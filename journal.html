@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>يومياتي</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #141417;
+    --surface2: #1c1c21;
+    --surface3: #232329;
+    --border: #2a2a32;
+    --border-glow: #3a3a48;
+    --text: #e8e6f0;
+    --text-muted: #7a7890;
+    --text-faint: #3d3c50;
+    --accent: #c9a84c;
+    --accent-dim: #8a6e2e;
+    --accent-glow: rgba(201,168,76,0.12);
+    --red: #c96b6b;
+    --red-dim: rgba(201,107,107,0.15);
+    --green: #6bc98a;
+    --mono: 'IBM Plex Mono', monospace;
+    --serif: 'Amiri', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Subtle grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* Radial glow top center */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ───── LAYOUT ───── */
+  .shell {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* ───── HEADER ───── */
+  header {
+    padding: 52px 0 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .header-ornament {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 4px;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+  .header-ornament::before, .header-ornament::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent));
+  }
+  .header-ornament::after {
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  h1 {
+    font-size: clamp(2.2rem, 6vw, 3.2rem);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #e8e6f0 0%, var(--accent) 60%, #c9a84c88 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    margin-top: 2px;
+  }
+
+  /* ───── STATUS BAR ───── */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text-faint);
+    display: inline-block;
+    margin-left: 6px;
+    transition: background 0.4s, box-shadow 0.4s;
+  }
+  .status-dot.ok { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .status-dot.err { background: var(--red); box-shadow: 0 0 6px var(--red); }
+  .status-dot.loading { background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .entry-count { color: var(--accent); font-weight: 500; }
+
+  /* ───── INPUT AREA ───── */
+  .compose {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 32px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .compose::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 60%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-dim));
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .compose:focus-within { border-color: var(--accent-dim); box-shadow: 0 0 0 1px var(--accent-dim), inset 0 0 30px rgba(201,168,76,0.03); }
+  .compose:focus-within::before { opacity: 1; }
+
+  .compose-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .compose-label span { color: var(--accent); }
+
+  textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    resize: none;
+    min-height: 90px;
+    caret-color: var(--accent);
+  }
+  textarea::placeholder { color: var(--text-faint); }
+
+  .compose-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .char-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  /* ───── BUTTONS ───── */
+  .btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.5px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0d0d0f;
+    font-weight: 600;
+    box-shadow: 0 2px 12px rgba(201,168,76,0.25);
+  }
+  .btn-primary:hover { background: #d9b85c; box-shadow: 0 4px 20px rgba(201,168,76,0.4); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--border-glow); color: var(--text); }
+
+  /* ───── FILTER / SEARCH ───── */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .search-wrap {
+    flex: 1;
+    position: relative;
+    min-width: 160px;
+  }
+  .search-wrap::before {
+    content: '⌕';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-faint);
+    font-size: 16px;
+    pointer-events: none;
+  }
+  .search-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 36px 9px 14px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--accent-dim); }
+  .search-input::placeholder { color: var(--text-faint); }
+
+  .filter-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .filter-btn.active { border-color: var(--accent-dim); color: var(--accent); background: var(--accent-glow); }
+  .filter-btn:hover:not(.active) { border-color: var(--border-glow); color: var(--text); }
+
+  /* ───── SECTION LABEL ───── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ───── ENTRIES ───── */
+  #entries { display: flex; flex-direction: column; gap: 1px; }
+
+  .day-group { margin-bottom: 28px; }
+  .day-header {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0 0 10px;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .day-header::before { content: '—'; opacity: 0.5; }
+
+  .entry {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 6px;
+    position: relative;
+    transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .entry:hover { border-color: var(--border-glow); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+
+  /* Left accent line */
+  .entry::before {
+    content: '';
+    position: absolute;
+    right: 0; top: 14px; bottom: 14px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .entry:hover::before { background: var(--accent-dim); }
+
+  .entry-body {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--text);
+    word-break: break-word;
+    padding-right: 10px;
+  }
+  .entry-body.editing { display: none; }
+
+  .entry-edit-area {
+    display: none;
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--accent-dim);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    resize: none;
+    outline: none;
+    caret-color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .entry-edit-area.active { display: block; }
+
+  .entry-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .entry-time {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .entry-time .edited-tag {
+    color: var(--accent-dim);
+    border: 1px solid var(--accent-dim);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+  }
+
+  .entry-actions {
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .entry:hover .entry-actions { opacity: 1; }
+
+  .action-btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.18s;
+    background: transparent;
+    color: var(--text-muted);
+  }
+  .action-btn:hover { background: var(--surface2); border-color: var(--border-glow); color: var(--text); }
+  .action-btn.delete:hover { border-color: var(--red); color: var(--red); background: var(--red-dim); }
+  .action-btn.save-edit { color: var(--accent); border-color: var(--accent-dim); }
+  .action-btn.save-edit:hover { background: var(--accent-glow); }
+
+  /* ───── EMPTY STATE ───── */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-faint);
+    font-size: 1.1rem;
+    animation: fadeIn 0.5s ease;
+  }
+  .empty .empty-icon { font-size: 2.5rem; margin-bottom: 16px; display: block; opacity: 0.4; }
+  .empty p { font-family: var(--mono); font-size: 12px; margin-top: 8px; color: var(--text-faint); }
+
+  @keyframes fadeIn { from {opacity:0} to {opacity:1} }
+
+  /* ───── LOADING ───── */
+  .loading-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px;
+    flex-direction: column;
+    gap: 16px;
+    color: var(--text-faint);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ───── TOAST ───── */
+  #toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--surface3);
+    border: 1px solid var(--border-glow);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    z-index: 999;
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.35s;
+    opacity: 0;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  #toast.success { border-color: var(--green); color: var(--green); }
+  #toast.error { border-color: var(--red); color: var(--red); }
+
+  /* ───── SCROLLBAR ───── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-glow); border-radius: 2px; }
+
+  /* ───── DELETE CONFIRM ───── */
+  .entry.deleting { animation: fadeOut 0.3s ease forwards; }
+  @keyframes fadeOut { to { opacity: 0; transform: translateX(10px); height: 0; padding: 0; margin: 0; overflow: hidden; } }
+
+  /* ───── RESPONSIVE ───── */
+  @media (max-width: 480px) {
+    .entry-actions { opacity: 1; }
+    header { padding: 36px 0 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header>
+    <div class="header-ornament">يوميات</div>
+    <h1>سجلّي</h1>
+    <div class="subtitle">// private journal · cloud-synced</div>
+  </header>
+
+  <div class="status-bar">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText" style="font-size:11px">جاري الاتصال...</span>
+    </div>
+    <div>
+      إجمالي السجلات: <span class="entry-count" id="entryCount">—</span>
+    </div>
+  </div>
+
+  <div class="compose">
+    <div class="compose-label">✦ <span>سجّل لحظتك</span></div>
+    <textarea id="newText" placeholder="ماذا يدور في خاطرك الآن؟" rows="4" autocomplete="off" spellcheck="false"></textarea>
+    <div class="compose-footer">
+      <span class="char-count"><span id="charCount">0</span> حرف</span>
+      <button class="btn btn-primary" id="addBtn" onclick="addEntry()">
+        ✦ أضف سجلاً
+      </button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <input class="search-input" type="text" id="searchInput" placeholder="ابحث في سجلاتك..." oninput="filterEntries()" autocomplete="off">
+    </div>
+    <button class="filter-btn active" id="filterAll" onclick="setFilter('all')">الكل</button>
+    <button class="filter-btn" id="filterToday" onclick="setFilter('today')">اليوم</button>
+    <button class="filter-btn" id="filterWeek" onclick="setFilter('week')">هذا الأسبوع</button>
+  </div>
+
+  <div class="section-label">السجلات</div>
+
+  <div id="entries">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>يتم تحميل سجلاتك...</span>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbyL6qhCG66T6rJrp7Ot6fBijGCEIDg5Jhu-6dU6HpIh1BDMw_s1zw8UCS8Qooo3ZiTO/exec';
+let allEntries = [];
+let currentFilter = 'all';
+
+// ── helpers ──
+const $ = id => document.getElementById(id);
+const setStatus = (type, msg) => {
+  $('statusDot').className = 'status-dot ' + type;
+  $('statusText').textContent = msg;
+};
+const showToast = (msg, type='') => {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.className = '', 2800);
+};
+const apiCall = params => {
+  const url = API + '?' + new URLSearchParams(params).toString();
+  return fetch(url).then(r => r.json());
+};
+const formatDate = ts => {
+  const d = new Date(Number(ts));
+  return d.toLocaleDateString('ar-EG', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+};
+const formatTime = ts => {
+  const d = new Date(Number(ts));
+  return d.toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
+};
+const dayKey = ts => new Date(Number(ts)).toDateString();
+const isToday = ts => dayKey(ts) === new Date().toDateString();
+const isThisWeek = ts => {
+  const now = new Date(); const d = new Date(Number(ts));
+  const diffDays = (now - d) / (1000*60*60*24);
+  return diffDays <= 7;
+};
+
+// ── textarea auto-resize ──
+$('newText').addEventListener('input', function(){
+  $('charCount').textContent = this.value.length;
+  this.style.height = 'auto';
+  this.style.height = this.scrollHeight + 'px';
+});
+$('newText').addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') addEntry();
+});
+
+// ── load entries ──
+async function loadEntries() {
+  setStatus('loading', 'جاري التحميل...');
+  try {
+    const res = await apiCall({action:'get'});
+    if (!res.ok) throw new Error(res.error);
+    allEntries = res.data.sort((a,b) => Number(b.ts) - Number(a.ts));
+    setStatus('ok', 'متصل · مزامنة ناجحة');
+    $('entryCount').textContent = allEntries.length;
+    renderEntries();
+  } catch(e) {
+    setStatus('err', 'خطأ في الاتصال');
+    $('entries').innerHTML = `<div class="empty"><span class="empty-icon">⚠</span>تعذّر الاتصال بالخادم<p>تحقق من اتصالك بالإنترنت</p></div>`;
+    showToast('خطأ: ' + e.message, 'error');
+  }
+}
+
+// ── render ──
+function renderEntries() {
+  const query = $('searchInput').value.trim().toLowerCase();
+  let list = [...allEntries];
+
+  if (currentFilter === 'today') list = list.filter(e => isToday(e.ts));
+  if (currentFilter === 'week')  list = list.filter(e => isThisWeek(e.ts));
+  if (query) list = list.filter(e => e.text.toLowerCase().includes(query));
+
+  $('entryCount').textContent = allEntries.length;
+
+  if (!list.length) {
+    $('entries').innerHTML = `<div class="empty"><span class="empty-icon">✦</span>${query ? 'لا توجد نتائج للبحث' : 'لا توجد سجلات بعد'}<p>${query ? 'جرّب كلمة أخرى' : 'ابدأ بتسجيل أول لحظة لك'}</p></div>`;
+    return;
+  }
+
+  // group by day
+  const groups = {};
+  list.forEach(e => { const k = dayKey(e.ts); (groups[k] = groups[k]||[]).push(e); });
+
+  let html = '';
+  Object.entries(groups).forEach(([day, entries]) => {
+    const label = isToday(entries[0].ts) ? 'اليوم' : formatDate(entries[0].ts);
+    html += `<div class="day-group"><div class="day-header">${label}</div>`;
+    entries.forEach(e => { html += buildEntry(e, query); });
+    html += '</div>';
+  });
+
+  $('entries').innerHTML = html;
+}
+
+function highlight(text, query) {
+  if (!query) return escHtml(text);
+  const re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+  return escHtml(text).replace(re, '<mark style="background:rgba(201,168,76,0.3);color:var(--accent);border-radius:2px">$1</mark>');
+}
+function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function buildEntry(e, query='') {
+  const edited = e.editedAt ? `<span class="edited-tag">عُدّل</span>` : '';
+  const editedTime = e.editedAt ? ` · آخر تعديل: ${formatTime(e.editedAt)}` : '';
+  return `
+  <div class="entry" id="entry-${e.id}">
+    <div class="entry-body" id="body-${e.id}">${highlight(e.text, query)}</div>
+    <textarea class="entry-edit-area" id="edit-${e.id}" rows="3">${escHtml(e.text)}</textarea>
+    <div class="entry-meta">
+      <div class="entry-time">${formatTime(e.ts)}${editedTime} ${edited}</div>
+      <div class="entry-actions">
+        <button class="action-btn edit-btn" id="editBtn-${e.id}" onclick="startEdit('${e.id}')">تعديل</button>
+        <button class="action-btn save-edit" id="saveBtn-${e.id}" style="display:none" onclick="saveEdit('${e.id}')">حفظ</button>
+        <button class="action-btn" id="cancelBtn-${e.id}" style="display:none" onclick="cancelEdit('${e.id}')">إلغاء</button>
+        <button class="action-btn delete" onclick="deleteEntry('${e.id}')">حذف</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── add ──
+async function addEntry() {
+  const text = $('newText').value.trim();
+  if (!text) { showToast('اكتب شيئاً أولاً ✦', 'error'); return; }
+  const btn = $('addBtn');
+  btn.disabled = true; btn.textContent = '...';
+  setStatus('loading', 'جاري الحفظ...');
+  try {
+    const res = await apiCall({action:'add', text, ts: Date.now()});
+    if (!res.ok) throw new Error(res.error);
+    $('newText').value = '';
+    $('charCount').textContent = '0';
+    $('newText').style.height = '';
+    showToast('✦ تمّ الحفظ بنجاح', 'success');
+    await loadEntries();
+  } catch(e) {
+    setStatus('err', 'فشل الحفظ');
+    showToast('خطأ: ' + e.message, 'error');
+  } finally { btn.disabled = false; btn.innerHTML = '✦ أضف سجلاً'; }
+}
+
+// ── edit ──
+function startEdit(id) {
+  $('body-'+id).classList.add('editing');
+  $('edit-'+id).classList.add('active');
+  $('edit-'+id).style.height = 'auto';
+  $('edit-'+id).style.height = $('edit-'+id).scrollHeight + 'px';
+  $('editBtn-'+id).style.display = 'none';
+  $('saveBtn-'+id).style.display = 'inline-flex';
+  $('cancelBtn-'+id).style.display = 'inline-flex';
+  $('edit-'+id).focus();
+}
+function cancelEdit(id) {
+  $('body-'+id).classList.remove('editing');
+  $('edit-'+id).classList.remove('active');
+  $('editBtn-'+id).style.display = '';
+  $('saveBtn-'+id).style.display = 'none';
+  $('cancelBtn-'+id).style.display = 'none';
+}
+async function saveEdit(id) {
+  const newText = $('edit-'+id).value.trim();
+  if (!newText) { showToast('لا يمكن حفظ نص فارغ', 'error'); return; }
+  $('saveBtn-'+id).textContent = '...';
+  setStatus('loading', 'جاري التعديل...');
+  try {
+    const res = await apiCall({action:'edit', id, text: newText});
+    if (!res.ok) throw new Error(res.error);
+    showToast('✦ تمّ التعديل', 'success');
+    await loadEntries();
+  } catch(e) {
+    setStatus('err', 'فشل التعديل');
+    showToast('خطأ: ' + e.message, 'error');
+  }
+}
+
+// ── delete ──
+async function deleteEntry(id) {
+  if (!confirm('هل تريد حذف هذا السجل نهائياً؟')) return;
+  const el = $('entry-'+id);
+  el.classList.add('deleting');
+  setStatus('loading', 'جاري الحذف...');
+  try {
+    const res = await apiCall({action:'delete', id});
+    if (!res.ok) throw new Error(res.error);
+    showToast('تمّ الحذف', '');
+    await loadEntries();
+  } catch(e) {
+    el.classList.remove('deleting');
+    setStatus('err', 'فشل الحذف');
+    showToast('خطأ: ' + e.message, 'error');
+  }
+}
+
+// ── filter ──
+function setFilter(f) {
+  currentFilter = f;
+  ['All','Today','Week'].forEach(x => $('filter'+x).classList.remove('active'));
+  $('filter'+ f.charAt(0).toUpperCase()+f.slice(1)).classList.add('active');
+  renderEntries();
+}
+function filterEntries() { renderEntries(); }
+
+// ── init ──
+loadEntries();
+</script>
+</body>
+</html>
