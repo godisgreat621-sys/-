@@ -6,185 +6,217 @@
 <title>سجلّي</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#0d0d0f; --surface:#141417; --surface2:#1c1c21; --surface3:#232329;
-  --border:#2a2a32; --border-glow:#3a3a48;
-  --text:#e8e6f0; --text-muted:#7a7890; --text-faint:#3d3c50;
-  --accent:#c9a84c; --accent-dim:#8a6e2e; --accent-glow:rgba(201,168,76,0.12);
-  --red:#c96b6b; --red-dim:rgba(201,107,107,0.15);
-  --green:#6bc98a; --blue:#6b9bc9; --purple:#9b6bc9;
-  --mono:'IBM Plex Mono',monospace; --sans:'Cairo',sans-serif;
+:root{
+  --bg:#0d0d0f;--surface:#141417;--surface2:#1c1c21;--surface3:#232329;
+  --border:#2a2a32;--border-glow:#3a3a48;
+  --text:#e8e6f0;--text-muted:#7a7890;--text-faint:#3d3c50;
+  --accent:#c9a84c;--accent-dim:#8a6e2e;--accent-glow:rgba(201,168,76,0.12);
+  --red:#c96b6b;--red-dim:rgba(201,107,107,0.15);
+  --green:#6bc98a;--blue:#6b9bc9;--purple:#9b6bc9;
+  --mono:'IBM Plex Mono',monospace;--sans:'Cairo',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;position:relative;}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.6;}
-body::after{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(201,168,76,.06) 0%,transparent 70%);pointer-events:none;z-index:0;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 
-/* ── LOCK ── */
-#lockScreen{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;}
-.lock-box{position:relative;z-index:1;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 40px 40px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5);animation:lockIn .5s cubic-bezier(.16,1,.3,1) both;}
+/* ══ LOCK ══ */
+#lockScreen{position:fixed;inset:0;z-index:500;background:var(--bg);display:flex;align-items:center;justify-content:center;}
+.lock-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 40px 40px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.6);animation:lockIn .5s cubic-bezier(.16,1,.3,1) both;}
 @keyframes lockIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-.lock-icon{font-size:2.4rem;margin-bottom:18px;display:block;filter:drop-shadow(0 0 12px rgba(201,168,76,.3));}
+.lock-icon{font-size:2.4rem;margin-bottom:18px;display:block;}
 .lock-title{font-size:1.5rem;font-weight:700;margin-bottom:6px;}
 .lock-sub{font-size:.82rem;color:var(--text-muted);margin-bottom:28px;}
-#passInput{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 18px;color:var(--text);font-family:var(--mono);font-size:1.3rem;letter-spacing:6px;text-align:center;outline:none;transition:border-color .2s,box-shadow .2s;caret-color:var(--accent);margin-bottom:10px;}
-#passInput:focus{border-color:var(--accent-dim);box-shadow:0 0 0 1px var(--accent-dim);}
-#passInput.error{border-color:var(--red);box-shadow:0 0 0 1px var(--red);animation:shake .35s ease;}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
-#lockError{font-size:.8rem;color:var(--red);margin-bottom:14px;min-height:18px;font-weight:500;}
-.lock-btn{width:100%;background:var(--accent);color:#0d0d0f;border:none;border-radius:10px;padding:13px;font-family:var(--sans);font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 2px 16px rgba(201,168,76,.25);}
-.lock-btn:hover{background:#d9b85c;box-shadow:0 4px 24px rgba(201,168,76,.4);transform:translateY(-1px);}
-.lock-ornament{display:flex;align-items:center;gap:10px;margin:24px 0 0;color:var(--text-faint);font-size:10px;font-family:var(--mono);letter-spacing:2px;}
-.lock-ornament::before,.lock-ornament::after{content:'';flex:1;height:1px;background:var(--border);}
+#passInput{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 18px;color:var(--text);font-family:var(--mono);font-size:1.3rem;letter-spacing:6px;text-align:center;outline:none;transition:border-color .2s;caret-color:var(--accent);margin-bottom:10px;}
+#passInput:focus{border-color:var(--accent-dim);}
+#passInput.error{border-color:var(--red);animation:shake .35s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+#lockError{font-size:.8rem;color:var(--red);margin-bottom:14px;min-height:18px;}
+.lock-btn{width:100%;background:var(--accent);color:#0d0d0f;border:none;border-radius:10px;padding:13px;font-family:var(--sans);font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.lock-btn:hover{background:#d9b85c;transform:translateY(-1px);}
 
-/* ── APP ── */
-#app{display:none;}
-#app.visible{display:block;animation:fadeIn .4s ease;}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.shell{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:0 20px 100px;}
+/* ══ APP SHELL ══ */
+#app{display:none;position:fixed;inset:0;background:var(--bg);}
+#app.visible{display:flex;flex-direction:column;}
 
-/* ── HEADER ── */
-header{padding:52px 0 36px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;}
-.header-ornament{display:flex;align-items:center;gap:12px;color:var(--accent);font-size:11px;letter-spacing:4px;font-family:var(--mono);text-transform:uppercase;opacity:.7;margin-bottom:4px;}
-.header-ornament::before,.header-ornament::after{content:'';display:block;width:32px;height:1px;background:linear-gradient(90deg,transparent,var(--accent));}
-.header-ornament::after{background:linear-gradient(90deg,var(--accent),transparent);}
-h1{font-size:clamp(2.2rem,6vw,3.2rem);font-weight:700;background:linear-gradient(135deg,#e8e6f0 0%,var(--accent) 60%,#c9a84c88 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
-.subtitle{font-size:.82rem;color:var(--text-muted);font-family:var(--mono);margin-top:2px;}
-
-/* ── STATUS ── */
-.status-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:24px;font-size:12px;color:var(--text-muted);font-weight:500;}
-.status-dot{width:6px;height:6px;border-radius:50%;background:var(--text-faint);display:inline-block;margin-left:6px;transition:background .4s,box-shadow .4s;}
-.status-dot.ok{background:var(--green);box-shadow:0 0 6px var(--green);}
-.status-dot.err{background:var(--red);box-shadow:0 0 6px var(--red);}
-.status-dot.loading{background:var(--accent);box-shadow:0 0 6px var(--accent);animation:pulse 1s infinite;}
+/* ══ TOP BAR ══ */
+#topBar{
+  height:48px;flex-shrink:0;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;padding:0 12px;
+  z-index:100;
+}
+.app-title{font-size:1rem;font-weight:700;background:linear-gradient(135deg,#e8e6f0,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-left:auto;}
+.icon-btn{width:34px;height:34px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .18s;flex-shrink:0;}
+.icon-btn:hover{border-color:var(--border-glow);color:var(--text);background:var(--surface2);}
+.icon-btn.active{border-color:var(--accent-dim);color:var(--accent);background:var(--accent-glow);}
+.icon-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.sep{width:1px;height:24px;background:var(--border);flex-shrink:0;}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--text-faint);flex-shrink:0;transition:background .4s;}
+.status-dot.ok{background:var(--green);}
+.status-dot.err{background:var(--red);}
+.status-dot.loading{background:var(--accent);animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.entry-count{color:var(--accent);font-weight:700;}
 
-/* ── COMPOSE TABS ── */
-.compose-tabs{display:flex;gap:4px;margin-bottom:0;background:var(--surface);border:1px solid var(--border);border-bottom:none;border-radius:12px 12px 0 0;padding:8px 8px 0;}
-.compose-tab{font-family:var(--sans);font-size:12px;font-weight:600;padding:8px 16px;border-radius:8px 8px 0 0;border:none;cursor:pointer;transition:all .2s;background:transparent;color:var(--text-muted);}
-.compose-tab.active{background:var(--surface2);color:var(--accent);border-bottom:2px solid var(--accent);}
-.compose-tab:hover:not(.active){color:var(--text);}
+/* ══ WORKSPACE ══ */
+#workspace{flex:1;display:flex;overflow:hidden;position:relative;}
 
-/* ── COMPOSE ── */
-.compose{background:var(--surface);border:1px solid var(--border);border-radius:0 12px 12px 12px;padding:20px;margin-bottom:32px;transition:border-color .3s,box-shadow .3s;position:relative;overflow:hidden;}
-.compose:focus-within{border-color:var(--accent-dim);box-shadow:0 0 0 1px var(--accent-dim);}
-.compose-label{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--text-faint);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.compose-label span{color:var(--accent);}
-.compose-panel{display:none;}
-.compose-panel.active{display:block;}
-textarea{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:var(--sans);font-size:1rem;font-weight:400;line-height:1.9;resize:none;min-height:90px;caret-color:var(--accent);}
-textarea::placeholder{color:var(--text-faint);}
-.compose-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
-.char-count{font-size:11px;color:var(--text-faint);font-family:var(--mono);}
+/* ══ EDITOR MODE ══ */
+#editorPane{
+  flex:1;display:flex;flex-direction:column;
+  background:var(--bg);position:relative;overflow:hidden;
+}
+#editorPane.hidden{display:none;}
 
-/* ── BUTTONS ── */
-.btn{font-family:var(--sans);font-size:13px;font-weight:600;padding:9px 20px;border:none;border-radius:8px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
-.btn-primary{background:var(--accent);color:#0d0d0f;box-shadow:0 2px 12px rgba(201,168,76,.25);}
-.btn-primary:hover{background:#d9b85c;box-shadow:0 4px 20px rgba(201,168,76,.4);transform:translateY(-1px);}
-.btn-primary:active{transform:translateY(0);}
-.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;}
-.btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border);}
-.btn-ghost:hover{border-color:var(--border-glow);color:var(--text);}
-.btn-sm{padding:6px 12px;font-size:12px;border-radius:6px;}
+/* FORMAT TOOLBAR */
+#fmtBar{
+  height:40px;flex-shrink:0;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:4px;padding:0 12px;
+}
+.fmt-btn{
+  height:28px;min-width:28px;padding:0 8px;
+  border:1px solid transparent;border-radius:6px;
+  background:transparent;color:var(--text-muted);
+  cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  transition:all .15s;white-space:nowrap;
+}
+.fmt-btn:hover{background:var(--surface2);border-color:var(--border);color:var(--text);}
+.fmt-btn.active{background:var(--accent-glow);border-color:var(--accent-dim);color:var(--accent);}
+.fmt-sep{width:1px;height:20px;background:var(--border);margin:0 4px;}
+.color-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);cursor:pointer;transition:transform .15s;flex-shrink:0;}
+.color-dot:hover{transform:scale(1.3);}
+.color-dot.active{border-color:white;transform:scale(1.15);}
 
-/* ── TOOLBAR ── */
-.toolbar{display:flex;gap:10px;margin-bottom:20px;align-items:center;flex-wrap:wrap;}
-.search-wrap{flex:1;position:relative;min-width:160px;}
-.search-wrap::before{content:'⌕';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-faint);font-size:16px;pointer-events:none;}
-.search-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 36px 9px 14px;color:var(--text);font-family:var(--sans);font-size:13px;outline:none;transition:border-color .2s;}
-.search-input:focus{border-color:var(--accent-dim);}
-.search-input::placeholder{color:var(--text-faint);}
-.filter-btn{font-family:var(--sans);font-size:12px;font-weight:600;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text-muted);cursor:pointer;transition:all .2s;white-space:nowrap;}
-.filter-btn.active{border-color:var(--accent-dim);color:var(--accent);background:var(--accent-glow);}
-.filter-btn:hover:not(.active){border-color:var(--border-glow);color:var(--text);}
-.section-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
-.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+/* CONTENT EDITABLE */
+#editor{
+  flex:1;overflow-y:auto;padding:48px 60px;
+  outline:none;font-size:1.05rem;line-height:1.9;caret-color:var(--accent);
+  color:var(--text);
+}
+#editor:empty::before{content:attr(data-placeholder);color:var(--text-faint);pointer-events:none;}
+#editor b,#editor strong{font-weight:700;}
+#editor u{text-decoration:underline;}
+#editor [style*="color"]{} /* allow inline colors */
 
-/* ── ENTRIES ── */
-#entries{display:flex;flex-direction:column;gap:1px;}
-.day-group{margin-bottom:28px;}
-.day-header{font-size:12px;font-weight:600;color:var(--accent);letter-spacing:1px;padding:0 0 10px;opacity:.8;display:flex;align-items:center;gap:8px;}
-.day-header::before{content:'—';opacity:.5;}
-.entry{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:6px;position:relative;transition:border-color .25s,box-shadow .25s;animation:slideIn .35s cubic-bezier(.16,1,.3,1) both;}
-@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.entry:hover{border-color:var(--border-glow);box-shadow:0 4px 20px rgba(0,0,0,.3);}
-.entry::before{content:'';position:absolute;right:0;top:14px;bottom:14px;width:2px;border-radius:2px;background:var(--border);transition:background .3s;}
-.entry:hover::before{background:var(--accent-dim);}
-.entry.tree-entry::before{background:rgba(107,155,201,.4);}
-.entry.tree-entry:hover::before{background:var(--blue);}
-.entry-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin-bottom:8px;letter-spacing:.5px;}
-.badge-text{background:rgba(201,168,76,.1);color:var(--accent);border:1px solid rgba(201,168,76,.2);}
-.badge-tree{background:rgba(107,155,201,.1);color:var(--blue);border:1px solid rgba(107,155,201,.2);}
-.entry-body{font-size:1rem;font-weight:400;line-height:1.9;color:var(--text);word-break:break-word;padding-right:10px;}
-.entry-body.editing{display:none;}
-.entry-edit-area{display:none;width:100%;background:var(--surface2);border:1px solid var(--accent-dim);border-radius:6px;padding:10px 12px;color:var(--text);font-family:var(--sans);font-size:1rem;line-height:1.9;resize:none;outline:none;caret-color:var(--accent);margin-bottom:8px;}
-.entry-edit-area.active{display:block;}
-.entry-meta{display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:6px;}
-.entry-time{font-family:var(--mono);font-size:10px;color:var(--text-faint);display:flex;align-items:center;gap:6px;}
-.edited-tag{color:var(--accent-dim);border:1px solid var(--accent-dim);border-radius:3px;padding:1px 5px;font-size:9px;}
-.entry-actions{display:flex;gap:6px;opacity:0;transition:opacity .2s;}
-.entry:hover .entry-actions{opacity:1;}
-.action-btn{font-family:var(--sans);font-size:11px;font-weight:600;padding:4px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;transition:all .18s;background:transparent;color:var(--text-muted);}
-.action-btn:hover{background:var(--surface2);border-color:var(--border-glow);color:var(--text);}
-.action-btn.delete:hover{border-color:var(--red);color:var(--red);background:var(--red-dim);}
-.action-btn.save-edit{color:var(--accent);border-color:var(--accent-dim);}
-.action-btn.save-edit:hover{background:var(--accent-glow);}
+/* EDITOR FOOTER */
+#editorFooter{
+  height:40px;flex-shrink:0;
+  background:var(--surface);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;font-size:11px;color:var(--text-faint);font-family:var(--mono);
+}
+#saveEntryBtn{
+  background:var(--accent);color:#0d0d0f;border:none;border-radius:6px;
+  padding:5px 16px;font-family:var(--sans);font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+#saveEntryBtn:hover{background:#d9b85c;}
+#saveEntryBtn:disabled{opacity:.4;cursor:not-allowed;}
 
-/* ── TREE DISPLAY in entry ── */
-.tree-display{font-family:var(--mono);font-size:13px;line-height:2;color:var(--text);padding-right:10px;overflow-x:auto;}
-.tree-display .tnode{display:flex;align-items:flex-start;gap:0;}
-.tree-display .tnode .prefix{color:var(--text-faint);white-space:pre;user-select:none;flex-shrink:0;}
-.tree-display .tnode .tlabel{color:var(--text);word-break:break-word;}
-.tree-display .tnode .tlabel.root-lbl{color:var(--accent);font-weight:600;font-size:14px;}
+/* ══ MIND MAP MODE ══ */
+#mindPane{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;}
+#mindPane.hidden{display:none;}
+#mindCanvas{flex:1;width:100%;cursor:grab;position:relative;overflow:hidden;}
+#mindCanvas.grabbing{cursor:grabbing;}
+#mindCanvas svg{position:absolute;inset:0;width:100%;height:100%;}
+#mindToolbar{
+  height:44px;flex-shrink:0;
+  background:var(--surface);border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;padding:0 14px;
+}
+.mind-btn{
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  padding:6px 14px;border:1px solid var(--border);border-radius:7px;
+  background:transparent;color:var(--text-muted);cursor:pointer;
+  transition:all .18s;white-space:nowrap;
+}
+.mind-btn:hover{border-color:var(--border-glow);color:var(--text);}
+.mind-btn.accent{border-color:var(--accent-dim);color:var(--accent);background:var(--accent-glow);}
+.mind-btn.accent:hover{background:rgba(201,168,76,.2);}
+#mindSavebtn{
+  margin-right:auto;background:var(--accent);color:#0d0d0f;border:none;
+  border-radius:7px;padding:6px 16px;font-family:var(--sans);font-size:12px;
+  font-weight:700;cursor:pointer;transition:all .2s;
+}
+#mindSavebtn:hover{background:#d9b85c;}
 
-/* ── MIND MAP / TREE BUILDER ── */
-#treePanel{display:flex;flex-direction:column;gap:14px;}
-.tree-builder-title{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
-.tree-builder-title input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:var(--sans);font-size:1.05rem;font-weight:600;outline:none;transition:border-color .2s;caret-color:var(--accent);}
-.tree-builder-title input:focus{border-color:var(--accent-dim);}
-.tree-builder-title input::placeholder{color:var(--text-faint);}
-.tree-nodes-area{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;min-height:120px;max-height:400px;overflow-y:auto;}
-.tnode-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;animation:slideIn .2s ease both;}
-.tnode-indent{display:flex;align-items:center;gap:4px;}
-.indent-btn,.outdent-btn{width:26px;height:26px;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--text-muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
-.indent-btn:hover,.outdent-btn:hover{border-color:var(--accent-dim);color:var(--accent);background:var(--accent-glow);}
-.tnode-level-indicator{display:flex;gap:3px;align-items:center;flex-shrink:0;}
-.level-dot{width:5px;height:5px;border-radius:50%;background:var(--border);}
-.level-dot.active{background:var(--accent);}
-.tnode-input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--border);outline:none;color:var(--text);font-family:var(--sans);font-size:.95rem;padding:4px 8px;transition:border-color .2s;caret-color:var(--accent);}
-.tnode-input:focus{border-bottom-color:var(--accent-dim);}
-.tnode-input::placeholder{color:var(--text-faint);}
-.tnode-del{width:26px;height:26px;border:none;background:transparent;color:var(--text-faint);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;border-radius:5px;transition:all .15s;flex-shrink:0;}
-.tnode-del:hover{color:var(--red);background:var(--red-dim);}
-.tree-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
-.tree-preview-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-family:var(--mono);font-size:13px;line-height:2;color:var(--text);min-height:60px;max-height:300px;overflow:auto;white-space:pre;}
-.tree-preview-box .prev-root{color:var(--accent);font-weight:600;}
-.tree-preview-box .prev-branch{color:var(--text-muted);}
-.tree-preview-box .prev-leaf{color:var(--text);}
-.tree-tip{font-size:11px;color:var(--text-faint);font-family:var(--mono);padding:6px 0 0;}
+/* Node edit tooltip */
+#nodeEditBox{
+  position:absolute;z-index:300;background:var(--surface);
+  border:1px solid var(--accent-dim);border-radius:8px;
+  padding:6px 10px;display:none;flex-direction:column;gap:4px;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);min-width:180px;
+}
+#nodeEditBox input{
+  background:transparent;border:none;border-bottom:1px solid var(--border);
+  color:var(--text);font-family:var(--sans);font-size:.9rem;
+  outline:none;padding:4px;caret-color:var(--accent);width:100%;
+}
+#nodeEditBox .node-edit-actions{display:flex;gap:6px;}
+.nea-btn{font-family:var(--sans);font-size:11px;font-weight:600;padding:4px 10px;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--text-muted);cursor:pointer;transition:all .15s;flex:1;}
+.nea-btn:hover{border-color:var(--border-glow);color:var(--text);}
+.nea-btn.accent{color:var(--accent);border-color:var(--accent-dim);}
+.nea-btn.danger{color:var(--red);border-color:var(--red);}
 
-/* ── EMPTY ── */
-.empty{text-align:center;padding:60px 20px;color:var(--text-faint);font-size:1rem;animation:fadeIn .5s ease;}
-.empty .empty-icon{font-size:2.5rem;margin-bottom:16px;display:block;opacity:.4;}
-.empty p{font-size:12px;margin-top:8px;color:var(--text-faint);}
+/* ══ SIDEBAR (JOURNAL LIST) ══ */
+#sidebar{
+  width:300px;flex-shrink:0;border-right:1px solid var(--border);
+  background:var(--surface);display:flex;flex-direction:column;
+  transition:transform .3s cubic-bezier(.16,1,.3,1);
+  position:absolute;right:0;top:0;bottom:0;z-index:200;
+  transform:translateX(0);
+}
+#sidebar.hidden{transform:translateX(100%);}
+#sidebarHeader{
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+#sidebarHeader h2{font-size:.95rem;font-weight:700;color:var(--accent);}
+#searchInput{
+  width:calc(100% - 32px);margin:10px 16px;
+  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+  padding:8px 12px;color:var(--text);font-family:var(--sans);font-size:12px;
+  outline:none;transition:border-color .2s;flex-shrink:0;
+}
+#searchInput:focus{border-color:var(--accent-dim);}
+#searchInput::placeholder{color:var(--text-faint);}
+#filterRow{display:flex;gap:4px;padding:0 16px 10px;flex-wrap:wrap;flex-shrink:0;}
+.flt-btn{font-size:11px;font-weight:600;padding:4px 10px;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--text-faint);cursor:pointer;transition:all .15s;}
+.flt-btn.active{border-color:var(--accent-dim);color:var(--accent);background:var(--accent-glow);}
+#entryList{flex:1;overflow-y:auto;padding:0 16px 16px;}
+.entry-item{
+  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+  padding:10px 12px;margin-bottom:6px;cursor:pointer;
+  transition:all .18s;position:relative;
+}
+.entry-item:hover{border-color:var(--border-glow);}
+.entry-item.active{border-color:var(--accent-dim);background:var(--accent-glow);}
+.entry-item .ei-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;
+  margin-bottom:5px;letter-spacing:.5px;
+}
+.ei-badge.text{background:rgba(201,168,76,.1);color:var(--accent);}
+.ei-badge.mind{background:rgba(107,155,201,.1);color:var(--blue);}
+.entry-item .ei-preview{font-size:11px;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.entry-item .ei-time{font-size:9px;color:var(--text-faint);font-family:var(--mono);margin-top:5px;}
+.entry-item .ei-del{position:absolute;top:8px;left:8px;width:22px;height:22px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--text-faint);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;opacity:0;transition:all .15s;}
+.entry-item:hover .ei-del{opacity:1;}
+.entry-item .ei-del:hover{border-color:var(--red);color:var(--red);background:var(--red-dim);}
 
-/* ── LOADING ── */
-.loading-wrap{display:flex;justify-content:center;align-items:center;padding:60px;flex-direction:column;gap:16px;color:var(--text-faint);font-size:13px;}
-.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── TOAST ── */
-#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface3);border:1px solid var(--border-glow);color:var(--text);font-size:13px;font-weight:600;padding:10px 22px;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:999;transition:transform .35s cubic-bezier(.16,1,.3,1),opacity .35s;opacity:0;white-space:nowrap;}
+/* ══ TOAST ══ */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface3);border:1px solid var(--border-glow);color:var(--text);font-size:13px;font-weight:600;padding:9px 20px;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:999;transition:transform .3s,opacity .3s;opacity:0;white-space:nowrap;}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 #toast.success{border-color:var(--green);color:var(--green);}
 #toast.error{border-color:var(--red);color:var(--red);}
 
+/* ══ OVERLAY ══ */
+#sideOverlay{position:absolute;inset:0;z-index:199;display:none;}
+#sideOverlay.show{display:block;}
+
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border-glow);border-radius:2px;}
-.entry.deleting{animation:fadeOut .3s ease forwards;}
-@keyframes fadeOut{to{opacity:0;transform:translateX(10px);height:0;padding:0;margin:0;overflow:hidden;}}
-@media(max-width:480px){.entry-actions{opacity:1;}header{padding:36px 0 24px;}.lock-box{margin:20px;padding:36px 24px 28px;}.tree-toolbar{gap:6px;}}
+@media(max-width:600px){#editor{padding:24px 20px;}}
 </style>
 </head>
 <body>
@@ -195,439 +227,773 @@ textarea::placeholder{color:var(--text-faint);}
     <span class="lock-icon">🔒</span>
     <div class="lock-title">سجلّي الخاص</div>
     <div class="lock-sub">أدخل كلمة المرور للدخول</div>
-    <input type="password" id="passInput" maxlength="10" placeholder="••••" autocomplete="off" oninput="clearPassError()" onkeydown="if(event.key==='Enter')checkPass()">
+    <input type="password" id="passInput" maxlength="10" placeholder="••••" autocomplete="off"
+      oninput="document.getElementById('lockError').textContent=''"
+      onkeydown="if(event.key==='Enter')checkPass()">
     <div id="lockError"></div>
     <button class="lock-btn" onclick="checkPass()">دخول</button>
-    <div class="lock-ornament">private journal</div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
-<div class="shell">
-  <header>
-    <div class="header-ornament">يوميات</div>
-    <h1>سجلّي</h1>
-    <div class="subtitle">// private journal · cloud-synced</div>
-  </header>
-
-  <div class="status-bar">
-    <div style="display:flex;align-items:center;gap:6px">
-      <span class="status-dot" id="statusDot"></span>
-      <span id="statusText">جاري الاتصال...</span>
-    </div>
-    <div>إجمالي السجلات: <span class="entry-count" id="entryCount">—</span></div>
+  <!-- TOP BAR -->
+  <div id="topBar">
+    <!-- Mode btns -->
+    <button class="icon-btn active" id="modeEditor" onclick="setMode('editor')" title="محرر النصوص">
+      <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>
+    <button class="icon-btn" id="modeMind" onclick="setMode('mind')" title="الخريطة الذهنية">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 9V3M12 21v-6M9 12H3M21 12h-6M5.6 5.6l3 3M15.4 15.4l3 3M18.4 5.6l-3 3M8.6 15.4l-3 3"/></svg>
+    </button>
+    <div class="sep"></div>
+    <!-- New entry -->
+    <button class="icon-btn" onclick="newEntry()" title="سجل جديد">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+    <!-- Journal list -->
+    <button class="icon-btn" id="sidebarToggle" onclick="toggleSidebar()" title="السجلات">
+      <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    </button>
+    <div class="sep"></div>
+    <span class="status-dot" id="statusDot"></span>
+    <span style="font-size:11px;color:var(--text-faint);font-family:var(--mono)" id="statusText">...</span>
+    <div class="app-title">سجلّي</div>
   </div>
 
-  <!-- COMPOSE TABS -->
-  <div class="compose-tabs">
-    <button class="compose-tab active" id="tabText" onclick="switchTab('text')">✦ نص حر</button>
-    <button class="compose-tab" id="tabTree" onclick="switchTab('tree')">🌿 تشجير الأفكار</button>
-  </div>
-
-  <div class="compose">
-    <!-- TEXT PANEL -->
-    <div class="compose-panel active" id="panelText">
-      <div class="compose-label">✦ <span>سجّل لحظتك</span></div>
-      <textarea id="newText" placeholder="ماذا يدور في خاطرك الآن؟" rows="4" autocomplete="off" spellcheck="false"></textarea>
-      <div class="compose-footer">
-        <span class="char-count"><span id="charCount">0</span> حرف</span>
-        <button class="btn btn-primary" id="addBtn" onclick="addTextEntry()">✦ أضف سجلاً</button>
+  <!-- WORKSPACE -->
+  <div id="workspace">
+    <!-- EDITOR PANE -->
+    <div id="editorPane">
+      <!-- FORMAT BAR -->
+      <div id="fmtBar">
+        <button class="fmt-btn" id="fmtBold" onclick="execFmt('bold')" title="عريض"><b>ع</b></button>
+        <button class="fmt-btn" id="fmtUnder" onclick="execFmt('underline')" title="تسطير"><u>ع</u></button>
+        <div class="fmt-sep"></div>
+        <!-- Colors -->
+        <div style="display:flex;align-items:center;gap:6px;margin:0 4px">
+          <span style="font-size:10px;color:var(--text-faint)">لون:</span>
+          <div class="color-dot active" id="cdDefault" style="background:var(--text)" onclick="setColor('')" title="افتراضي"></div>
+          <div class="color-dot" id="cdGold" style="background:#c9a84c" onclick="setColor('#c9a84c')" title="ذهبي"></div>
+          <div class="color-dot" id="cdBlue" style="background:#6b9bc9" onclick="setColor('#6b9bc9')" title="أزرق"></div>
+          <div class="color-dot" id="cdGreen" style="background:#6bc98a" onclick="setColor('#6bc98a')" title="أخضر"></div>
+          <div class="color-dot" id="cdRed" style="background:#c96b6b" onclick="setColor('#c96b6b')" title="أحمر"></div>
+          <div class="color-dot" id="cdPurple" style="background:#9b6bc9" onclick="setColor('#9b6bc9')" title="بنفسجي"></div>
+        </div>
+        <div class="fmt-sep"></div>
+        <span style="font-size:10px;color:var(--text-faint);font-family:var(--mono);margin-right:auto" id="wordCount">0 كلمة</span>
+      </div>
+      <!-- EDITOR -->
+      <div id="editor" contenteditable="true" data-placeholder="ابدأ الكتابة هنا..."></div>
+      <!-- FOOTER -->
+      <div id="editorFooter">
+        <span id="charCount">0 حرف</span>
+        <button id="saveEntryBtn" onclick="saveEditorEntry()">✦ حفظ السجل</button>
       </div>
     </div>
 
-    <!-- TREE PANEL -->
-    <div class="compose-panel" id="panelTree">
-      <div id="treePanel">
-        <div class="tree-builder-title">
-          <input type="text" id="treeRoot" placeholder="عنوان الشجرة (الجذر)..." autocomplete="off">
-        </div>
-        <div class="tree-nodes-area" id="treeNodesArea"></div>
-        <div class="tree-toolbar">
-          <button class="btn btn-ghost btn-sm" onclick="addTreeNode()">+ إضافة فكرة</button>
-          <button class="btn btn-ghost btn-sm" onclick="clearTree()">🗑 مسح الكل</button>
-          <button class="btn btn-ghost btn-sm" onclick="togglePreview()">👁 معاينة</button>
-          <button class="btn btn-primary btn-sm" onclick="addTreeEntry()">🌿 حفظ الشجرة</button>
-        </div>
-        <div class="tree-tip">Tab لزيادة المستوى · Shift+Tab لتقليله · Enter لفكرة جديدة · Delete على السطر الفارغ لحذفه</div>
-        <div id="treePreview" style="display:none">
-          <div class="section-label" style="margin-top:14px">معاينة</div>
-          <div class="tree-preview-box" id="treePreviewBox"></div>
+    <!-- MIND MAP PANE -->
+    <div id="mindPane" class="hidden">
+      <div id="mindCanvas">
+        <svg id="mindSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div id="mindToolbar">
+        <button id="mindSavebtn" onclick="saveMindEntry()">🌿 حفظ الخريطة</button>
+        <button class="mind-btn" onclick="mindAddChild()" title="إضافة فرع للعقدة المحددة">+ فرع</button>
+        <button class="mind-btn" onclick="mindAddSibling()" title="إضافة عقدة مجاورة">+ مجاور</button>
+        <button class="mind-btn" onclick="mindToggleCollapse()">إخفاء/إظهار الفروع</button>
+        <button class="mind-btn" onclick="mindDeleteSelected()">🗑 حذف</button>
+        <div class="sep"></div>
+        <button class="mind-btn" onclick="mindReset()">خريطة جديدة</button>
+        <div style="margin-right:auto;font-size:11px;color:var(--text-faint)">اسحب لتحريك · دبل-كليك لتعديل · كليك للتحديد</div>
+      </div>
+      <!-- Node edit box -->
+      <div id="nodeEditBox">
+        <input type="text" id="nodeEditInput" placeholder="نص العقدة..." onkeydown="nodeEditKey(event)">
+        <div class="node-edit-actions">
+          <button class="nea-btn accent" onclick="confirmNodeEdit()">حفظ</button>
+          <button class="nea-btn" onclick="closeNodeEdit()">إلغاء</button>
+          <button class="nea-btn danger" onclick="mindDeleteSelected();closeNodeEdit()">حذف</button>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="toolbar">
-    <div class="search-wrap">
-      <input class="search-input" type="text" id="searchInput" placeholder="ابحث في سجلاتك..." oninput="filterEntries()" autocomplete="off">
+    <!-- SIDEBAR OVERLAY -->
+    <div id="sideOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <div id="sidebar" class="hidden">
+      <div id="sidebarHeader">
+        <h2>✦ السجلات</h2>
+        <button class="icon-btn" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <input type="text" id="searchInput" placeholder="ابحث..." oninput="renderList()">
+      <div id="filterRow">
+        <button class="flt-btn active" id="fAll" onclick="setFilter('all')">الكل</button>
+        <button class="flt-btn" id="fToday" onclick="setFilter('today')">اليوم</button>
+        <button class="flt-btn" id="fWeek" onclick="setFilter('week')">الأسبوع</button>
+        <button class="flt-btn" id="fMind" onclick="setFilter('mind')">🌿 الخرائط</button>
+      </div>
+      <div id="entryList"><div style="color:var(--text-faint);font-size:12px;text-align:center;padding:30px">جاري التحميل...</div></div>
     </div>
-    <button class="filter-btn active" id="filterAll" onclick="setFilter('all')">الكل</button>
-    <button class="filter-btn" id="filterToday" onclick="setFilter('today')">اليوم</button>
-    <button class="filter-btn" id="filterWeek" onclick="setFilter('week')">هذا الأسبوع</button>
-    <button class="filter-btn" id="filterTrees" onclick="setFilter('trees')">🌿 الأشجار</button>
   </div>
-
-  <div class="section-label">السجلات</div>
-  <div id="entries"><div class="loading-wrap"><div class="spinner"></div><span>يتم تحميل سجلاتك...</span></div></div>
-</div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-const API  = 'https://script.google.com/macros/s/AKfycbwDuAZbCi0Gls71mcZtkHJo0-CpAvO41QFo7pbGZ2YV3SwC8yMMjIWqjhjQGu8pF3iN/exec';
-const PASS = '8435';
-let allEntries = [], currentFilter = 'all', treeNodes = [];
-let previewVisible = false;
+/* ════════════════════════════════════════════
+   CONFIG
+════════════════════════════════════════════ */
+const API   = 'https://script.google.com/macros/s/AKfycbwDuAZbCi0Gls71mcZtkHJo0-CpAvO41QFo7pbGZ2YV3SwC8yMMjIWqjhjQGu8pF3iN/exec';
+const PASS  = '8435';
 
-/* ══ LOCK ══ */
+/* ════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════ */
+let allEntries = [], activeFilter = 'all', currentMode = 'editor';
+let activeEntryId = null;
+let sidebarOpen = false;
+
+/* ════════════════════════════════════════════
+   LOCK
+════════════════════════════════════════════ */
 function checkPass(){
   const v = document.getElementById('passInput').value;
-  if(v===PASS){
-    document.getElementById('lockScreen').style.display='none';
+  if(v === PASS){
+    document.getElementById('lockScreen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
-    loadEntries(); initTree();
+    loadEntries();
+    mindInit();
   } else {
-    const inp=document.getElementById('passInput');
+    const inp = document.getElementById('passInput');
     inp.classList.add('error');
-    document.getElementById('lockError').textContent='كلمة المرور غير صحيحة، حاول مجدداً';
-    inp.value='';
-    setTimeout(()=>inp.classList.remove('error'),600);
+    document.getElementById('lockError').textContent = 'كلمة المرور غير صحيحة';
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 600);
   }
 }
-function clearPassError(){document.getElementById('lockError').textContent='';}
+document.getElementById('passInput').addEventListener('keydown', e => { if(e.key==='Enter') checkPass(); });
 
-/* ══ HELPERS ══ */
-const $  = id => document.getElementById(id);
-const setStatus=(type,msg)=>{$('statusDot').className='status-dot '+type;$('statusText').textContent=msg;};
-const showToast=(msg,type='')=>{const t=$('toast');t.textContent=msg;t.className='show '+type;clearTimeout(t._t);t._t=setTimeout(()=>t.className='',2800);};
-const apiCall=p=>fetch(API+'?'+new URLSearchParams(p).toString()).then(r=>r.json());
-const fmtDate=ts=>new Date(Number(ts)).toLocaleDateString('ar-EG',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-const fmtTime=ts=>new Date(Number(ts)).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
-const dayKey=ts=>new Date(Number(ts)).toDateString();
-const isToday=ts=>dayKey(ts)===new Date().toDateString();
-const isThisWeek=ts=>(new Date()-new Date(Number(ts)))/(864e5)<=7;
-const escH=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+/* ════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const setStatus = (type, msg) => { $('statusDot').className='status-dot '+type; $('statusText').textContent=msg; };
+const showToast = (msg, type='') => {
+  const t=$('toast'); t.textContent=msg; t.className='show '+type;
+  clearTimeout(t._t); t._t=setTimeout(()=>t.className='',2800);
+};
+const apiCall = p => fetch(API+'?'+new URLSearchParams(p).toString()).then(r=>r.json());
+const fmtTime = ts => new Date(Number(ts)).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+const fmtDate = ts => new Date(Number(ts)).toLocaleDateString('ar-EG',{month:'short',day:'numeric'});
+const isToday = ts => new Date(Number(ts)).toDateString() === new Date().toDateString();
+const isWeek  = ts => (Date.now()-Number(ts))/(864e5) <= 7;
 
-/* ══ TABS ══ */
-function switchTab(tab){
-  $('tabText').classList.toggle('active',tab==='text');
-  $('tabTree').classList.toggle('active',tab==='tree');
-  $('panelText').classList.toggle('active',tab==='text');
-  $('panelTree').classList.toggle('active',tab==='tree');
+/* ════════════════════════════════════════════
+   MODE
+════════════════════════════════════════════ */
+function setMode(mode){
+  currentMode = mode;
+  $('modeEditor').classList.toggle('active', mode==='editor');
+  $('modeMind').classList.toggle('active', mode==='mind');
+  $('editorPane').classList.toggle('hidden', mode!=='editor');
+  $('mindPane').classList.toggle('hidden', mode!=='mind');
+  $('fmtBar').style.display = mode==='editor' ? 'flex' : 'none';
 }
 
-/* ══ TEXT COMPOSE ══ */
-$('newText').addEventListener('input',function(){
-  $('charCount').textContent=this.value.length;
-  this.style.height='auto';this.style.height=this.scrollHeight+'px';
-});
-$('newText').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')addTextEntry();});
+/* ════════════════════════════════════════════
+   SIDEBAR
+════════════════════════════════════════════ */
+function toggleSidebar(){
+  sidebarOpen = !sidebarOpen;
+  $('sidebar').classList.toggle('hidden', !sidebarOpen);
+  $('sideOverlay').classList.toggle('show', sidebarOpen);
+  $('sidebarToggle').classList.toggle('active', sidebarOpen);
+  if(sidebarOpen) renderList();
+}
+function setFilter(f){
+  activeFilter = f;
+  ['All','Today','Week','Mind'].forEach(x => $('f'+x)?.classList.remove('active'));
+  const map = {all:'All',today:'Today',week:'Week',mind:'Mind'};
+  $('f'+map[f])?.classList.add('active');
+  renderList();
+}
 
-/* ══ LOAD ══ */
+/* ════════════════════════════════════════════
+   API
+════════════════════════════════════════════ */
 async function loadEntries(){
   setStatus('loading','جاري التحميل...');
   try{
-    const res=await apiCall({action:'get'});
-    if(!res.ok)throw new Error(res.error);
-    allEntries=res.data.sort((a,b)=>Number(b.ts)-Number(a.ts));
-    setStatus('ok','متصل · مزامنة ناجحة');
-    $('entryCount').textContent=allEntries.length;
-    renderEntries();
-  }catch(e){
+    const res = await apiCall({action:'get'});
+    if(!res.ok) throw new Error(res.error);
+    allEntries = res.data.sort((a,b)=>Number(b.ts)-Number(a.ts));
+    setStatus('ok','متصل');
+    if(sidebarOpen) renderList();
+  } catch(e){
     setStatus('err','خطأ في الاتصال');
-    $('entries').innerHTML=`<div class="empty"><span class="empty-icon">⚠</span>تعذّر الاتصال بالخادم<p>تحقق من اتصالك بالإنترنت</p></div>`;
     showToast('خطأ: '+e.message,'error');
   }
 }
 
-/* ══ RENDER ══ */
-function renderEntries(){
-  const query=$('searchInput').value.trim().toLowerCase();
-  let list=[...allEntries];
-  if(currentFilter==='today')  list=list.filter(e=>isToday(e.ts));
-  if(currentFilter==='week')   list=list.filter(e=>isThisWeek(e.ts));
-  if(currentFilter==='trees')  list=list.filter(e=>e.text.startsWith('TREE::'));
-  if(query) list=list.filter(e=>e.text.toLowerCase().includes(query));
-  $('entryCount').textContent=allEntries.length;
+/* ════════════════════════════════════════════
+   SIDEBAR LIST
+════════════════════════════════════════════ */
+function renderList(){
+  const q = $('searchInput').value.trim().toLowerCase();
+  let list = [...allEntries];
+  if(activeFilter==='today') list=list.filter(e=>isToday(e.ts));
+  if(activeFilter==='week')  list=list.filter(e=>isWeek(e.ts));
+  if(activeFilter==='mind')  list=list.filter(e=>e.text.startsWith('MIND::'));
+  if(q) list=list.filter(e=>e.text.toLowerCase().includes(q));
   if(!list.length){
-    $('entries').innerHTML=`<div class="empty"><span class="empty-icon">✦</span>${query?'لا توجد نتائج':'لا توجد سجلات بعد'}<p>${query?'جرّب كلمة أخرى':'ابدأ بتسجيل أول لحظة لك'}</p></div>`;
+    $('entryList').innerHTML=`<div style="color:var(--text-faint);font-size:12px;text-align:center;padding:30px">لا توجد سجلات</div>`;
     return;
   }
-  const groups={};
-  list.forEach(e=>{const k=dayKey(e.ts);(groups[k]=groups[k]||[]).push(e);});
-  let html='';
-  Object.entries(groups).forEach(([,entries])=>{
-    const label=isToday(entries[0].ts)?'اليوم':fmtDate(entries[0].ts);
-    html+=`<div class="day-group"><div class="day-header">${label}</div>`;
-    entries.forEach(e=>{html+=buildEntry(e,query);});
-    html+='</div>';
-  });
-  $('entries').innerHTML=html;
+  $('entryList').innerHTML = list.map(e=>{
+    const isMind = e.text.startsWith('MIND::');
+    const preview = isMind ? '🌿 خريطة ذهنية' : e.text.replace(/<[^>]*>/g,'').slice(0,80);
+    const active = activeEntryId===e.id ? ' active' : '';
+    return `<div class="entry-item${active}" onclick="openEntry('${e.id}')">
+      <span class="ei-badge ${isMind?'mind':'text'}">${isMind?'🌿 خريطة':'✦ نص'}</span>
+      <div class="ei-preview">${preview}</div>
+      <div class="ei-time">${fmtDate(e.ts)} · ${fmtTime(e.ts)}</div>
+      <button class="ei-del" onclick="event.stopPropagation();deleteEntry('${e.id}')" title="حذف">×</button>
+    </div>`;
+  }).join('');
 }
 
-function highlight(text,query){
-  if(!query)return escH(text);
-  const re=new RegExp('('+query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
-  return escH(text).replace(re,'<mark style="background:rgba(201,168,76,.3);color:var(--accent);border-radius:2px">$1</mark>');
-}
-
-function buildEntry(e,query=''){
-  const isTree=e.text.startsWith('TREE::');
-  const edited=e.editedAt?`<span class="edited-tag">عُدّل</span>`:'';
-  const editedTime=e.editedAt?` · آخر تعديل: ${fmtTime(e.editedAt)}`:'';
-  const badge=isTree
-    ?`<div class="entry-badge badge-tree">🌿 شجرة أفكار</div>`
-    :`<div class="entry-badge badge-text">✦ نص</div>`;
-  const bodyHtml=isTree?renderTreeHtml(e.text):highlight(e.text,query);
-  return `
-  <div class="entry${isTree?' tree-entry':''}" id="entry-${e.id}">
-    ${badge}
-    <div class="entry-body" id="body-${e.id}">${bodyHtml}</div>
-    <textarea class="entry-edit-area" id="edit-${e.id}" rows="3">${escH(isTree?treeToEditText(e.text):e.text)}</textarea>
-    <div class="entry-meta">
-      <div class="entry-time">${fmtTime(e.ts)}${editedTime} ${edited}</div>
-      <div class="entry-actions">
-        <button class="action-btn" id="editBtn-${e.id}" onclick="startEdit('${e.id}',${isTree})">تعديل</button>
-        <button class="action-btn save-edit" id="saveBtn-${e.id}" style="display:none" onclick="saveEdit('${e.id}',${isTree})">حفظ</button>
-        <button class="action-btn" id="cancelBtn-${e.id}" style="display:none" onclick="cancelEdit('${e.id}')">إلغاء</button>
-        <button class="action-btn delete" onclick="deleteEntry('${e.id}')">حذف</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-/* ══ TREE SERIALIZATION ══ */
-// Format: TREE::{root}||{level},{label}||{level},{label}...
-function serializeTree(root, nodes){
-  const parts=nodes.map(n=>`${n.level},${n.text.replace(/\|/g,'｜')}`);
-  return 'TREE::'+root+'||'+parts.join('||');
-}
-function parseTree(raw){
-  const body=raw.slice(6); // remove TREE::
-  const parts=body.split('||');
-  const root=parts[0]||'';
-  const nodes=parts.slice(1).filter(Boolean).map(p=>{
-    const comma=p.indexOf(',');
-    return{level:parseInt(p.slice(0,comma))||0,text:p.slice(comma+1).replace(/｜/g,'|')};
-  });
-  return{root,nodes};
-}
-function treeToEditText(raw){
-  const{root,nodes}=parseTree(raw);
-  const indent=n=>'  '.repeat(n.level);
-  return root+'\n'+nodes.map(n=>indent(n.level)+'- '+n.text).join('\n');
-}
-function editTextToTree(text){
-  const lines=text.split('\n').filter(l=>l.trim());
-  if(!lines.length)return{root:'',nodes:[]};
-  const root=lines[0].replace(/^-+\s*/,'').trim();
-  const nodes=lines.slice(1).map(l=>{
-    const spaces=l.match(/^(\s*)/)[1].length;
-    const level=Math.round(spaces/2);
-    const txt=l.replace(/^\s*-?\s*/,'').trim();
-    return{level,text:txt};
-  }).filter(n=>n.text);
-  return{root,nodes};
-}
-function renderTreeHtml(raw){
-  const{root,nodes}=parseTree(raw);
-  if(!root&&!nodes.length)return '<span style="color:var(--text-faint)">شجرة فارغة</span>';
-  let html=`<div class="tree-display">`;
-  html+=`<div class="tnode"><span class="prefix">◉ </span><span class="tlabel root-lbl">${escH(root)}</span></div>`;
-  nodes.forEach((n,i)=>{
-    const isLast=nodes.slice(i+1).every(m=>m.level<=n.level);
-    const parentLines=buildParentLines(nodes,i);
-    let prefix=parentLines+'  '.repeat(Math.max(0,n.level-1))+(n.level>0?(isLast?'└─ ':'├─ '):'');
-    html+=`<div class="tnode"><span class="prefix">${escH(prefix)}</span><span class="tlabel">${escH(n.text)}</span></div>`;
-  });
-  html+='</div>';
-  return html;
-}
-function buildParentLines(nodes,idx){
-  const n=nodes[idx];
-  if(n.level===0)return '';
-  let prefix='';
-  for(let lvl=0;lvl<n.level-1;lvl++){
-    // find if there's a sibling after idx at this level
-    const hasSibling=nodes.slice(idx+1).some(m=>m.level===lvl+1&&!nodes.slice(idx+1,nodes.indexOf(m)).some(x=>x.level<=lvl));
-    prefix+=hasSibling?'│ ':'  ';
+/* ════════════════════════════════════════════
+   OPEN / NEW ENTRY
+════════════════════════════════════════════ */
+function openEntry(id){
+  const e = allEntries.find(x=>x.id===id);
+  if(!e) return;
+  activeEntryId = id;
+  if(e.text.startsWith('MIND::')){
+    setMode('mind');
+    mindLoadFromSerial(e.text.slice(6));
+  } else {
+    setMode('editor');
+    $('editor').innerHTML = e.text;
+    updateCounts();
   }
-  return prefix;
+  renderList();
+  if(window.innerWidth < 768) toggleSidebar();
 }
-function previewTree(){
-  const root=$('treeRoot').value.trim()||'الجذر';
-  let text=`◉ ${root}\n`;
-  treeNodes.forEach((n,i)=>{
-    const isLast=treeNodes.slice(i+1).every(m=>m.level<=n.level);
-    const par=buildParentLines(treeNodes,i);
-    const branch=n.level>0?(par+'  '.repeat(Math.max(0,n.level-1))+(isLast?'└─ ':'├─ ')):'';
-    text+=branch+(n.text||'...')+'\n';
-  });
-  return text;
-}
-
-/* ══ TREE BUILDER ══ */
-function initTree(){treeNodes=[];renderTreeNodes();}
-function addTreeNode(level=0,afterIdx=-1,focusNew=true){
-  const node={level,text:'',id:Date.now()+Math.random()};
-  if(afterIdx<0)treeNodes.push(node);
-  else treeNodes.splice(afterIdx+1,0,node);
-  renderTreeNodes();
-  if(focusNew){
-    const target=afterIdx<0?treeNodes.length-1:afterIdx+1;
-    setTimeout(()=>{const inp=document.querySelector(`[data-nodeid="${node.id}"]`);if(inp)inp.focus();},50);
-  }
-  if(previewVisible)updatePreview();
-}
-function removeTreeNode(id){
-  const idx=treeNodes.findIndex(n=>n.id===id);
-  if(idx>=0){treeNodes.splice(idx,1);renderTreeNodes();}
-  if(previewVisible)updatePreview();
-}
-function clearTree(){treeNodes=[];$('treeRoot').value='';renderTreeNodes();if(previewVisible)updatePreview();}
-function renderTreeNodes(){
-  const area=$('treeNodesArea');
-  if(!treeNodes.length){area.innerHTML=`<div style="color:var(--text-faint);font-size:12px;text-align:center;padding:20px 0;">اضغط "+ إضافة فكرة" لبدء التشجير</div>`;return;}
-  area.innerHTML=treeNodes.map((n,i)=>`
-    <div class="tnode-row" data-idx="${i}">
-      <div class="tnode-indent">
-        <button class="outdent-btn" onclick="changeLevel(${i},-1)" title="تقليل المستوى">←</button>
-        <button class="indent-btn"  onclick="changeLevel(${i},+1)" title="زيادة المستوى">→</button>
-      </div>
-      <div class="tnode-level-indicator">
-        ${[0,1,2,3].map(l=>`<div class="level-dot${n.level>l?' active':''}"></div>`).join('')}
-      </div>
-      <input class="tnode-input" type="text" value="${escH(n.text)}" placeholder="فكرة ${i+1}..."
-        data-nodeid="${n.id}"
-        oninput="updateNodeText(${i},this.value)"
-        onkeydown="nodeKeydown(event,${i})">
-      <button class="tnode-del" onclick="removeTreeNode(${n.id})" title="حذف">×</button>
-    </div>
-  `).join('');
-}
-function updateNodeText(idx,val){treeNodes[idx].text=val;if(previewVisible)updatePreview();}
-function changeLevel(idx,delta){
-  const n=treeNodes[idx];
-  n.level=Math.max(0,Math.min(4,n.level+delta));
-  renderTreeNodes();
-  setTimeout(()=>{const inputs=document.querySelectorAll('.tnode-input');if(inputs[idx])inputs[idx].focus();},30);
-  if(previewVisible)updatePreview();
-}
-function nodeKeydown(e,idx){
-  if(e.key==='Enter'){
-    e.preventDefault();
-    addTreeNode(treeNodes[idx]?.level||0,idx);
-  } else if(e.key==='Tab'){
-    e.preventDefault();
-    changeLevel(idx,e.shiftKey?-1:1);
-  } else if(e.key==='Backspace'&&treeNodes[idx]?.text===''){
-    e.preventDefault();
-    const prevIdx=idx-1;
-    removeTreeNode(treeNodes[idx].id);
-    setTimeout(()=>{const inputs=document.querySelectorAll('.tnode-input');if(inputs[prevIdx])inputs[prevIdx].focus();},30);
+function newEntry(){
+  activeEntryId = null;
+  if(currentMode==='editor'){
+    $('editor').innerHTML='';
+    updateCounts();
+    $('editor').focus();
+  } else {
+    mindInit();
   }
 }
-function togglePreview(){
-  previewVisible=!previewVisible;
-  $('treePreview').style.display=previewVisible?'block':'none';
-  if(previewVisible)updatePreview();
-}
-function updatePreview(){
-  $('treePreviewBox').textContent=previewTree();
-}
 
-/* ══ ADD ENTRIES ══ */
-async function addTextEntry(){
-  const text=$('newText').value.trim();
-  if(!text){showToast('اكتب شيئاً أولاً ✦','error');return;}
-  const btn=$('addBtn');btn.disabled=true;btn.textContent='...';
+/* ════════════════════════════════════════════
+   EDITOR
+════════════════════════════════════════════ */
+const editor = $('editor');
+editor.addEventListener('input', updateCounts);
+editor.addEventListener('keyup', updateFmtBtns);
+editor.addEventListener('mouseup', updateFmtBtns);
+editor.addEventListener('selectionchange', updateFmtBtns);
+
+function updateCounts(){
+  const text = editor.innerText || '';
+  $('charCount').textContent = text.length + ' حرف';
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  $('wordCount').textContent = words + ' كلمة';
+}
+function updateFmtBtns(){
+  $('fmtBold').classList.toggle('active', document.queryCommandState('bold'));
+  $('fmtUnder').classList.toggle('active', document.queryCommandState('underline'));
+}
+function execFmt(cmd){
+  document.execCommand(cmd, false, null);
+  editor.focus();
+  updateFmtBtns();
+}
+function setColor(color){
+  document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
+  if(!color){
+    $('cdDefault').classList.add('active');
+    document.execCommand('removeFormat', false, null);
+    document.execCommand('foreColor', false, '#e8e6f0');
+  } else {
+    const id = {
+      '#c9a84c':'cdGold','#6b9bc9':'cdBlue','#6bc98a':'cdGreen',
+      '#c96b6b':'cdRed','#9b6bc9':'cdPurple'
+    }[color];
+    if(id) $(id)?.classList.add('active');
+    document.execCommand('foreColor', false, color);
+  }
+  editor.focus();
+}
+async function saveEditorEntry(){
+  const html = editor.innerHTML.trim();
+  if(!html || html==='<br>'){showToast('اكتب شيئاً أولاً','error');return;}
+  $('saveEntryBtn').disabled = true;
+  $('saveEntryBtn').textContent = '...';
   setStatus('loading','جاري الحفظ...');
   try{
-    const res=await apiCall({action:'add',text,ts:Date.now()});
-    if(!res.ok)throw new Error(res.error);
-    $('newText').value='';$('charCount').textContent='0';$('newText').style.height='';
-    showToast('✦ تمّ الحفظ بنجاح','success');
+    let res;
+    if(activeEntryId){
+      res = await apiCall({action:'edit', id:activeEntryId, text:html});
+    } else {
+      res = await apiCall({action:'add', text:html, ts:Date.now()});
+    }
+    if(!res.ok) throw new Error(res.error);
+    showToast('✦ تمّ الحفظ','success');
+    activeEntryId = null;
+    editor.innerHTML = '';
+    updateCounts();
     await loadEntries();
-  }catch(e){setStatus('err','فشل الحفظ');showToast('خطأ: '+e.message,'error');}
-  finally{btn.disabled=false;btn.innerHTML='✦ أضف سجلاً';}
-}
-async function addTreeEntry(){
-  const root=$('treeRoot').value.trim();
-  if(!root&&!treeNodes.length){showToast('أضف عنواناً أو فكرة للشجرة','error');return;}
-  if(!root){showToast('أضف عنوان الشجرة (الجذر)','error');return;}
-  const text=serializeTree(root,treeNodes);
-  setStatus('loading','جاري الحفظ...');
-  try{
-    const res=await apiCall({action:'add',text,ts:Date.now()});
-    if(!res.ok)throw new Error(res.error);
-    showToast('🌿 تمّ حفظ الشجرة','success');
-    clearTree();if(previewVisible){previewVisible=false;$('treePreview').style.display='none';}
-    await loadEntries();
-  }catch(e){setStatus('err','فشل الحفظ');showToast('خطأ: '+e.message,'error');}
-}
-
-/* ══ EDIT ══ */
-function startEdit(id,isTree){
-  $('body-'+id).classList.add('editing');
-  const ea=$('edit-'+id);
-  ea.classList.add('active');
-  ea.style.height='auto';ea.style.height=ea.scrollHeight+'px';
-  $('editBtn-'+id).style.display='none';
-  $('saveBtn-'+id).style.display='inline-flex';
-  $('cancelBtn-'+id).style.display='inline-flex';
-  ea.focus();
-  if(isTree){ea.style.fontFamily='var(--mono)';ea.style.fontSize='12px';}
-}
-function cancelEdit(id){
-  $('body-'+id).classList.remove('editing');
-  $('edit-'+id).classList.remove('active');
-  $('editBtn-'+id).style.display='';
-  $('saveBtn-'+id).style.display='none';
-  $('cancelBtn-'+id).style.display='none';
-}
-async function saveEdit(id,isTree){
-  let newText=$('edit-'+id).value.trim();
-  if(!newText){showToast('لا يمكن حفظ نص فارغ','error');return;}
-  if(isTree){
-    const parsed=editTextToTree(newText);
-    newText=serializeTree(parsed.root,parsed.nodes);
+    if(sidebarOpen) renderList();
+  } catch(e){
+    setStatus('err','فشل الحفظ');
+    showToast('خطأ: '+e.message,'error');
+  } finally {
+    $('saveEntryBtn').disabled = false;
+    $('saveEntryBtn').innerHTML = '✦ حفظ السجل';
   }
-  $('saveBtn-'+id).textContent='...';
-  setStatus('loading','جاري التعديل...');
-  try{
-    const res=await apiCall({action:'edit',id,text:newText});
-    if(!res.ok)throw new Error(res.error);
-    showToast('✦ تمّ التعديل','success');
-    await loadEntries();
-  }catch(e){setStatus('err','فشل التعديل');showToast('خطأ: '+e.message,'error');}
 }
 
-/* ══ DELETE ══ */
+/* ════════════════════════════════════════════
+   DELETE
+════════════════════════════════════════════ */
 async function deleteEntry(id){
-  if(!confirm('هل تريد حذف هذا السجل نهائياً؟'))return;
-  $('entry-'+id).classList.add('deleting');
+  if(!confirm('هل تريد حذف هذا السجل نهائياً؟')) return;
   setStatus('loading','جاري الحذف...');
   try{
-    const res=await apiCall({action:'delete',id});
-    if(!res.ok)throw new Error(res.error);
-    showToast('تمّ الحذف','');
+    const res = await apiCall({action:'delete', id});
+    if(!res.ok) throw new Error(res.error);
+    showToast('تمّ الحذف');
+    if(activeEntryId===id){
+      activeEntryId=null;
+      if(currentMode==='editor') editor.innerHTML='';
+      else mindInit();
+    }
     await loadEntries();
-  }catch(e){
-    $('entry-'+id).classList.remove('deleting');
-    setStatus('err','فشل الحذف');showToast('خطأ: '+e.message,'error');
+    if(sidebarOpen) renderList();
+  } catch(e){
+    setStatus('err','فشل الحذف');
+    showToast('خطأ: '+e.message,'error');
   }
 }
 
-/* ══ FILTER ══ */
-function setFilter(f){
-  currentFilter=f;
-  ['All','Today','Week','Trees'].forEach(x=>$('filter'+x).classList.remove('active'));
-  $('filter'+f.charAt(0).toUpperCase()+f.slice(1)).classList.add('active');
-  renderEntries();
+/* ════════════════════════════════════════════
+   ══════════ MIND MAP ENGINE ══════════
+════════════════════════════════════════════ */
+
+/* Data model */
+let mindNodes = [];   // [{id,label,x,y,parentId,collapsed}]
+let mindEdges = [];   // computed from nodes
+let mindNextId = 1;
+let mindSelected = null;
+let mindDragging = null;
+let mindDragOffset = {x:0,y:0};
+let mindPan = {x:0,y:0};
+let mindPanning = false;
+let mindPanStart = {x:0,y:0};
+let mindPanOrigin = {x:0,y:0};
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const mindSvg = $('mindSvg');
+const mindCanvas = $('mindCanvas');
+
+/* Colors per depth */
+const NODE_COLORS = ['#c9a84c','#6b9bc9','#6bc98a','#9b6bc9','#c96b6b','#c9846b','#6bc9c9'];
+const NODE_RADIUS = [36,28,24,20];
+
+function nodeColor(depth){ return NODE_COLORS[depth % NODE_COLORS.length]; }
+function nodeR(depth){ return NODE_RADIUS[Math.min(depth, NODE_RADIUS.length-1)]; }
+function nodeDepth(id){
+  let d=0, n=mindNodes.find(x=>x.id===id);
+  while(n && n.parentId!=null){ d++; n=mindNodes.find(x=>x.id===n.parentId); }
+  return d;
 }
-function filterEntries(){renderEntries();}
+
+function mindInit(){
+  mindNodes = [{id:1,label:'الفكرة الرئيسية',x:0,y:0,parentId:null,collapsed:false}];
+  mindNextId = 2;
+  mindSelected = null;
+  mindPan = {x:0,y:0};
+  centerMind();
+  mindRender();
+}
+
+function centerMind(){
+  const rect = mindCanvas.getBoundingClientRect();
+  mindPan = {x: rect.width/2, y: rect.height/2};
+}
+
+function mindRender(){
+  mindSvg.innerHTML = '';
+
+  /* filter: drop shadow for selected */
+  const defs = document.createElementNS(SVG_NS,'defs');
+  defs.innerHTML = `<filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+    <feFlood flood-color="var(--accent)" flood-opacity="0.5" result="color"/>
+    <feComposite in="color" in2="blur" operator="in" result="shadow"/>
+    <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>`;
+  mindSvg.appendChild(defs);
+
+  const g = document.createElementNS(SVG_NS,'g');
+  g.setAttribute('id','mindG');
+  mindSvg.appendChild(g);
+
+  const visibleNodes = getVisibleNodes();
+  const visibleIds = new Set(visibleNodes.map(n=>n.id));
+
+  /* edges */
+  const eGroup = document.createElementNS(SVG_NS,'g');
+  eGroup.setAttribute('id','mindEdges');
+  mindNodes.forEach(n=>{
+    if(n.parentId==null || !visibleIds.has(n.id) || !visibleIds.has(n.parentId)) return;
+    const parent = mindNodes.find(x=>x.id===n.parentId);
+    if(!parent) return;
+    const path = document.createElementNS(SVG_NS,'path');
+    const px=parent.x+mindPan.x, py=parent.y+mindPan.y;
+    const cx=n.x+mindPan.x, cy=n.y+mindPan.y;
+    const mx=(px+cx)/2;
+    path.setAttribute('d',`M${px},${py} C${mx},${py} ${mx},${cy} ${cx},${cy}`);
+    path.setAttribute('stroke', nodeColor(nodeDepth(n.id)-1));
+    path.setAttribute('stroke-opacity','0.5');
+    path.setAttribute('stroke-width','1.5');
+    path.setAttribute('fill','none');
+    eGroup.appendChild(path);
+  });
+  g.appendChild(eGroup);
+
+  /* nodes */
+  visibleNodes.forEach(n=>{
+    const depth = nodeDepth(n.id);
+    const r = nodeR(depth);
+    const col = nodeColor(depth);
+    const nx = n.x+mindPan.x, ny = n.y+mindPan.y;
+    const isSel = n.id===mindSelected;
+    const hasChildren = mindNodes.some(c=>c.parentId===n.id);
+
+    const nGroup = document.createElementNS(SVG_NS,'g');
+    nGroup.setAttribute('class','mind-node');
+    nGroup.style.cursor = 'pointer';
+    nGroup.dataset.nid = n.id;
+
+    /* circle */
+    const circle = document.createElementNS(SVG_NS,'circle');
+    circle.setAttribute('cx', nx);
+    circle.setAttribute('cy', ny);
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', col+'22');
+    circle.setAttribute('stroke', col);
+    circle.setAttribute('stroke-width', isSel?'2.5':'1.5');
+    if(isSel) circle.setAttribute('filter','url(#glow)');
+    nGroup.appendChild(circle);
+
+    /* label */
+    const text = document.createElementNS(SVG_NS,'text');
+    text.setAttribute('x', nx);
+    text.setAttribute('y', ny+4);
+    text.setAttribute('text-anchor','middle');
+    text.setAttribute('fill', col);
+    text.setAttribute('font-family','Cairo, sans-serif');
+    text.setAttribute('font-size', depth===0?'13':'11');
+    text.setAttribute('font-weight', depth===0?'700':'500');
+    text.textContent = truncLabel(n.label, r);
+    nGroup.appendChild(text);
+
+    /* collapse indicator */
+    if(hasChildren){
+      const indicator = document.createElementNS(SVG_NS,'circle');
+      indicator.setAttribute('cx', nx + r - 4);
+      indicator.setAttribute('cy', ny - r + 4);
+      indicator.setAttribute('r','5');
+      indicator.setAttribute('fill', n.collapsed ? col : col+'44');
+      indicator.setAttribute('stroke', col);
+      indicator.setAttribute('stroke-width','1');
+      nGroup.appendChild(indicator);
+      const iText = document.createElementNS(SVG_NS,'text');
+      iText.setAttribute('x', nx + r - 4);
+      iText.setAttribute('y', ny - r + 8);
+      iText.setAttribute('text-anchor','middle');
+      iText.setAttribute('fill', n.collapsed?'#0d0d0f':col);
+      iText.setAttribute('font-size','7');
+      iText.setAttribute('font-weight','700');
+      iText.textContent = n.collapsed ? '+' : '−';
+      nGroup.appendChild(iText);
+    }
+
+    /* events */
+    nGroup.addEventListener('mousedown', e => onNodeMouseDown(e, n.id));
+    nGroup.addEventListener('click', e => { e.stopPropagation(); selectNode(n.id); });
+    nGroup.addEventListener('dblclick', e => { e.stopPropagation(); openNodeEdit(n.id); });
+    g.appendChild(nGroup);
+  });
+}
+
+function truncLabel(label, r){
+  const maxChars = Math.max(3, Math.floor(r/5));
+  return label.length > maxChars ? label.slice(0,maxChars)+'…' : label;
+}
+
+function getVisibleNodes(){
+  const visible = [];
+  const hidden = new Set();
+  const sorted = topoSort(mindNodes);
+  sorted.forEach(n=>{
+    if(n.parentId!=null && hidden.has(n.parentId)){
+      hidden.add(n.id);
+      return;
+    }
+    visible.push(n);
+    if(n.collapsed) hidden.add(n.id);
+  });
+  return visible;
+}
+
+function topoSort(nodes){
+  const result=[], visited=new Set();
+  function visit(n){
+    if(visited.has(n.id)) return; visited.add(n.id);
+    if(n.parentId!=null){ const p=nodes.find(x=>x.id===n.parentId); if(p) visit(p); }
+    result.push(n);
+  }
+  nodes.forEach(visit);
+  return result;
+}
+
+/* Select */
+function selectNode(id){
+  mindSelected = id;
+  mindRender();
+}
+
+/* Node operations */
+function mindAddChild(){
+  const pid = mindSelected || (mindNodes[0]?.id);
+  if(!pid) return;
+  const parent = mindNodes.find(n=>n.id===pid);
+  if(!parent) return;
+  const depth = nodeDepth(pid);
+  const siblings = mindNodes.filter(n=>n.parentId===pid);
+  const angle = depth===0
+    ? (siblings.length * Math.PI*0.4) - Math.PI*0.6
+    : getAngleFromParent(parent) + (siblings.length-0) * 0.5;
+  const dist = 120 - depth*10;
+  const newNode = {
+    id: mindNextId++,
+    label: 'فكرة جديدة',
+    x: parent.x + Math.cos(angle)*dist,
+    y: parent.y + Math.sin(angle)*dist,
+    parentId: pid,
+    collapsed: false
+  };
+  mindNodes.push(newNode);
+  mindSelected = newNode.id;
+  mindRender();
+  openNodeEdit(newNode.id);
+}
+function getAngleFromParent(node){
+  const parent = mindNodes.find(n=>n.id===node.parentId);
+  if(!parent) return 0;
+  return Math.atan2(node.y-parent.y, node.x-parent.x);
+}
+function mindAddSibling(){
+  if(!mindSelected) return;
+  const sel = mindNodes.find(n=>n.id===mindSelected);
+  if(!sel || sel.parentId==null){ mindAddChild(); return; }
+  const pid = sel.parentId;
+  const parent = mindNodes.find(n=>n.id===pid);
+  const baseAngle = getAngleFromParent(sel);
+  const dist = Math.hypot(sel.x-parent.x, sel.y-parent.y);
+  const newNode = {
+    id: mindNextId++,
+    label: 'فكرة جديدة',
+    x: parent.x + Math.cos(baseAngle+0.6)*dist,
+    y: parent.y + Math.sin(baseAngle+0.6)*dist,
+    parentId: pid,
+    collapsed: false
+  };
+  mindNodes.push(newNode);
+  mindSelected = newNode.id;
+  mindRender();
+  openNodeEdit(newNode.id);
+}
+function mindToggleCollapse(){
+  if(!mindSelected) return;
+  const n = mindNodes.find(x=>x.id===mindSelected);
+  if(!n) return;
+  n.collapsed = !n.collapsed;
+  mindRender();
+}
+function mindDeleteSelected(){
+  if(!mindSelected) return;
+  const sel = mindNodes.find(n=>n.id===mindSelected);
+  if(!sel) return;
+  if(sel.parentId===null && mindNodes.length===1){ showToast('لا يمكن حذف الجذر','error'); return; }
+  /* delete node and all descendants */
+  const toDelete = new Set();
+  function markDelete(id){ toDelete.add(id); mindNodes.filter(n=>n.parentId===id).forEach(c=>markDelete(c.id)); }
+  markDelete(mindSelected);
+  mindNodes = mindNodes.filter(n=>!toDelete.has(n.id));
+  mindSelected = sel.parentId || (mindNodes[0]?.id);
+  closeNodeEdit();
+  mindRender();
+}
+function mindReset(){
+  if(!confirm('مسح الخريطة الحالية وبدء جديدة؟')) return;
+  activeEntryId = null;
+  mindInit();
+}
+
+/* Node Edit Popup */
+let editingNodeId = null;
+function openNodeEdit(id){
+  editingNodeId = id;
+  const n = mindNodes.find(x=>x.id===id);
+  if(!n) return;
+  const box = $('nodeEditBox');
+  const inp = $('nodeEditInput');
+  inp.value = n.label;
+  /* position near node */
+  const rect = mindCanvas.getBoundingClientRect();
+  const nx = n.x + mindPan.x + rect.left;
+  const ny = n.y + mindPan.y + rect.top;
+  box.style.display = 'flex';
+  box.style.left = Math.min(nx - rect.left + 20, rect.width - 220) + 'px';
+  box.style.top  = Math.max(ny - rect.top  - 80, 10) + 'px';
+  setTimeout(()=>inp.select(),50);
+}
+function closeNodeEdit(){
+  $('nodeEditBox').style.display = 'none';
+  editingNodeId = null;
+}
+function confirmNodeEdit(){
+  if(!editingNodeId) return;
+  const n = mindNodes.find(x=>x.id===editingNodeId);
+  if(n) n.label = $('nodeEditInput').value.trim() || n.label;
+  closeNodeEdit();
+  mindRender();
+}
+function nodeEditKey(e){
+  if(e.key==='Enter') confirmNodeEdit();
+  if(e.key==='Escape') closeNodeEdit();
+}
+
+/* Drag nodes */
+function onNodeMouseDown(e, id){
+  e.stopPropagation();
+  if(e.button!==0) return;
+  const n = mindNodes.find(x=>x.id===id);
+  if(!n) return;
+  mindDragging = n;
+  const rect = mindCanvas.getBoundingClientRect();
+  mindDragOffset = {
+    x: e.clientX - rect.left - (n.x+mindPan.x),
+    y: e.clientY - rect.top  - (n.y+mindPan.y)
+  };
+}
+
+/* Pan canvas */
+mindCanvas.addEventListener('mousedown', e=>{
+  if(e.button===0 && !mindDragging){
+    mindPanning=true;
+    mindPanStart={x:e.clientX,y:e.clientY};
+    mindPanOrigin={...mindPan};
+    mindCanvas.classList.add('grabbing');
+  }
+});
+window.addEventListener('mousemove', e=>{
+  if(mindDragging){
+    const rect = mindCanvas.getBoundingClientRect();
+    mindDragging.x = e.clientX - rect.left - mindPan.x - mindDragOffset.x;
+    mindDragging.y = e.clientY - rect.top  - mindPan.y - mindDragOffset.y;
+    mindRender();
+  } else if(mindPanning){
+    mindPan.x = mindPanOrigin.x + (e.clientX-mindPanStart.x);
+    mindPan.y = mindPanOrigin.y + (e.clientY-mindPanStart.y);
+    mindRender();
+  }
+});
+window.addEventListener('mouseup', ()=>{
+  mindDragging=null;
+  mindPanning=false;
+  mindCanvas.classList.remove('grabbing');
+});
+mindCanvas.addEventListener('click', ()=>{ selectNode(null); closeNodeEdit(); });
+
+/* Touch support */
+let touchStartPos=null;
+mindCanvas.addEventListener('touchstart', e=>{
+  if(e.touches.length===1){
+    touchStartPos={x:e.touches[0].clientX,y:e.touches[0].clientY};
+    mindPanStart={...touchStartPos};
+    mindPanOrigin={...mindPan};
+    mindPanning=true;
+  }
+},{passive:true});
+mindCanvas.addEventListener('touchmove', e=>{
+  if(mindPanning && e.touches.length===1){
+    mindPan.x = mindPanOrigin.x + (e.touches[0].clientX-mindPanStart.x);
+    mindPan.y = mindPanOrigin.y + (e.touches[0].clientY-mindPanStart.y);
+    mindRender();
+  }
+},{passive:true});
+mindCanvas.addEventListener('touchend', ()=>{ mindPanning=false; });
+
+/* ══ SERIALIZATION ══ */
+function mindSerialize(){
+  return JSON.stringify({nodes:mindNodes, nextId:mindNextId, pan:mindPan});
+}
+function mindLoadFromSerial(serial){
+  try{
+    const data = JSON.parse(serial);
+    mindNodes = data.nodes || [];
+    mindNextId = data.nextId || (Math.max(0,...mindNodes.map(n=>n.id))+1);
+    mindPan = data.pan || {x:0,y:0};
+    mindSelected = null;
+    /* center if pan not saved */
+    if(!data.pan) centerMind();
+    mindRender();
+  } catch(e){ mindInit(); }
+}
+async function saveMindEntry(){
+  if(!mindNodes.length){ showToast('الخريطة فارغة','error'); return; }
+  const text = 'MIND::' + mindSerialize();
+  setStatus('loading','جاري الحفظ...');
+  $('mindSavebtn').textContent = '...';
+  try{
+    let res;
+    if(activeEntryId){
+      res = await apiCall({action:'edit', id:activeEntryId, text});
+    } else {
+      res = await apiCall({action:'add', text, ts:Date.now()});
+    }
+    if(!res.ok) throw new Error(res.error);
+    showToast('🌿 تمّ حفظ الخريطة','success');
+    activeEntryId = null;
+    await loadEntries();
+    if(sidebarOpen) renderList();
+  } catch(e){
+    setStatus('err','فشل الحفظ');
+    showToast('خطأ: '+e.message,'error');
+  } finally {
+    $('mindSavebtn').textContent = '🌿 حفظ الخريطة';
+  }
+}
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+window.addEventListener('resize', ()=>{ if(currentMode==='mind') mindRender(); });
 </script>
 </body>
 </html>
