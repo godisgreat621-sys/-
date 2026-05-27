@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>سجلّي</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -16,38 +16,31 @@
   --mono:'IBM Plex Mono',monospace;--sans:'Cairo',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{width:100%;height:100%;overflow:hidden;}
+html,body{width:100%;height:100%;overflow:hidden;-webkit-text-size-adjust:100%;}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 
-/* ══ LOCK ══ */
-#lockScreen{position:fixed;inset:0;z-index:500;background:var(--bg);display:flex;align-items:center;justify-content:center;}
+#lockScreen{position:fixed;inset:0;z-index:500;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;}
 .lock-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 40px 40px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.6);animation:lockIn .5s cubic-bezier(.16,1,.3,1) both;}
-@keyframes lockIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes lockIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
 .lock-icon{font-size:2.4rem;margin-bottom:18px;display:block;}
 .lock-title{font-size:1.5rem;font-weight:700;margin-bottom:6px;}
 .lock-sub{font-size:.82rem;color:var(--text-muted);margin-bottom:28px;}
 #passInput{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 18px;color:var(--text);font-family:var(--mono);font-size:1.3rem;letter-spacing:6px;text-align:center;outline:none;transition:border-color .2s;caret-color:var(--accent);margin-bottom:10px;}
 #passInput:focus{border-color:var(--accent-dim);}
 #passInput.error{border-color:var(--red);animation:shake .35s ease;}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 #lockError{font-size:.8rem;color:var(--red);margin-bottom:14px;min-height:18px;}
-.lock-btn{width:100%;background:var(--accent);color:#0d0d0f;border:none;border-radius:10px;padding:13px;font-family:var(--sans);font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;}
-.lock-btn:hover{background:#d9b85c;transform:translateY(-1px);}
+.lock-btn{width:100%;background:var(--accent);color:#0d0d0f;border:none;border-radius:10px;padding:13px;font-family:var(--sans);font-size:1rem;font-weight:700;cursor:pointer;}
+.lock-btn:active{transform:scale(.98);}
 
-/* ══ APP SHELL ══ */
-#app{display:none;position:fixed;inset:0;background:var(--bg);}
-#app.visible{display:flex;flex-direction:column;}
+#app{display:none;position:fixed;inset:0;background:var(--bg);flex-direction:column;}
+#app.visible{display:flex;}
 
-/* ══ TOP BAR ══ */
-#topBar{
-  height:48px;flex-shrink:0;
-  background:var(--surface);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:8px;padding:0 12px;
-  z-index:100;
-}
+#topBar{height:48px;flex-shrink:0;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;padding:0 12px;z-index:100;}
 .app-title{font-size:1rem;font-weight:700;background:linear-gradient(135deg,#e8e6f0,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-left:auto;}
-.icon-btn{width:34px;height:34px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .18s;flex-shrink:0;}
+.icon-btn{width:34px;height:34px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .18s;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
 .icon-btn:hover{border-color:var(--border-glow);color:var(--text);background:var(--surface2);}
+.icon-btn:active{transform:scale(.92);}
 .icon-btn.active{border-color:var(--accent-dim);color:var(--accent);background:var(--accent-glow);}
 .icon-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .sep{width:1px;height:24px;background:var(--border);flex-shrink:0;}
@@ -56,190 +49,128 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 .status-dot.err{background:var(--red);}
 .status-dot.loading{background:var(--accent);animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#statusText{font-size:11px;color:var(--text-faint);font-family:var(--mono);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-/* ══ WORKSPACE ══ */
-#workspace{flex:1;display:flex;overflow:hidden;position:relative;}
+#workspace{flex:1;display:flex;overflow:hidden;position:relative;min-height:0;}
 
-/* ══ EDITOR MODE ══ */
-#editorPane{
-  flex:1;display:flex;flex-direction:column;
-  background:var(--bg);position:relative;overflow:hidden;
-}
+#editorPane{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;min-width:0;}
 #editorPane.hidden{display:none;}
 
-/* FORMAT TOOLBAR */
-#fmtBar{
-  height:40px;flex-shrink:0;
-  background:var(--surface);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:4px;padding:0 12px;
-}
-.fmt-btn{
-  height:28px;min-width:28px;padding:0 8px;
-  border:1px solid transparent;border-radius:6px;
-  background:transparent;color:var(--text-muted);
-  cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:600;
-  display:flex;align-items:center;justify-content:center;gap:4px;
-  transition:all .15s;white-space:nowrap;
-}
+#fmtBar{height:40px;flex-shrink:0;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:4px;padding:0 12px;overflow-x:auto;scrollbar-width:none;}
+#fmtBar::-webkit-scrollbar{display:none;}
+.fmt-btn{height:28px;min-width:28px;padding:0 8px;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--text-muted);cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;transition:all .15s;white-space:nowrap;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
 .fmt-btn:hover{background:var(--surface2);border-color:var(--border);color:var(--text);}
+.fmt-btn:active{transform:scale(.92);}
 .fmt-btn.active{background:var(--accent-glow);border-color:var(--accent-dim);color:var(--accent);}
-.fmt-sep{width:1px;height:20px;background:var(--border);margin:0 4px;}
-.color-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);cursor:pointer;transition:transform .15s;flex-shrink:0;}
-.color-dot:hover{transform:scale(1.3);}
+.fmt-sep{width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0;}
+.color-dot{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.2);cursor:pointer;transition:transform .15s;flex-shrink:0;}
+.color-dot:hover,.color-dot:active{transform:scale(1.3);}
 .color-dot.active{border-color:white;transform:scale(1.15);}
 
-/* CONTENT EDITABLE */
-#editor{
-  flex:1;overflow-y:auto;padding:48px 60px;
-  outline:none;font-size:1.05rem;line-height:1.9;caret-color:var(--accent);
-  color:var(--text);
-}
+#editor{flex:1;overflow-y:auto;padding:36px 48px;outline:none;font-size:1.05rem;line-height:1.9;caret-color:var(--accent);color:var(--text);-webkit-overflow-scrolling:touch;}
 #editor:empty::before{content:attr(data-placeholder);color:var(--text-faint);pointer-events:none;}
 #editor b,#editor strong{font-weight:700;}
 #editor u{text-decoration:underline;}
-#editor [style*="color"]{} /* allow inline colors */
+@media(max-width:600px){#editor{padding:20px 18px;font-size:1rem;}}
 
-/* EDITOR FOOTER */
-#editorFooter{
-  height:40px;flex-shrink:0;
-  background:var(--surface);border-top:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;font-size:11px;color:var(--text-faint);font-family:var(--mono);
-}
-#saveEntryBtn{
-  background:var(--accent);color:#0d0d0f;border:none;border-radius:6px;
-  padding:5px 16px;font-family:var(--sans);font-size:12px;font-weight:700;
-  cursor:pointer;transition:all .2s;
-}
-#saveEntryBtn:hover{background:#d9b85c;}
+#editorFooter{height:44px;flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:8px;}
+#editingBadge{display:none;align-items:center;gap:6px;font-size:10px;color:var(--accent);font-family:var(--mono);background:var(--accent-glow);border:1px solid var(--accent-dim);border-radius:4px;padding:3px 8px;flex-shrink:0;}
+#editingBadge.visible{display:flex;}
+#editingBadge .cancel-btn{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;line-height:1;padding:0;}
+#charCount{font-size:11px;color:var(--text-faint);font-family:var(--mono);white-space:nowrap;}
+#saveEntryBtn{background:var(--accent);color:#0d0d0f;border:none;border-radius:6px;padding:6px 14px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+#saveEntryBtn:active{transform:scale(.95);}
 #saveEntryBtn:disabled{opacity:.4;cursor:not-allowed;}
 
-/* ══ MIND MAP MODE ══ */
 #mindPane{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;}
 #mindPane.hidden{display:none;}
-#mindCanvas{flex:1;width:100%;cursor:grab;position:relative;overflow:hidden;}
+#mindCanvas{flex:1;width:100%;cursor:grab;position:relative;overflow:hidden;touch-action:none;}
 #mindCanvas.grabbing{cursor:grabbing;}
 #mindCanvas svg{position:absolute;inset:0;width:100%;height:100%;}
-#mindToolbar{
-  height:44px;flex-shrink:0;
-  background:var(--surface);border-top:1px solid var(--border);
-  display:flex;align-items:center;gap:8px;padding:0 14px;
-}
-.mind-btn{
-  font-family:var(--sans);font-size:12px;font-weight:600;
-  padding:6px 14px;border:1px solid var(--border);border-radius:7px;
-  background:transparent;color:var(--text-muted);cursor:pointer;
-  transition:all .18s;white-space:nowrap;
-}
-.mind-btn:hover{border-color:var(--border-glow);color:var(--text);}
-.mind-btn.accent{border-color:var(--accent-dim);color:var(--accent);background:var(--accent-glow);}
-.mind-btn.accent:hover{background:rgba(201,168,76,.2);}
-#mindSavebtn{
-  margin-right:auto;background:var(--accent);color:#0d0d0f;border:none;
-  border-radius:7px;padding:6px 16px;font-family:var(--sans);font-size:12px;
-  font-weight:700;cursor:pointer;transition:all .2s;
-}
-#mindSavebtn:hover{background:#d9b85c;}
+#mindToolbar{flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;padding:8px 14px;flex-wrap:wrap;}
+.mind-btn{font-family:var(--sans);font-size:12px;font-weight:600;padding:6px 12px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--text-muted);cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
+.mind-btn:active{transform:scale(.94);}
+#mindSavebtn{background:var(--accent);color:#0d0d0f;border:none;border-radius:7px;padding:6px 16px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+#mindSavebtn:active{transform:scale(.95);}
 
-/* Node edit tooltip */
-#nodeEditBox{
-  position:absolute;z-index:300;background:var(--surface);
-  border:1px solid var(--accent-dim);border-radius:8px;
-  padding:6px 10px;display:none;flex-direction:column;gap:4px;
-  box-shadow:0 8px 32px rgba(0,0,0,.5);min-width:180px;
-}
-#nodeEditBox input{
-  background:transparent;border:none;border-bottom:1px solid var(--border);
-  color:var(--text);font-family:var(--sans);font-size:.9rem;
-  outline:none;padding:4px;caret-color:var(--accent);width:100%;
-}
-#nodeEditBox .node-edit-actions{display:flex;gap:6px;}
-.nea-btn{font-family:var(--sans);font-size:11px;font-weight:600;padding:4px 10px;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--text-muted);cursor:pointer;transition:all .15s;flex:1;}
-.nea-btn:hover{border-color:var(--border-glow);color:var(--text);}
+#nodeEditBox{position:absolute;z-index:300;background:var(--surface);border:1px solid var(--accent-dim);border-radius:8px;padding:8px 10px;display:none;flex-direction:column;gap:6px;box-shadow:0 8px 32px rgba(0,0,0,.6);min-width:200px;max-width:calc(100vw - 32px);}
+#nodeEditBox input{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--sans);font-size:.9rem;outline:none;padding:7px 10px;caret-color:var(--accent);width:100%;}
+#nodeEditBox input:focus{border-color:var(--accent-dim);}
+.node-edit-actions{display:flex;gap:6px;}
+.nea-btn{font-family:var(--sans);font-size:11px;font-weight:600;padding:5px 10px;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--text-muted);cursor:pointer;flex:1;-webkit-tap-highlight-color:transparent;}
 .nea-btn.accent{color:var(--accent);border-color:var(--accent-dim);}
 .nea-btn.danger{color:var(--red);border-color:var(--red);}
 
-/* ══ SIDEBAR (JOURNAL LIST) ══ */
-#sidebar{
-  width:300px;flex-shrink:0;border-right:1px solid var(--border);
-  background:var(--surface);display:flex;flex-direction:column;
-  transition:transform .3s cubic-bezier(.16,1,.3,1);
-  position:absolute;right:0;top:0;bottom:0;z-index:200;
-  transform:translateX(0);
-}
-#sidebar.hidden{transform:translateX(100%);}
-#sidebarHeader{
-  padding:14px 16px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-}
+#sidebar{width:min(300px,90vw);flex-shrink:0;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.16,1,.3,1);position:absolute;right:0;top:0;bottom:0;z-index:200;transform:translateX(0);box-shadow:-8px 0 32px rgba(0,0,0,.4);}
+#sidebar.hidden{transform:translateX(110%);}
+#sidebarHeader{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 #sidebarHeader h2{font-size:.95rem;font-weight:700;color:var(--accent);}
-#searchInput{
-  width:calc(100% - 32px);margin:10px 16px;
-  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
-  padding:8px 12px;color:var(--text);font-family:var(--sans);font-size:12px;
-  outline:none;transition:border-color .2s;flex-shrink:0;
-}
+#searchInput{width:calc(100% - 32px);margin:10px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--sans);font-size:13px;outline:none;transition:border-color .2s;flex-shrink:0;}
 #searchInput:focus{border-color:var(--accent-dim);}
 #searchInput::placeholder{color:var(--text-faint);}
 #filterRow{display:flex;gap:4px;padding:0 16px 10px;flex-wrap:wrap;flex-shrink:0;}
-.flt-btn{font-size:11px;font-weight:600;padding:4px 10px;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--text-faint);cursor:pointer;transition:all .15s;}
+.flt-btn{font-size:11px;font-weight:600;padding:5px 10px;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--text-faint);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.flt-btn:active{transform:scale(.94);}
 .flt-btn.active{border-color:var(--accent-dim);color:var(--accent);background:var(--accent-glow);}
-#entryList{flex:1;overflow-y:auto;padding:0 16px 16px;}
-.entry-item{
-  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
-  padding:10px 12px;margin-bottom:6px;cursor:pointer;
-  transition:all .18s;position:relative;
-}
+#entryList{flex:1;overflow-y:auto;padding:0 16px 16px;-webkit-overflow-scrolling:touch;}
+.entry-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:7px;cursor:pointer;transition:border-color .18s;position:relative;-webkit-tap-highlight-color:transparent;}
 .entry-item:hover{border-color:var(--border-glow);}
+.entry-item:active{opacity:.8;}
 .entry-item.active{border-color:var(--accent-dim);background:var(--accent-glow);}
-.entry-item .ei-badge{
-  display:inline-flex;align-items:center;gap:3px;
-  font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;
-  margin-bottom:5px;letter-spacing:.5px;
-}
+.ei-badge{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;margin-bottom:5px;letter-spacing:.5px;}
 .ei-badge.text{background:rgba(201,168,76,.1);color:var(--accent);}
 .ei-badge.mind{background:rgba(107,155,201,.1);color:var(--blue);}
-.entry-item .ei-preview{font-size:11px;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.entry-item .ei-time{font-size:9px;color:var(--text-faint);font-family:var(--mono);margin-top:5px;}
-.entry-item .ei-del{position:absolute;top:8px;left:8px;width:22px;height:22px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--text-faint);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;opacity:0;transition:all .15s;}
+.ei-preview{font-size:11px;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.ei-time{font-size:9px;color:var(--text-faint);font-family:var(--mono);margin-top:5px;}
+.ei-del{position:absolute;top:8px;left:8px;width:24px;height:24px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--text-faint);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;opacity:0;transition:all .15s;}
 .entry-item:hover .ei-del{opacity:1;}
-.entry-item .ei-del:hover{border-color:var(--red);color:var(--red);background:var(--red-dim);}
+.ei-del:hover{border-color:var(--red)!important;color:var(--red)!important;background:var(--red-dim)!important;}
+@media(hover:none){.ei-del{opacity:.5;}}
 
-/* ══ TOAST ══ */
+#confirmDialog{position:fixed;inset:0;z-index:600;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);padding:20px;}
+#confirmDialog.show{display:flex;}
+.confirm-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 24px;max-width:320px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.6);animation:lockIn .25s cubic-bezier(.16,1,.3,1) both;}
+.confirm-box p{font-size:.95rem;color:var(--text-muted);margin-bottom:20px;line-height:1.6;}
+.confirm-actions{display:flex;gap:8px;}
+.confirm-yes{flex:1;background:var(--red);color:#fff;border:none;border-radius:8px;padding:10px;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;}
+.confirm-no{flex:1;background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);border-radius:8px;padding:10px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;}
+
+#sideOverlay{position:absolute;inset:0;z-index:199;display:none;background:rgba(0,0,0,.4);}
+#sideOverlay.show{display:block;}
+
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface3);border:1px solid var(--border-glow);color:var(--text);font-size:13px;font-weight:600;padding:9px 20px;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:999;transition:transform .3s,opacity .3s;opacity:0;white-space:nowrap;}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 #toast.success{border-color:var(--green);color:var(--green);}
 #toast.error{border-color:var(--red);color:var(--red);}
 
-/* ══ OVERLAY ══ */
-#sideOverlay{position:absolute;inset:0;z-index:199;display:none;}
-#sideOverlay.show{display:block;}
-
-::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border-glow);border-radius:2px;}
-@media(max-width:600px){#editor{padding:24px 20px;}}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border-glow);border-radius:2px;}
 </style>
 </head>
 <body>
 
-<!-- LOCK -->
 <div id="lockScreen">
   <div class="lock-box">
     <span class="lock-icon">🔒</span>
     <div class="lock-title">سجلّي الخاص</div>
     <div class="lock-sub">أدخل كلمة المرور للدخول</div>
-    <input type="password" id="passInput" maxlength="10" placeholder="••••" autocomplete="off"
-      oninput="document.getElementById('lockError').textContent=''"
-      onkeydown="if(event.key==='Enter')checkPass()">
+    <input type="password" id="passInput" maxlength="10" placeholder="••••" autocomplete="off">
     <div id="lockError"></div>
     <button class="lock-btn" onclick="checkPass()">دخول</button>
   </div>
 </div>
 
-<!-- APP -->
+<div id="confirmDialog">
+  <div class="confirm-box">
+    <p id="confirmMsg">هل تريد الحذف؟</p>
+    <div class="confirm-actions">
+      <button class="confirm-yes" onclick="confirmYes()">تأكيد</button>
+      <button class="confirm-no" onclick="confirmNo()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
 <div id="app">
-  <!-- TOP BAR -->
   <div id="topBar">
-    <!-- Mode btns -->
     <button class="icon-btn active" id="modeEditor" onclick="setMode('editor')" title="محرر النصوص">
       <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
     </button>
@@ -247,81 +178,71 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 9V3M12 21v-6M9 12H3M21 12h-6M5.6 5.6l3 3M15.4 15.4l3 3M18.4 5.6l-3 3M8.6 15.4l-3 3"/></svg>
     </button>
     <div class="sep"></div>
-    <!-- New entry -->
     <button class="icon-btn" onclick="newEntry()" title="سجل جديد">
       <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     </button>
-    <!-- Journal list -->
     <button class="icon-btn" id="sidebarToggle" onclick="toggleSidebar()" title="السجلات">
       <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
     </button>
     <div class="sep"></div>
     <span class="status-dot" id="statusDot"></span>
-    <span style="font-size:11px;color:var(--text-faint);font-family:var(--mono)" id="statusText">...</span>
-    <div class="app-title">سجلّي</div>
+    <span id="statusText">...</span>
+    <div class="app-title">سجلّي ✦</div>
   </div>
 
-  <!-- WORKSPACE -->
   <div id="workspace">
-    <!-- EDITOR PANE -->
     <div id="editorPane">
-      <!-- FORMAT BAR -->
       <div id="fmtBar">
-        <button class="fmt-btn" id="fmtBold" onclick="execFmt('bold')" title="عريض"><b>ع</b></button>
-        <button class="fmt-btn" id="fmtUnder" onclick="execFmt('underline')" title="تسطير"><u>ع</u></button>
+        <button class="fmt-btn" id="fmtBold" onclick="execFmt('bold')"><b>ع</b></button>
+        <button class="fmt-btn" id="fmtUnder" onclick="execFmt('underline')"><u>ع</u></button>
         <div class="fmt-sep"></div>
-        <!-- Colors -->
-        <div style="display:flex;align-items:center;gap:6px;margin:0 4px">
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
           <span style="font-size:10px;color:var(--text-faint)">لون:</span>
-          <div class="color-dot active" id="cdDefault" style="background:var(--text)" onclick="setColor('')" title="افتراضي"></div>
-          <div class="color-dot" id="cdGold" style="background:#c9a84c" onclick="setColor('#c9a84c')" title="ذهبي"></div>
-          <div class="color-dot" id="cdBlue" style="background:#6b9bc9" onclick="setColor('#6b9bc9')" title="أزرق"></div>
-          <div class="color-dot" id="cdGreen" style="background:#6bc98a" onclick="setColor('#6bc98a')" title="أخضر"></div>
-          <div class="color-dot" id="cdRed" style="background:#c96b6b" onclick="setColor('#c96b6b')" title="أحمر"></div>
-          <div class="color-dot" id="cdPurple" style="background:#9b6bc9" onclick="setColor('#9b6bc9')" title="بنفسجي"></div>
+          <div class="color-dot active" id="cdDefault" style="background:var(--text)" onclick="setColor('')"></div>
+          <div class="color-dot" id="cdGold" style="background:#c9a84c" onclick="setColor('#c9a84c')"></div>
+          <div class="color-dot" id="cdBlue" style="background:#6b9bc9" onclick="setColor('#6b9bc9')"></div>
+          <div class="color-dot" id="cdGreen" style="background:#6bc98a" onclick="setColor('#6bc98a')"></div>
+          <div class="color-dot" id="cdRed" style="background:#c96b6b" onclick="setColor('#c96b6b')"></div>
+          <div class="color-dot" id="cdPurple" style="background:#9b6bc9" onclick="setColor('#9b6bc9')"></div>
         </div>
         <div class="fmt-sep"></div>
-        <span style="font-size:10px;color:var(--text-faint);font-family:var(--mono);margin-right:auto" id="wordCount">0 كلمة</span>
+        <span style="font-size:10px;color:var(--text-faint);font-family:var(--mono);margin-right:auto;flex-shrink:0" id="wordCount">0 كلمة</span>
       </div>
-      <!-- EDITOR -->
       <div id="editor" contenteditable="true" data-placeholder="ابدأ الكتابة هنا..."></div>
-      <!-- FOOTER -->
       <div id="editorFooter">
+        <div id="editingBadge">
+          <span>✏️ تعديل</span>
+          <button class="cancel-btn" onclick="cancelEdit()">×</button>
+        </div>
         <span id="charCount">0 حرف</span>
-        <button id="saveEntryBtn" onclick="saveEditorEntry()">✦ حفظ السجل</button>
+        <button id="saveEntryBtn" onclick="saveEditorEntry()">✦ حفظ</button>
       </div>
     </div>
 
-    <!-- MIND MAP PANE -->
     <div id="mindPane" class="hidden">
       <div id="mindCanvas">
         <svg id="mindSvg" xmlns="http://www.w3.org/2000/svg"></svg>
       </div>
       <div id="mindToolbar">
-        <button id="mindSavebtn" onclick="saveMindEntry()">🌿 حفظ الخريطة</button>
-        <button class="mind-btn" onclick="mindAddChild()" title="إضافة فرع للعقدة المحددة">+ فرع</button>
-        <button class="mind-btn" onclick="mindAddSibling()" title="إضافة عقدة مجاورة">+ مجاور</button>
-        <button class="mind-btn" onclick="mindToggleCollapse()">إخفاء/إظهار الفروع</button>
-        <button class="mind-btn" onclick="mindDeleteSelected()">🗑 حذف</button>
-        <div class="sep"></div>
-        <button class="mind-btn" onclick="mindReset()">خريطة جديدة</button>
-        <div style="margin-right:auto;font-size:11px;color:var(--text-faint)">اسحب لتحريك · دبل-كليك لتعديل · كليك للتحديد</div>
+        <button id="mindSavebtn" onclick="saveMindEntry()">🌿 حفظ</button>
+        <button class="mind-btn" onclick="mindAddChild()">+ فرع</button>
+        <button class="mind-btn" onclick="mindAddSibling()">+ مجاور</button>
+        <button class="mind-btn" onclick="mindToggleCollapse()">إخفاء/إظهار</button>
+        <button class="mind-btn" onclick="mindDeleteSelectedNode()">🗑 حذف</button>
+        <button class="mind-btn" onclick="mindResetConfirm()">جديدة</button>
       </div>
-      <!-- Node edit box -->
       <div id="nodeEditBox">
         <input type="text" id="nodeEditInput" placeholder="نص العقدة..." onkeydown="nodeEditKey(event)">
         <div class="node-edit-actions">
           <button class="nea-btn accent" onclick="confirmNodeEdit()">حفظ</button>
           <button class="nea-btn" onclick="closeNodeEdit()">إلغاء</button>
-          <button class="nea-btn danger" onclick="mindDeleteSelected();closeNodeEdit()">حذف</button>
+          <button class="nea-btn danger" onclick="mindDeleteSelectedNode();closeNodeEdit()">حذف</button>
         </div>
       </div>
     </div>
 
-    <!-- SIDEBAR OVERLAY -->
     <div id="sideOverlay" onclick="toggleSidebar()"></div>
 
-    <!-- SIDEBAR -->
     <div id="sidebar" class="hidden">
       <div id="sidebarHeader">
         <h2>✦ السجلات</h2>
@@ -329,7 +250,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
           <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <input type="text" id="searchInput" placeholder="ابحث..." oninput="renderList()">
+      <input type="text" id="searchInput" placeholder="ابحث في السجلات..." oninput="renderList()">
       <div id="filterRow">
         <button class="flt-btn active" id="fAll" onclick="setFilter('all')">الكل</button>
         <button class="flt-btn" id="fToday" onclick="setFilter('today')">اليوم</button>
@@ -344,749 +265,598 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 <div id="toast"></div>
 
 <script>
-/* ════════════════════════════════════════════
-   CONFIG
-════════════════════════════════════════════ */
-const API   = 'https://script.google.com/macros/s/AKfycbwDuAZbCi0Gls71mcZtkHJo0-CpAvO41QFo7pbGZ2YV3SwC8yMMjIWqjhjQGu8pF3iN/exec';
-const PASS  = '8435';
+const API  = 'https://script.google.com/macros/s/AKfycbwDuAZbCi0Gls71mcZtkHJo0-CpAvO41QFo7pbGZ2YV3SwC8yMMjIWqjhjQGu8pF3iN/exec';
+const PASS = '8435';
 
-/* ════════════════════════════════════════════
-   STATE
-════════════════════════════════════════════ */
-let allEntries = [], activeFilter = 'all', currentMode = 'editor';
-let activeEntryId = null;
-let sidebarOpen = false;
+let allEntries=[], activeFilter='all', currentMode='editor';
+let activeEntryId=null, sidebarOpen=false;
 
-/* ════════════════════════════════════════════
-   LOCK
-════════════════════════════════════════════ */
+/* Confirm dialog */
+let _confirmResolve=null;
+function showConfirm(msg){
+  return new Promise(res=>{
+    _confirmResolve=res;
+    document.getElementById('confirmMsg').textContent=msg;
+    document.getElementById('confirmDialog').classList.add('show');
+  });
+}
+function confirmYes(){document.getElementById('confirmDialog').classList.remove('show');if(_confirmResolve)_confirmResolve(true);_confirmResolve=null;}
+function confirmNo(){document.getElementById('confirmDialog').classList.remove('show');if(_confirmResolve)_confirmResolve(false);_confirmResolve=null;}
+
+/* Lock */
 function checkPass(){
-  const v = document.getElementById('passInput').value;
-  if(v === PASS){
-    document.getElementById('lockScreen').style.display = 'none';
+  const v=document.getElementById('passInput').value;
+  if(v===PASS){
+    document.getElementById('lockScreen').style.display='none';
     document.getElementById('app').classList.add('visible');
     loadEntries();
     mindInit();
   } else {
-    const inp = document.getElementById('passInput');
+    const inp=document.getElementById('passInput');
     inp.classList.add('error');
-    document.getElementById('lockError').textContent = 'كلمة المرور غير صحيحة';
-    inp.value = '';
-    setTimeout(() => inp.classList.remove('error'), 600);
+    document.getElementById('lockError').textContent='كلمة المرور غير صحيحة';
+    inp.value='';
+    setTimeout(()=>inp.classList.remove('error'),600);
   }
 }
-document.getElementById('passInput').addEventListener('keydown', e => { if(e.key==='Enter') checkPass(); });
+document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkPass();});
 
-/* ════════════════════════════════════════════
-   HELPERS
-════════════════════════════════════════════ */
-const $ = id => document.getElementById(id);
-const setStatus = (type, msg) => { $('statusDot').className='status-dot '+type; $('statusText').textContent=msg; };
-const showToast = (msg, type='') => {
-  const t=$('toast'); t.textContent=msg; t.className='show '+type;
-  clearTimeout(t._t); t._t=setTimeout(()=>t.className='',2800);
+const $=id=>document.getElementById(id);
+const setStatus=(type,msg)=>{$('statusDot').className='status-dot '+type;$('statusText').textContent=msg;};
+const showToast=(msg,type='')=>{
+  const t=$('toast');t.textContent=msg;t.className='show '+type;
+  clearTimeout(t._t);t._t=setTimeout(()=>t.className='',2800);
 };
-const apiCall = p => fetch(API+'?'+new URLSearchParams(p).toString()).then(r=>r.json());
-const fmtTime = ts => new Date(Number(ts)).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
-const fmtDate = ts => new Date(Number(ts)).toLocaleDateString('ar-EG',{month:'short',day:'numeric'});
-const isToday = ts => new Date(Number(ts)).toDateString() === new Date().toDateString();
-const isWeek  = ts => (Date.now()-Number(ts))/(864e5) <= 7;
+const apiCall=p=>fetch(API+'?'+new URLSearchParams(p).toString()).then(r=>r.json());
+const fmtTime=ts=>new Date(Number(ts)).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+const fmtDate=ts=>new Date(Number(ts)).toLocaleDateString('ar-EG',{month:'short',day:'numeric'});
+const isToday=ts=>new Date(Number(ts)).toDateString()===new Date().toDateString();
+const isWeek=ts=>(Date.now()-Number(ts))/(864e5)<=7;
+const escHtml=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-/* ════════════════════════════════════════════
-   MODE
-════════════════════════════════════════════ */
+/* Mode */
 function setMode(mode){
-  currentMode = mode;
-  $('modeEditor').classList.toggle('active', mode==='editor');
-  $('modeMind').classList.toggle('active', mode==='mind');
-  $('editorPane').classList.toggle('hidden', mode!=='editor');
-  $('mindPane').classList.toggle('hidden', mode!=='mind');
-  $('fmtBar').style.display = mode==='editor' ? 'flex' : 'none';
+  currentMode=mode;
+  $('modeEditor').classList.toggle('active',mode==='editor');
+  $('modeMind').classList.toggle('active',mode==='mind');
+  $('editorPane').classList.toggle('hidden',mode!=='editor');
+  $('mindPane').classList.toggle('hidden',mode!=='mind');
   if(mode==='mind'){
     requestAnimationFrame(()=>{
-      if(mindNodes.length===1 && mindNodes[0].x===0 && mindNodes[0].y===0){
-        centerMind();
-      }
+      if(mindNodes.length===1&&mindNodes[0].x===0&&mindNodes[0].y===0)centerMind();
       mindRender();
     });
   }
 }
 
-/* ════════════════════════════════════════════
-   SIDEBAR
-════════════════════════════════════════════ */
+/* Sidebar */
 function toggleSidebar(){
-  sidebarOpen = !sidebarOpen;
-  $('sidebar').classList.toggle('hidden', !sidebarOpen);
-  $('sideOverlay').classList.toggle('show', sidebarOpen);
-  $('sidebarToggle').classList.toggle('active', sidebarOpen);
-  if(sidebarOpen) renderList();
+  sidebarOpen=!sidebarOpen;
+  $('sidebar').classList.toggle('hidden',!sidebarOpen);
+  $('sideOverlay').classList.toggle('show',sidebarOpen);
+  $('sidebarToggle').classList.toggle('active',sidebarOpen);
+  if(sidebarOpen)renderList();
+}
+function closeSidebar(){
+  if(!sidebarOpen)return;
+  sidebarOpen=false;
+  $('sidebar').classList.add('hidden');
+  $('sideOverlay').classList.remove('show');
+  $('sidebarToggle').classList.remove('active');
 }
 function setFilter(f){
-  activeFilter = f;
-  ['All','Today','Week','Mind'].forEach(x => $('f'+x)?.classList.remove('active'));
-  const map = {all:'All',today:'Today',week:'Week',mind:'Mind'};
-  $('f'+map[f])?.classList.add('active');
+  activeFilter=f;
+  ['fAll','fToday','fWeek','fMind'].forEach(x=>$(x)&&$(x).classList.remove('active'));
+  ({all:'fAll',today:'fToday',week:'fWeek',mind:'fMind'})[f] && $({all:'fAll',today:'fToday',week:'fWeek',mind:'fMind'}[f]).classList.add('active');
   renderList();
 }
 
-/* ════════════════════════════════════════════
-   API
-════════════════════════════════════════════ */
+/* API */
 async function loadEntries(){
   setStatus('loading','جاري التحميل...');
   try{
-    const res = await apiCall({action:'get'});
-    if(!res.ok) throw new Error(res.error);
-    allEntries = res.data.sort((a,b)=>Number(b.ts)-Number(a.ts));
-    setStatus('ok','متصل');
-    if(sidebarOpen) renderList();
-  } catch(e){
-    setStatus('err','خطأ في الاتصال');
-    showToast('خطأ: '+e.message,'error');
+    const res=await apiCall({action:'get'});
+    if(!res.ok)throw new Error(res.error||'خطأ');
+    allEntries=(res.data||[]).sort((a,b)=>Number(b.ts)-Number(a.ts));
+    setStatus('ok','متصل ✓');
+    if(sidebarOpen)renderList();
+  }catch(e){
+    setStatus('err','خطأ');
+    showToast('خطأ في الاتصال: '+e.message,'error');
   }
 }
 
-/* ════════════════════════════════════════════
-   SIDEBAR LIST
-════════════════════════════════════════════ */
+/* List */
 function renderList(){
-  const q = $('searchInput').value.trim().toLowerCase();
-  let list = [...allEntries];
-  if(activeFilter==='today') list=list.filter(e=>isToday(e.ts));
-  if(activeFilter==='week')  list=list.filter(e=>isWeek(e.ts));
-  if(activeFilter==='mind')  list=list.filter(e=>e.text.startsWith('MIND::'));
-  if(q) list=list.filter(e=>e.text.toLowerCase().includes(q));
+  const q=$('searchInput').value.trim().toLowerCase();
+  let list=[...allEntries];
+  if(activeFilter==='today')list=list.filter(e=>isToday(e.ts));
+  if(activeFilter==='week')list=list.filter(e=>isWeek(e.ts));
+  if(activeFilter==='mind')list=list.filter(e=>e.text.startsWith('MIND::'));
+  if(q)list=list.filter(e=>e.text.toLowerCase().includes(q));
   if(!list.length){
-    $('entryList').innerHTML=`<div style="color:var(--text-faint);font-size:12px;text-align:center;padding:30px">لا توجد سجلات</div>`;
+    $('entryList').innerHTML='<div style="color:var(--text-faint);font-size:12px;text-align:center;padding:40px">لا توجد سجلات</div>';
     return;
   }
-  $('entryList').innerHTML = list.map(e=>{
-    const isMind = e.text.startsWith('MIND::');
-    const preview = isMind ? '🌿 خريطة ذهنية' : e.text.replace(/<[^>]*>/g,'').slice(0,80);
-    const active = activeEntryId===e.id ? ' active' : '';
+  $('entryList').innerHTML=list.map(e=>{
+    const isMind=e.text.startsWith('MIND::');
+    const preview=isMind?'🌿 خريطة ذهنية':escHtml(e.text.replace(/<[^>]*>/g,'').slice(0,80));
+    const active=activeEntryId===e.id?' active':'';
     return `<div class="entry-item${active}" onclick="openEntry('${e.id}')">
       <span class="ei-badge ${isMind?'mind':'text'}">${isMind?'🌿 خريطة':'✦ نص'}</span>
       <div class="ei-preview">${preview}</div>
       <div class="ei-time">${fmtDate(e.ts)} · ${fmtTime(e.ts)}</div>
-      <button class="ei-del" onclick="event.stopPropagation();deleteEntry('${e.id}')" title="حذف">×</button>
+      <button class="ei-del" onclick="event.stopPropagation();deleteEntry('${e.id}')">×</button>
     </div>`;
   }).join('');
 }
 
-/* ════════════════════════════════════════════
-   OPEN / NEW ENTRY
-════════════════════════════════════════════ */
+/* ═══ OPEN ENTRY — الإصلاح الرئيسي ═══ */
 function openEntry(id){
-  const e = allEntries.find(x=>x.id===id);
-  if(!e) return;
-  activeEntryId = id;
+  const e=allEntries.find(x=>x.id===id);
+  if(!e){showToast('لم يُعثر على السجل','error');return;}
+  activeEntryId=id;
+
   if(e.text.startsWith('MIND::')){
     setMode('mind');
     mindLoadFromSerial(e.text.slice(6));
   } else {
+    /* تحميل السجل النصي وفتح المحرر */
     setMode('editor');
-    $('editor').innerHTML = e.text;
+    const editorEl=$('editor');
+    editorEl.innerHTML=e.text;
     updateCounts();
+    $('editingBadge').classList.add('visible');
+    /* تضع المؤشر في نهاية النص */
+    setTimeout(()=>{
+      editorEl.focus();
+      try{
+        const range=document.createRange();
+        const sel=window.getSelection();
+        range.selectNodeContents(editorEl);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }catch(err){}
+    },60);
   }
+
   renderList();
-  if(window.innerWidth < 768) toggleSidebar();
+  closeSidebar();
 }
+
+function cancelEdit(){
+  activeEntryId=null;
+  $('editor').innerHTML='';
+  $('editingBadge').classList.remove('visible');
+  updateCounts();
+  showToast('تمّ إلغاء التعديل');
+}
+
 function newEntry(){
-  activeEntryId = null;
+  activeEntryId=null;
+  $('editingBadge').classList.remove('visible');
   if(currentMode==='editor'){
     $('editor').innerHTML='';
     updateCounts();
-    $('editor').focus();
+    setTimeout(()=>$('editor').focus(),50);
   } else {
     mindInit();
   }
+  closeSidebar();
 }
 
-/* ════════════════════════════════════════════
-   EDITOR
-════════════════════════════════════════════ */
-const editor = $('editor');
-editor.addEventListener('input', updateCounts);
-editor.addEventListener('keyup', updateFmtBtns);
-editor.addEventListener('mouseup', updateFmtBtns);
-editor.addEventListener('selectionchange', updateFmtBtns);
+/* Editor */
+const editor=$('editor');
+editor.addEventListener('input',updateCounts);
+editor.addEventListener('keyup',updateFmtBtns);
+editor.addEventListener('mouseup',updateFmtBtns);
+editor.addEventListener('touchend',updateFmtBtns);
 
 function updateCounts(){
-  const text = editor.innerText || '';
-  $('charCount').textContent = text.length + ' حرف';
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-  $('wordCount').textContent = words + ' كلمة';
+  const text=editor.innerText||'';
+  $('charCount').textContent=text.length+' حرف';
+  $('wordCount').textContent=(text.trim()?text.trim().split(/\s+/).length:0)+' كلمة';
 }
 function updateFmtBtns(){
-  $('fmtBold').classList.toggle('active', document.queryCommandState('bold'));
-  $('fmtUnder').classList.toggle('active', document.queryCommandState('underline'));
+  try{
+    $('fmtBold').classList.toggle('active',document.queryCommandState('bold'));
+    $('fmtUnder').classList.toggle('active',document.queryCommandState('underline'));
+  }catch(e){}
 }
 function execFmt(cmd){
-  document.execCommand(cmd, false, null);
   editor.focus();
+  document.execCommand(cmd,false,null);
   updateFmtBtns();
 }
 function setColor(color){
   document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
+  editor.focus();
   if(!color){
     $('cdDefault').classList.add('active');
-    document.execCommand('removeFormat', false, null);
-    document.execCommand('foreColor', false, '#e8e6f0');
+    document.execCommand('removeFormat',false,null);
+    document.execCommand('foreColor',false,'#e8e6f0');
   } else {
-    const id = {
-      '#c9a84c':'cdGold','#6b9bc9':'cdBlue','#6bc98a':'cdGreen',
-      '#c96b6b':'cdRed','#9b6bc9':'cdPurple'
-    }[color];
-    if(id) $(id)?.classList.add('active');
-    document.execCommand('foreColor', false, color);
+    const id={'#c9a84c':'cdGold','#6b9bc9':'cdBlue','#6bc98a':'cdGreen','#c96b6b':'cdRed','#9b6bc9':'cdPurple'}[color];
+    if(id)$(id).classList.add('active');
+    document.execCommand('foreColor',false,color);
   }
-  editor.focus();
 }
+
 async function saveEditorEntry(){
-  const html = editor.innerHTML.trim();
-  if(!html || html==='<br>'){showToast('اكتب شيئاً أولاً','error');return;}
-  $('saveEntryBtn').disabled = true;
-  $('saveEntryBtn').textContent = '...';
+  const html=editor.innerHTML.trim();
+  if(!html||html==='<br>'){showToast('اكتب شيئاً أولاً','error');return;}
+  $('saveEntryBtn').disabled=true;
+  $('saveEntryBtn').textContent='...';
   setStatus('loading','جاري الحفظ...');
   try{
     let res;
     if(activeEntryId){
-      res = await apiCall({action:'edit', id:activeEntryId, text:html});
+      res=await apiCall({action:'edit',id:activeEntryId,text:html});
     } else {
-      res = await apiCall({action:'add', text:html, ts:Date.now()});
+      res=await apiCall({action:'add',text:html,ts:Date.now()});
     }
-    if(!res.ok) throw new Error(res.error);
-    showToast('✦ تمّ الحفظ','success');
-    activeEntryId = null;
-    editor.innerHTML = '';
+    if(!res.ok)throw new Error(res.error||'خطأ في الحفظ');
+    showToast(activeEntryId?'✦ تمّ التعديل':'✦ تمّ الحفظ','success');
+    activeEntryId=null;
+    $('editingBadge').classList.remove('visible');
+    editor.innerHTML='';
     updateCounts();
+    setStatus('ok','محفوظ ✓');
     await loadEntries();
-    if(sidebarOpen) renderList();
-  } catch(e){
+    if(sidebarOpen)renderList();
+  }catch(e){
     setStatus('err','فشل الحفظ');
     showToast('خطأ: '+e.message,'error');
-  } finally {
-    $('saveEntryBtn').disabled = false;
-    $('saveEntryBtn').innerHTML = '✦ حفظ السجل';
+  } finally{
+    $('saveEntryBtn').disabled=false;
+    $('saveEntryBtn').textContent='✦ حفظ';
   }
 }
 
-/* ════════════════════════════════════════════
-   DELETE
-════════════════════════════════════════════ */
+/* Delete */
 async function deleteEntry(id){
-  if(!confirm('هل تريد حذف هذا السجل نهائياً؟')) return;
+  const ok=await showConfirm('هل تريد حذف هذا السجل نهائياً؟');
+  if(!ok)return;
   setStatus('loading','جاري الحذف...');
   try{
-    const res = await apiCall({action:'delete', id});
-    if(!res.ok) throw new Error(res.error);
+    const res=await apiCall({action:'delete',id});
+    if(!res.ok)throw new Error(res.error||'خطأ');
     showToast('تمّ الحذف');
     if(activeEntryId===id){
       activeEntryId=null;
-      if(currentMode==='editor') editor.innerHTML='';
+      $('editingBadge').classList.remove('visible');
+      if(currentMode==='editor')editor.innerHTML='';
       else mindInit();
     }
+    setStatus('ok','متصل ✓');
     await loadEntries();
-    if(sidebarOpen) renderList();
-  } catch(e){
+    if(sidebarOpen)renderList();
+  }catch(e){
     setStatus('err','فشل الحذف');
     showToast('خطأ: '+e.message,'error');
   }
 }
 
-/* ════════════════════════════════════════════
-   ══════════ MIND MAP ENGINE ══════════
-════════════════════════════════════════════ */
+/* ═══════════ MIND MAP ═══════════ */
+let mindNodes=[],mindNextId=1,mindSelected=null;
+let mindDragging=null,mindDragOffset={x:0,y:0};
+let mindPan={x:0,y:0},mindPanning=false;
+let mindPanStart={x:0,y:0},mindPanOrigin={x:0,y:0};
 
-/* Data model */
-let mindNodes = [];
-let mindNextId = 1;
-let mindSelected = null;
-let mindDragging = null;
-let mindDragOffset = {x:0,y:0};
-let mindPan = {x:0,y:0};
-let mindPanning = false;
-let mindPanStart = {x:0,y:0};
-let mindPanOrigin = {x:0,y:0};
+const SVG_NS='http://www.w3.org/2000/svg';
+const mindSvg=$('mindSvg');
+const mindCanvas=$('mindCanvas');
+const NODE_COLORS=['#c9a84c','#6b9bc9','#6bc98a','#9b6bc9','#c96b6b','#c9846b','#6bc9c9'];
+const PAD_X=18,PAD_Y=10,FONT_SIZES=[14,12,11,10],MAX_TW=[160,130,110,90];
 
-const SVG_NS = 'http://www.w3.org/2000/svg';
-const mindSvg = $('mindSvg');
-const mindCanvas = $('mindCanvas');
-
-/* Colors per depth */
-const NODE_COLORS = ['#c9a84c','#6b9bc9','#6bc98a','#9b6bc9','#c96b6b','#c9846b','#6bc9c9'];
-/* Padding inside ellipse */
-const PAD_X = 18, PAD_Y = 10;
-/* Font sizes per depth */
-const FONT_SIZES = [14,12,11,10];
-/* Max text width before wrapping (px) */
-const MAX_TW = [160,130,110,90];
-
-function nodeColor(depth){ return NODE_COLORS[depth % NODE_COLORS.length]; }
-function nodeFontSize(depth){ return FONT_SIZES[Math.min(depth, FONT_SIZES.length-1)]; }
-function nodeMaxW(depth){ return MAX_TW[Math.min(depth, MAX_TW.length-1)]; }
+const nodeColor=d=>NODE_COLORS[d%NODE_COLORS.length];
+const nodeFontSize=d=>FONT_SIZES[Math.min(d,3)];
+const nodeMaxW=d=>MAX_TW[Math.min(d,3)];
 
 function nodeDepth(id){
-  let d=0, n=mindNodes.find(x=>x.id===id);
-  while(n && n.parentId!=null){ d++; n=mindNodes.find(x=>x.id===n.parentId); }
+  let d=0,n=mindNodes.find(x=>x.id===id);
+  while(n&&n.parentId!=null){d++;n=mindNodes.find(x=>x.id===n.parentId);}
   return d;
 }
-
-/* Measure text into wrapped lines given max pixel width */
-function wrapText(label, fontSize, maxW){
-  /* Use a temporary SVG text to measure */
-  const tmp = document.createElementNS(SVG_NS,'text');
-  tmp.setAttribute('font-family','Cairo, sans-serif');
-  tmp.setAttribute('font-size', fontSize);
-  tmp.style.visibility='hidden';
-  mindSvg.appendChild(tmp);
-  const words = label.split('');  /* split by char for Arabic */
-  /* Actually split by spaces for better wrapping */
-  const wordArr = label.split(' ');
-  const lines = [];
-  let current = '';
-  for(const w of wordArr){
-    const test = current ? current+' '+w : w;
-    tmp.textContent = test;
-    if(tmp.getComputedTextLength() > maxW && current){
-      lines.push(current);
-      current = w;
-    } else {
-      current = test;
-    }
+function wrapText(label,fontSize,maxW){
+  const tmp=document.createElementNS(SVG_NS,'text');
+  tmp.setAttribute('font-family','Cairo,sans-serif');tmp.setAttribute('font-size',fontSize);
+  tmp.style.visibility='hidden';mindSvg.appendChild(tmp);
+  const words=label.split(' ');const lines=[];let cur='';
+  for(const w of words){
+    const test=cur?cur+' '+w:w;tmp.textContent=test;
+    if(tmp.getComputedTextLength()>maxW&&cur){lines.push(cur);cur=w;}else cur=test;
   }
-  if(current) lines.push(current);
-  /* Measure max line width */
-  let maxLineW = 0;
-  for(const l of lines){
-    tmp.textContent = l;
-    maxLineW = Math.max(maxLineW, tmp.getComputedTextLength());
-  }
+  if(cur)lines.push(cur);
+  let maxLW=0;for(const l of lines){tmp.textContent=l;maxLW=Math.max(maxLW,tmp.getComputedTextLength());}
   mindSvg.removeChild(tmp);
-  return {lines, maxLineW};
+  return{lines,maxLineW:maxLW};
 }
-
-/* Compute ellipse radii for a node based on its label */
 function nodeRadii(n){
-  const depth = nodeDepth(n.id);
-  const fs = nodeFontSize(depth);
-  const maxW = nodeMaxW(depth);
-  const {lines, maxLineW} = wrapText(n.label, fs, maxW);
-  const lineH = fs * 1.5;
-  const textH = lines.length * lineH;
-  const rx = Math.max(40, maxLineW/2 + PAD_X);
-  const ry = Math.max(22, textH/2 + PAD_Y);
-  return {rx, ry, lines, lineH, fs};
+  const d=nodeDepth(n.id),fs=nodeFontSize(d),mw=nodeMaxW(d);
+  const{lines,maxLineW}=wrapText(n.label,fs,mw);
+  const lh=fs*1.5,th=lines.length*lh;
+  return{rx:Math.max(40,maxLineW/2+PAD_X),ry:Math.max(22,th/2+PAD_Y),lines,lineH:lh,fs};
 }
-
-/* Get point on ellipse border in direction (dx,dy) */
-function ellipseBorderPoint(cx, cy, rx, ry, dx, dy){
-  if(dx===0 && dy===0) return {x:cx, y:cy};
-  /* parametric: x=rx*cos(t), y=ry*sin(t), find t where direction matches */
-  const angle = Math.atan2(dy*rx, dx*ry);
-  return {
-    x: cx + rx * Math.cos(angle),
-    y: cy + ry * Math.sin(angle)
-  };
+function ellipsePt(cx,cy,rx,ry,dx,dy){
+  if(!dx&&!dy)return{x:cx,y:cy};
+  const a=Math.atan2(dy*rx,dx*ry);
+  return{x:cx+rx*Math.cos(a),y:cy+ry*Math.sin(a)};
 }
 
 function mindInit(){
-  mindNodes = [{id:1,label:'الفكرة الرئيسية',x:0,y:0,parentId:null,collapsed:false}];
-  mindNextId = 2;
-  mindSelected = null;
-  mindPan = {x:0,y:0};
-  /* defer centering until canvas has dimensions */
-  requestAnimationFrame(()=>{ centerMind(); mindRender(); });
+  mindNodes=[{id:1,label:'الفكرة الرئيسية',x:0,y:0,parentId:null,collapsed:false}];
+  mindNextId=2;mindSelected=null;mindPan={x:0,y:0};
+  requestAnimationFrame(()=>{centerMind();mindRender();});
 }
-
 function centerMind(){
-  const rect = mindCanvas.getBoundingClientRect();
-  mindPan = {x: rect.width/2, y: rect.height/2};
+  const r=mindCanvas.getBoundingClientRect();
+  mindPan={x:r.width/2,y:r.height/2};
 }
 
 function mindRender(){
-  mindSvg.innerHTML = '';
-
-  const defs = document.createElementNS(SVG_NS,'defs');
-  defs.innerHTML = `<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
-    <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
-    <feFlood flood-color="#c9a84c" flood-opacity="0.45" result="color"/>
-    <feComposite in="color" in2="blur" operator="in" result="shadow"/>
-    <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
-  </filter>`;
+  mindSvg.innerHTML='';
+  const defs=document.createElementNS(SVG_NS,'defs');
+  defs.innerHTML='<filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur in="SourceAlpha" stdDeviation="5" result="b"/><feFlood flood-color="#c9a84c" flood-opacity="0.45" result="c"/><feComposite in="c" in2="b" operator="in" result="s"/><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge></filter>';
   mindSvg.appendChild(defs);
+  const g=document.createElementNS(SVG_NS,'g');mindSvg.appendChild(g);
+  const vis=getVisibleNodes(),visIds=new Set(vis.map(n=>n.id));
+  const rm={};vis.forEach(n=>{rm[n.id]=nodeRadii(n);});
 
-  const g = document.createElementNS(SVG_NS,'g');
-  mindSvg.appendChild(g);
-
-  const visibleNodes = getVisibleNodes();
-  const visibleIds = new Set(visibleNodes.map(n=>n.id));
-
-  /* Pre-compute radii for all visible nodes */
-  const radiiMap = {};
-  visibleNodes.forEach(n=>{ radiiMap[n.id] = nodeRadii(n); });
-
-  /* edges — drawn FIRST so nodes appear on top */
-  const eGroup = document.createElementNS(SVG_NS,'g');
-  visibleNodes.forEach(n=>{
-    if(n.parentId==null || !visibleIds.has(n.parentId)) return;
-    const parent = mindNodes.find(x=>x.id===n.parentId);
-    if(!parent) return;
-
-    const depth = nodeDepth(n.id);
-    const col = nodeColor(depth-1);
-
-    const pcx = parent.x+mindPan.x, pcy = parent.y+mindPan.y;
-    const ncx = n.x+mindPan.x,      ncy = n.y+mindPan.y;
-
-    /* Direction vectors */
-    const dx = ncx - pcx, dy = ncy - pcy;
-
-    /* Border points */
-    const pr = radiiMap[parent.id] || {rx:40,ry:22};
-    const nr = radiiMap[n.id]      || {rx:40,ry:22};
-
-    const startPt = ellipseBorderPoint(pcx, pcy, pr.rx, pr.ry, dx, dy);
-    const endPt   = ellipseBorderPoint(ncx, ncy, nr.rx, nr.ry, -dx, -dy);
-
-    /* Bezier control points */
-    const mx = (startPt.x + endPt.x) / 2;
-    const path = document.createElementNS(SVG_NS,'path');
-    path.setAttribute('d',`M${startPt.x},${startPt.y} C${mx},${startPt.y} ${mx},${endPt.y} ${endPt.x},${endPt.y}`);
-    path.setAttribute('stroke', col);
-    path.setAttribute('stroke-opacity','0.45');
-    path.setAttribute('stroke-width','1.5');
-    path.setAttribute('fill','none');
-    eGroup.appendChild(path);
+  const eg=document.createElementNS(SVG_NS,'g');
+  vis.forEach(n=>{
+    if(n.parentId==null||!visIds.has(n.parentId))return;
+    const p=mindNodes.find(x=>x.id===n.parentId);if(!p)return;
+    const col=nodeColor(nodeDepth(n.id)-1);
+    const pcx=p.x+mindPan.x,pcy=p.y+mindPan.y,ncx=n.x+mindPan.x,ncy=n.y+mindPan.y;
+    const dx=ncx-pcx,dy=ncy-pcy;
+    const pr=rm[p.id]||{rx:40,ry:22},nr=rm[n.id]||{rx:40,ry:22};
+    const sp=ellipsePt(pcx,pcy,pr.rx,pr.ry,dx,dy),ep=ellipsePt(ncx,ncy,nr.rx,nr.ry,-dx,-dy);
+    const mx=(sp.x+ep.x)/2,path=document.createElementNS(SVG_NS,'path');
+    path.setAttribute('d',`M${sp.x},${sp.y} C${mx},${sp.y} ${mx},${ep.y} ${ep.x},${ep.y}`);
+    path.setAttribute('stroke',col);path.setAttribute('stroke-opacity','0.45');
+    path.setAttribute('stroke-width','1.5');path.setAttribute('fill','none');
+    eg.appendChild(path);
   });
-  g.appendChild(eGroup);
+  g.appendChild(eg);
 
-  /* nodes */
-  visibleNodes.forEach(n=>{
-    const depth = nodeDepth(n.id);
-    const col = nodeColor(depth);
-    const nx = n.x+mindPan.x, ny = n.y+mindPan.y;
-    const isSel = n.id===mindSelected;
-    const hasChildren = mindNodes.some(c=>c.parentId===n.id);
-    const {rx, ry, lines, lineH, fs} = radiiMap[n.id];
+  vis.forEach(n=>{
+    const d=nodeDepth(n.id),col=nodeColor(d),nx=n.x+mindPan.x,ny=n.y+mindPan.y;
+    const isSel=n.id===mindSelected,hasC=mindNodes.some(c=>c.parentId===n.id);
+    const{rx,ry,lines,lineH,fs}=rm[n.id];
+    const ng=document.createElementNS(SVG_NS,'g');ng.style.cursor='pointer';ng.dataset.nid=n.id;
 
-    const nGroup = document.createElementNS(SVG_NS,'g');
-    nGroup.setAttribute('class','mind-node');
-    nGroup.style.cursor = 'pointer';
-    nGroup.dataset.nid = n.id;
+    /* enlarged hit area */
+    const hit=document.createElementNS(SVG_NS,'ellipse');
+    hit.setAttribute('cx',nx);hit.setAttribute('cy',ny);
+    hit.setAttribute('rx',rx+10);hit.setAttribute('ry',ry+10);
+    hit.setAttribute('fill','transparent');hit.setAttribute('stroke','none');
+    ng.appendChild(hit);
 
-    /* ellipse */
-    const ellipse = document.createElementNS(SVG_NS,'ellipse');
-    ellipse.setAttribute('cx', nx);
-    ellipse.setAttribute('cy', ny);
-    ellipse.setAttribute('rx', rx);
-    ellipse.setAttribute('ry', ry);
-    ellipse.setAttribute('fill', col+'1a');
-    ellipse.setAttribute('stroke', col);
-    ellipse.setAttribute('stroke-width', isSel?'2.5':'1.5');
-    if(isSel) ellipse.setAttribute('filter','url(#glow)');
-    nGroup.appendChild(ellipse);
+    const el=document.createElementNS(SVG_NS,'ellipse');
+    el.setAttribute('cx',nx);el.setAttribute('cy',ny);el.setAttribute('rx',rx);el.setAttribute('ry',ry);
+    el.setAttribute('fill',col+'1a');el.setAttribute('stroke',col);el.setAttribute('stroke-width',isSel?'2.5':'1.5');
+    if(isSel)el.setAttribute('filter','url(#glow)');
+    ng.appendChild(el);
 
-    /* wrapped text lines */
-    const totalH = lines.length * lineH;
-    const startY = ny - totalH/2 + lineH * 0.75;
-    lines.forEach((line, i)=>{
-      const tspan = document.createElementNS(SVG_NS,'text');
-      tspan.setAttribute('x', nx);
-      tspan.setAttribute('y', startY + i*lineH);
-      tspan.setAttribute('text-anchor','middle');
-      tspan.setAttribute('fill', col);
-      tspan.setAttribute('font-family','Cairo, sans-serif');
-      tspan.setAttribute('font-size', fs);
-      tspan.setAttribute('font-weight', depth===0?'700':'500');
-      tspan.textContent = line;
-      nGroup.appendChild(tspan);
+    const tot=lines.length*lineH,sy=ny-tot/2+lineH*0.75;
+    lines.forEach((l,i)=>{
+      const t=document.createElementNS(SVG_NS,'text');
+      t.setAttribute('x',nx);t.setAttribute('y',sy+i*lineH);t.setAttribute('text-anchor','middle');
+      t.setAttribute('fill',col);t.setAttribute('font-family','Cairo,sans-serif');
+      t.setAttribute('font-size',fs);t.setAttribute('font-weight',d===0?'700':'500');
+      t.setAttribute('pointer-events','none');t.textContent=l;ng.appendChild(t);
     });
 
-    /* collapse indicator dot */
-    if(hasChildren){
-      const indG = document.createElementNS(SVG_NS,'g');
-      const ix = nx + rx - 2, iy = ny - ry + 2;
-      const circ = document.createElementNS(SVG_NS,'circle');
-      circ.setAttribute('cx', ix); circ.setAttribute('cy', iy);
-      circ.setAttribute('r','7');
-      circ.setAttribute('fill', n.collapsed ? col : col+'55');
-      circ.setAttribute('stroke', col); circ.setAttribute('stroke-width','1');
-      const itxt = document.createElementNS(SVG_NS,'text');
-      itxt.setAttribute('x', ix); itxt.setAttribute('y', iy+4);
-      itxt.setAttribute('text-anchor','middle');
-      itxt.setAttribute('fill', n.collapsed?'#0d0d0f':col);
-      itxt.setAttribute('font-size','9'); itxt.setAttribute('font-weight','700');
-      itxt.textContent = n.collapsed ? '+' : '−';
-      indG.appendChild(circ); indG.appendChild(itxt);
-      /* Click on indicator toggles collapse */
-      indG.style.cursor='pointer';
-      indG.addEventListener('click', e=>{ e.stopPropagation(); n.collapsed=!n.collapsed; mindRender(); });
-      nGroup.appendChild(indG);
+    if(hasC){
+      const ig=document.createElementNS(SVG_NS,'g');
+      const ix=nx+rx-2,iy=ny-ry+2;
+      const ci=document.createElementNS(SVG_NS,'circle');
+      ci.setAttribute('cx',ix);ci.setAttribute('cy',iy);ci.setAttribute('r','9');
+      ci.setAttribute('fill',n.collapsed?col:col+'55');ci.setAttribute('stroke',col);ci.setAttribute('stroke-width','1');
+      const it=document.createElementNS(SVG_NS,'text');
+      it.setAttribute('x',ix);it.setAttribute('y',iy+4);it.setAttribute('text-anchor','middle');
+      it.setAttribute('fill',n.collapsed?'#0d0d0f':col);it.setAttribute('font-size','11');it.setAttribute('font-weight','700');
+      it.setAttribute('pointer-events','none');it.textContent=n.collapsed?'+':'−';
+      ig.appendChild(ci);ig.appendChild(it);ig.style.cursor='pointer';
+      ig.addEventListener('mousedown',e=>{e.stopPropagation();e.preventDefault();});
+      ig.addEventListener('click',e=>{e.stopPropagation();n.collapsed=!n.collapsed;mindRender();});
+      ig.addEventListener('touchend',e=>{e.stopPropagation();e.preventDefault();n.collapsed=!n.collapsed;mindRender();});
+      ng.appendChild(ig);
     }
 
-    /* events */
-    nGroup.addEventListener('mousedown', e => onNodeMouseDown(e, n.id));
-    nGroup.addEventListener('click', e => { e.stopPropagation(); selectNode(n.id); });
-    nGroup.addEventListener('dblclick', e => { e.stopPropagation(); openNodeEdit(n.id); });
-    g.appendChild(nGroup);
+    ng.addEventListener('mousedown',e=>onNodeMD(e,n.id));
+    ng.addEventListener('touchstart',e=>onNodeTS(e,n.id),{passive:false});
+    ng.addEventListener('click',e=>{e.stopPropagation();selectNode(n.id);});
+    ng.addEventListener('dblclick',e=>{e.stopPropagation();openNodeEdit(n.id);});
+    g.appendChild(ng);
   });
 }
 
 function getVisibleNodes(){
-  const visible = [];
-  const hidden = new Set();
-  const sorted = topoSort(mindNodes);
-  sorted.forEach(n=>{
-    if(n.parentId!=null && hidden.has(n.parentId)){
-      hidden.add(n.id);
-      return;
-    }
-    visible.push(n);
-    if(n.collapsed) hidden.add(n.id);
-  });
-  return visible;
+  const v=[],h=new Set();
+  topoSort(mindNodes).forEach(n=>{
+    if(n.parentId!=null&&h.has(n.parentId)){h.add(n.id);return;}
+    v.push(n);if(n.collapsed)h.add(n.id);
+  });return v;
 }
-
 function topoSort(nodes){
-  const result=[], visited=new Set();
-  function visit(n){
-    if(visited.has(n.id)) return; visited.add(n.id);
-    if(n.parentId!=null){ const p=nodes.find(x=>x.id===n.parentId); if(p) visit(p); }
-    result.push(n);
-  }
-  nodes.forEach(visit);
-  return result;
+  const r=[],vis=new Set();
+  function visit(n){if(vis.has(n.id))return;vis.add(n.id);const p=nodes.find(x=>x.id===n.parentId);if(p)visit(p);r.push(n);}
+  nodes.forEach(visit);return r;
 }
+function selectNode(id){mindSelected=id;mindRender();}
 
-/* Select */
-function selectNode(id){
-  mindSelected = id;
-  mindRender();
+function getAngle(node){
+  const p=mindNodes.find(x=>x.id===node.parentId);
+  return p?Math.atan2(node.y-p.y,node.x-p.x):0;
 }
-
-/* Node operations */
 function mindAddChild(){
-  const pid = mindSelected || (mindNodes[0]?.id);
-  if(!pid) return;
-  const parent = mindNodes.find(n=>n.id===pid);
-  if(!parent) return;
-  const depth = nodeDepth(pid);
-  const siblings = mindNodes.filter(n=>n.parentId===pid);
-  const angle = depth===0
-    ? (siblings.length * Math.PI*0.45) - Math.PI*0.7
-    : getAngleFromParent(parent) + (siblings.length * 0.55);
-  const dist = 200 - depth*15;
-  const newNode = {
-    id: mindNextId++,
-    label: 'فكرة جديدة',
-    x: parent.x + Math.cos(angle)*dist,
-    y: parent.y + Math.sin(angle)*dist,
-    parentId: pid,
-    collapsed: false
-  };
-  mindNodes.push(newNode);
-  mindSelected = newNode.id;
-  mindRender();
-  openNodeEdit(newNode.id);
-}
-function getAngleFromParent(node){
-  const parent = mindNodes.find(n=>n.id===node.parentId);
-  if(!parent) return 0;
-  return Math.atan2(node.y-parent.y, node.x-parent.x);
+  const pid=mindSelected||(mindNodes[0]?.id);if(!pid)return;
+  const parent=mindNodes.find(n=>n.id===pid);if(!parent)return;
+  const depth=nodeDepth(pid);
+  const sibs=mindNodes.filter(n=>n.parentId===pid);
+  const angle=depth===0?(sibs.length*Math.PI*0.45)-Math.PI*0.7:getAngle(parent)+(sibs.length*0.55);
+  const dist=Math.max(160,200-depth*15);
+  const nn={id:mindNextId++,label:'فكرة جديدة',x:parent.x+Math.cos(angle)*dist,y:parent.y+Math.sin(angle)*dist,parentId:pid,collapsed:false};
+  if(parent.collapsed)parent.collapsed=false;
+  mindNodes.push(nn);mindSelected=nn.id;mindRender();openNodeEdit(nn.id);
 }
 function mindAddSibling(){
-  if(!mindSelected) return;
-  const sel = mindNodes.find(n=>n.id===mindSelected);
-  if(!sel || sel.parentId==null){ mindAddChild(); return; }
-  const pid = sel.parentId;
-  const parent = mindNodes.find(n=>n.id===pid);
-  const baseAngle = getAngleFromParent(sel);
-  const dist = Math.hypot(sel.x-parent.x, sel.y-parent.y);
-  const newNode = {
-    id: mindNextId++,
-    label: 'فكرة جديدة',
-    x: parent.x + Math.cos(baseAngle+0.6)*dist,
-    y: parent.y + Math.sin(baseAngle+0.6)*dist,
-    parentId: pid,
-    collapsed: false
-  };
-  mindNodes.push(newNode);
-  mindSelected = newNode.id;
-  mindRender();
-  openNodeEdit(newNode.id);
+  if(!mindSelected)return;
+  const sel=mindNodes.find(n=>n.id===mindSelected);
+  if(!sel||sel.parentId==null){mindAddChild();return;}
+  const p=mindNodes.find(n=>n.id===sel.parentId);
+  const a=getAngle(sel),dist=Math.hypot(sel.x-p.x,sel.y-p.y);
+  const nn={id:mindNextId++,label:'فكرة جديدة',x:p.x+Math.cos(a+0.6)*dist,y:p.y+Math.sin(a+0.6)*dist,parentId:sel.parentId,collapsed:false};
+  mindNodes.push(nn);mindSelected=nn.id;mindRender();openNodeEdit(nn.id);
 }
 function mindToggleCollapse(){
-  if(!mindSelected) return;
-  const n = mindNodes.find(x=>x.id===mindSelected);
-  if(!n) return;
-  n.collapsed = !n.collapsed;
-  mindRender();
+  const n=mindNodes.find(x=>x.id===mindSelected);if(n){n.collapsed=!n.collapsed;mindRender();}
 }
-function mindDeleteSelected(){
-  if(!mindSelected) return;
-  const sel = mindNodes.find(n=>n.id===mindSelected);
-  if(!sel) return;
-  if(sel.parentId===null && mindNodes.length===1){ showToast('لا يمكن حذف الجذر','error'); return; }
-  /* delete node and all descendants */
-  const toDelete = new Set();
-  function markDelete(id){ toDelete.add(id); mindNodes.filter(n=>n.parentId===id).forEach(c=>markDelete(c.id)); }
-  markDelete(mindSelected);
-  mindNodes = mindNodes.filter(n=>!toDelete.has(n.id));
-  mindSelected = sel.parentId || (mindNodes[0]?.id);
-  closeNodeEdit();
-  mindRender();
+function mindDeleteSelectedNode(){
+  if(!mindSelected)return;
+  const sel=mindNodes.find(n=>n.id===mindSelected);if(!sel)return;
+  if(sel.parentId===null&&mindNodes.length===1){showToast('لا يمكن حذف الجذر','error');return;}
+  const toDel=new Set();
+  function mark(id){toDel.add(id);mindNodes.filter(n=>n.parentId===id).forEach(c=>mark(c.id));}
+  mark(mindSelected);
+  mindNodes=mindNodes.filter(n=>!toDel.has(n.id));
+  mindSelected=sel.parentId||(mindNodes[0]?.id);
+  closeNodeEdit();mindRender();
 }
-function mindReset(){
-  if(!confirm('مسح الخريطة الحالية وبدء جديدة؟')) return;
-  activeEntryId = null;
-  mindInit();
+async function mindResetConfirm(){
+  const ok=await showConfirm('مسح الخريطة الحالية وبدء جديدة؟');
+  if(!ok)return;activeEntryId=null;mindInit();
 }
 
-/* Node Edit Popup */
-let editingNodeId = null;
+let editingNodeId=null;
 function openNodeEdit(id){
-  editingNodeId = id;
-  const n = mindNodes.find(x=>x.id===id);
-  if(!n) return;
-  const box = $('nodeEditBox');
-  const inp = $('nodeEditInput');
-  inp.value = n.label;
-  const rect = mindCanvas.getBoundingClientRect();
-  /* compute ellipse ry to position below node */
-  const {ry} = nodeRadii(n);
-  const nx = n.x + mindPan.x;
-  const ny = n.y + mindPan.y + ry + 10;
-  const left = Math.min(Math.max(nx - rect.left - 90, 8), rect.width - 210);
-  const top  = Math.min(Math.max(ny - rect.top, 8), rect.height - 100);
-  box.style.display = 'flex';
-  box.style.left = left + 'px';
-  box.style.top  = top + 'px';
-  setTimeout(()=>inp.select(),50);
+  editingNodeId=id;
+  const n=mindNodes.find(x=>x.id===id);if(!n)return;
+  const box=$('nodeEditBox'),inp=$('nodeEditInput');
+  inp.value=n.label;
+  const rect=mindCanvas.getBoundingClientRect();
+  const{ry}=nodeRadii(n);
+  const nx=n.x+mindPan.x,ny=n.y+mindPan.y+ry+14;
+  const left=Math.min(Math.max(nx-rect.left-100,8),rect.width-220);
+  const top=Math.min(Math.max(ny-rect.top,8),rect.height-110);
+  box.style.display='flex';box.style.left=left+'px';box.style.top=top+'px';
+  setTimeout(()=>{inp.focus();inp.select();},80);
 }
-function closeNodeEdit(){
-  $('nodeEditBox').style.display = 'none';
-  editingNodeId = null;
-}
+function closeNodeEdit(){$('nodeEditBox').style.display='none';editingNodeId=null;}
 function confirmNodeEdit(){
-  if(!editingNodeId) return;
-  const n = mindNodes.find(x=>x.id===editingNodeId);
-  if(n) n.label = $('nodeEditInput').value.trim() || n.label;
-  closeNodeEdit();
-  mindRender();
+  if(!editingNodeId)return;
+  const n=mindNodes.find(x=>x.id===editingNodeId);
+  if(n)n.label=$('nodeEditInput').value.trim()||n.label;
+  closeNodeEdit();mindRender();
 }
 function nodeEditKey(e){
-  if(e.key==='Enter') confirmNodeEdit();
-  if(e.key==='Escape') closeNodeEdit();
+  if(e.key==='Enter'){e.preventDefault();confirmNodeEdit();}
+  if(e.key==='Escape')closeNodeEdit();
 }
 
-/* Drag nodes */
-function onNodeMouseDown(e, id){
-  e.stopPropagation();
-  if(e.button!==0) return;
-  const n = mindNodes.find(x=>x.id===id);
-  if(!n) return;
-  mindDragging = n;
-  const rect = mindCanvas.getBoundingClientRect();
-  mindDragOffset = {
-    x: e.clientX - rect.left - (n.x+mindPan.x),
-    y: e.clientY - rect.top  - (n.y+mindPan.y)
-  };
+/* Mouse drag */
+function onNodeMD(e,id){
+  e.stopPropagation();if(e.button!==0)return;
+  const n=mindNodes.find(x=>x.id===id);if(!n)return;
+  mindDragging=n;
+  const r=mindCanvas.getBoundingClientRect();
+  mindDragOffset={x:e.clientX-r.left-(n.x+mindPan.x),y:e.clientY-r.top-(n.y+mindPan.y)};
 }
-
-/* Pan canvas */
-mindCanvas.addEventListener('mousedown', e=>{
-  if(e.button===0 && !mindDragging){
-    mindPanning=true;
-    mindPanStart={x:e.clientX,y:e.clientY};
-    mindPanOrigin={...mindPan};
+mindCanvas.addEventListener('mousedown',e=>{
+  if(e.button===0&&!mindDragging){
+    mindPanning=true;mindPanStart={x:e.clientX,y:e.clientY};mindPanOrigin={...mindPan};
     mindCanvas.classList.add('grabbing');
   }
 });
-window.addEventListener('mousemove', e=>{
+window.addEventListener('mousemove',e=>{
   if(mindDragging){
-    const rect = mindCanvas.getBoundingClientRect();
-    mindDragging.x = e.clientX - rect.left - mindPan.x - mindDragOffset.x;
-    mindDragging.y = e.clientY - rect.top  - mindPan.y - mindDragOffset.y;
+    const r=mindCanvas.getBoundingClientRect();
+    mindDragging.x=e.clientX-r.left-mindPan.x-mindDragOffset.x;
+    mindDragging.y=e.clientY-r.top-mindPan.y-mindDragOffset.y;
     mindRender();
   } else if(mindPanning){
-    mindPan.x = mindPanOrigin.x + (e.clientX-mindPanStart.x);
-    mindPan.y = mindPanOrigin.y + (e.clientY-mindPanStart.y);
+    mindPan.x=mindPanOrigin.x+(e.clientX-mindPanStart.x);
+    mindPan.y=mindPanOrigin.y+(e.clientY-mindPanStart.y);
     mindRender();
   }
 });
-window.addEventListener('mouseup', ()=>{
-  mindDragging=null;
-  mindPanning=false;
-  mindCanvas.classList.remove('grabbing');
-});
-mindCanvas.addEventListener('click', ()=>{ selectNode(null); closeNodeEdit(); });
+window.addEventListener('mouseup',()=>{mindDragging=null;mindPanning=false;mindCanvas.classList.remove('grabbing');});
+mindCanvas.addEventListener('click',()=>{selectNode(null);closeNodeEdit();});
 
-/* Touch support */
-let touchStartPos=null;
-mindCanvas.addEventListener('touchstart', e=>{
-  if(e.touches.length===1){
-    touchStartPos={x:e.touches[0].clientX,y:e.touches[0].clientY};
-    mindPanStart={...touchStartPos};
-    mindPanOrigin={...mindPan};
-    mindPanning=true;
-  }
-},{passive:true});
-mindCanvas.addEventListener('touchmove', e=>{
-  if(mindPanning && e.touches.length===1){
-    mindPan.x = mindPanOrigin.x + (e.touches[0].clientX-mindPanStart.x);
-    mindPan.y = mindPanOrigin.y + (e.touches[0].clientY-mindPanStart.y);
-    mindRender();
-  }
-},{passive:true});
-mindCanvas.addEventListener('touchend', ()=>{ mindPanning=false; });
-
-/* ══ SERIALIZATION ══ */
-function mindSerialize(){
-  return JSON.stringify({nodes:mindNodes, nextId:mindNextId, pan:mindPan});
+/* Touch — node drag + double tap */
+let _nts=null,_ntn=null,_ntm=false,_ttpId=null,_lastTapId=null;
+function onNodeTS(e,id){
+  e.stopPropagation();if(e.touches.length!==1)return;
+  const t=e.touches[0];
+  _nts={x:t.clientX,y:t.clientY};
+  _ntn=mindNodes.find(x=>x.id===id);_ntm=false;
+  /* double tap */
+  if(_lastTapId===id&&_ttpId){clearTimeout(_ttpId);_ttpId=null;_lastTapId=null;openNodeEdit(id);return;}
+  _lastTapId=id;_ttpId=setTimeout(()=>{_ttpId=null;_lastTapId=null;},350);
 }
+
+let _cts=null,_cpo=null,_cpm=false;
+mindCanvas.addEventListener('touchstart',e=>{
+  if(e.touches.length===1&&!_ntn){
+    const t=e.touches[0];_cts={x:t.clientX,y:t.clientY};_cpo={...mindPan};_cpm=false;mindPanning=true;
+  }
+},{passive:true});
+mindCanvas.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  if(e.touches.length!==1)return;
+  const t=e.touches[0];
+  if(_ntn&&_nts){
+    const dx=t.clientX-_nts.x,dy=t.clientY-_nts.y;
+    if(!_ntm&&Math.hypot(dx,dy)<5)return;
+    _ntm=true;
+    const r=mindCanvas.getBoundingClientRect();
+    _ntn.x=t.clientX-r.left-mindPan.x;
+    _ntn.y=t.clientY-r.top-mindPan.y;
+    mindRender();
+  } else if(mindPanning&&_cts){
+    _cpm=true;
+    mindPan.x=_cpo.x+(t.clientX-_cts.x);mindPan.y=_cpo.y+(t.clientY-_cts.y);mindRender();
+  }
+},{passive:false});
+mindCanvas.addEventListener('touchend',e=>{
+  if(_ntn&&!_ntm)selectNode(_ntn.id);
+  _ntn=null;_nts=null;_ntm=false;mindPanning=false;_cts=null;
+});
+
+/* Serialization */
+function mindSerialize(){return JSON.stringify({nodes:mindNodes,nextId:mindNextId,pan:mindPan});}
 function mindLoadFromSerial(serial){
   try{
-    const data = JSON.parse(serial);
-    mindNodes = data.nodes || [];
-    mindNextId = data.nextId || (Math.max(0,...mindNodes.map(n=>n.id))+1);
-    mindPan = data.pan || {x:0,y:0};
-    mindSelected = null;
-    /* center if pan not saved */
-    if(!data.pan) centerMind();
-    mindRender();
-  } catch(e){ mindInit(); }
+    const data=JSON.parse(serial);
+    mindNodes=data.nodes||[];
+    mindNextId=data.nextId||(Math.max(0,...mindNodes.map(n=>n.id))+1);
+    mindPan=data.pan||{x:0,y:0};
+    mindSelected=null;if(!data.pan)centerMind();mindRender();
+  }catch(e){mindInit();}
 }
 async function saveMindEntry(){
-  if(!mindNodes.length){ showToast('الخريطة فارغة','error'); return; }
-  const text = 'MIND::' + mindSerialize();
-  setStatus('loading','جاري الحفظ...');
-  $('mindSavebtn').textContent = '...';
+  if(!mindNodes.length){showToast('الخريطة فارغة','error');return;}
+  const text='MIND::'+mindSerialize();
+  setStatus('loading','جاري الحفظ...');$('mindSavebtn').textContent='...';
   try{
     let res;
-    if(activeEntryId){
-      res = await apiCall({action:'edit', id:activeEntryId, text});
-    } else {
-      res = await apiCall({action:'add', text, ts:Date.now()});
-    }
-    if(!res.ok) throw new Error(res.error);
-    showToast('🌿 تمّ حفظ الخريطة','success');
-    activeEntryId = null;
-    await loadEntries();
-    if(sidebarOpen) renderList();
-  } catch(e){
-    setStatus('err','فشل الحفظ');
-    showToast('خطأ: '+e.message,'error');
-  } finally {
-    $('mindSavebtn').textContent = '🌿 حفظ الخريطة';
-  }
+    if(activeEntryId)res=await apiCall({action:'edit',id:activeEntryId,text});
+    else res=await apiCall({action:'add',text,ts:Date.now()});
+    if(!res.ok)throw new Error(res.error||'خطأ');
+    showToast(activeEntryId?'🌿 تمّ تعديل الخريطة':'🌿 تمّ حفظ الخريطة','success');
+    activeEntryId=null;setStatus('ok','محفوظ ✓');
+    await loadEntries();if(sidebarOpen)renderList();
+  }catch(e){setStatus('err','فشل');showToast('خطأ: '+e.message,'error');}
+  finally{$('mindSavebtn').textContent='🌿 حفظ';}
 }
 
-/* ════════════════════════════════════════════
-   INIT
-════════════════════════════════════════════ */
-window.addEventListener('resize', ()=>{ if(currentMode==='mind') mindRender(); });
+window.addEventListener('resize',()=>{if(currentMode==='mind')mindRender();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeSidebar();closeNodeEdit();confirmNo();}
+});
 </script>
 </body>
 </html>
