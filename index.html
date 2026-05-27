@@ -582,6 +582,8 @@ editor.addEventListener('keydown', function(e){
     updateCounts();
   }
 });
+
+async function saveEditorEntry(){
   const html=editor.innerHTML.trim();
   if(!html||html==='<br>'){showToast('اكتب شيئاً أولاً','error');return;}
   $('saveEntryBtn').disabled=true;
