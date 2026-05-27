@@ -402,6 +402,14 @@ function setMode(mode){
   $('editorPane').classList.toggle('hidden', mode!=='editor');
   $('mindPane').classList.toggle('hidden', mode!=='mind');
   $('fmtBar').style.display = mode==='editor' ? 'flex' : 'none';
+  if(mode==='mind'){
+    requestAnimationFrame(()=>{
+      if(mindNodes.length===1 && mindNodes[0].x===0 && mindNodes[0].y===0){
+        centerMind();
+      }
+      mindRender();
+    });
+  }
 }
 
 /* ════════════════════════════════════════════
@@ -592,8 +600,7 @@ async function deleteEntry(id){
 ════════════════════════════════════════════ */
 
 /* Data model */
-let mindNodes = [];   // [{id,label,x,y,parentId,collapsed}]
-let mindEdges = [];   // computed from nodes
+let mindNodes = [];
 let mindNextId = 1;
 let mindSelected = null;
 let mindDragging = null;
@@ -609,14 +616,79 @@ const mindCanvas = $('mindCanvas');
 
 /* Colors per depth */
 const NODE_COLORS = ['#c9a84c','#6b9bc9','#6bc98a','#9b6bc9','#c96b6b','#c9846b','#6bc9c9'];
-const NODE_RADIUS = [36,28,24,20];
+/* Padding inside ellipse */
+const PAD_X = 18, PAD_Y = 10;
+/* Font sizes per depth */
+const FONT_SIZES = [14,12,11,10];
+/* Max text width before wrapping (px) */
+const MAX_TW = [160,130,110,90];
 
 function nodeColor(depth){ return NODE_COLORS[depth % NODE_COLORS.length]; }
-function nodeR(depth){ return NODE_RADIUS[Math.min(depth, NODE_RADIUS.length-1)]; }
+function nodeFontSize(depth){ return FONT_SIZES[Math.min(depth, FONT_SIZES.length-1)]; }
+function nodeMaxW(depth){ return MAX_TW[Math.min(depth, MAX_TW.length-1)]; }
+
 function nodeDepth(id){
   let d=0, n=mindNodes.find(x=>x.id===id);
   while(n && n.parentId!=null){ d++; n=mindNodes.find(x=>x.id===n.parentId); }
   return d;
+}
+
+/* Measure text into wrapped lines given max pixel width */
+function wrapText(label, fontSize, maxW){
+  /* Use a temporary SVG text to measure */
+  const tmp = document.createElementNS(SVG_NS,'text');
+  tmp.setAttribute('font-family','Cairo, sans-serif');
+  tmp.setAttribute('font-size', fontSize);
+  tmp.style.visibility='hidden';
+  mindSvg.appendChild(tmp);
+  const words = label.split('');  /* split by char for Arabic */
+  /* Actually split by spaces for better wrapping */
+  const wordArr = label.split(' ');
+  const lines = [];
+  let current = '';
+  for(const w of wordArr){
+    const test = current ? current+' '+w : w;
+    tmp.textContent = test;
+    if(tmp.getComputedTextLength() > maxW && current){
+      lines.push(current);
+      current = w;
+    } else {
+      current = test;
+    }
+  }
+  if(current) lines.push(current);
+  /* Measure max line width */
+  let maxLineW = 0;
+  for(const l of lines){
+    tmp.textContent = l;
+    maxLineW = Math.max(maxLineW, tmp.getComputedTextLength());
+  }
+  mindSvg.removeChild(tmp);
+  return {lines, maxLineW};
+}
+
+/* Compute ellipse radii for a node based on its label */
+function nodeRadii(n){
+  const depth = nodeDepth(n.id);
+  const fs = nodeFontSize(depth);
+  const maxW = nodeMaxW(depth);
+  const {lines, maxLineW} = wrapText(n.label, fs, maxW);
+  const lineH = fs * 1.5;
+  const textH = lines.length * lineH;
+  const rx = Math.max(40, maxLineW/2 + PAD_X);
+  const ry = Math.max(22, textH/2 + PAD_Y);
+  return {rx, ry, lines, lineH, fs};
+}
+
+/* Get point on ellipse border in direction (dx,dy) */
+function ellipseBorderPoint(cx, cy, rx, ry, dx, dy){
+  if(dx===0 && dy===0) return {x:cx, y:cy};
+  /* parametric: x=rx*cos(t), y=ry*sin(t), find t where direction matches */
+  const angle = Math.atan2(dy*rx, dx*ry);
+  return {
+    x: cx + rx * Math.cos(angle),
+    y: cy + ry * Math.sin(angle)
+  };
 }
 
 function mindInit(){
@@ -624,8 +696,8 @@ function mindInit(){
   mindNextId = 2;
   mindSelected = null;
   mindPan = {x:0,y:0};
-  centerMind();
-  mindRender();
+  /* defer centering until canvas has dimensions */
+  requestAnimationFrame(()=>{ centerMind(); mindRender(); });
 }
 
 function centerMind(){
@@ -636,37 +708,54 @@ function centerMind(){
 function mindRender(){
   mindSvg.innerHTML = '';
 
-  /* filter: drop shadow for selected */
   const defs = document.createElementNS(SVG_NS,'defs');
-  defs.innerHTML = `<filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-    <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
-    <feFlood flood-color="var(--accent)" flood-opacity="0.5" result="color"/>
+  defs.innerHTML = `<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
+    <feFlood flood-color="#c9a84c" flood-opacity="0.45" result="color"/>
     <feComposite in="color" in2="blur" operator="in" result="shadow"/>
     <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>`;
   mindSvg.appendChild(defs);
 
   const g = document.createElementNS(SVG_NS,'g');
-  g.setAttribute('id','mindG');
   mindSvg.appendChild(g);
 
   const visibleNodes = getVisibleNodes();
   const visibleIds = new Set(visibleNodes.map(n=>n.id));
 
-  /* edges */
+  /* Pre-compute radii for all visible nodes */
+  const radiiMap = {};
+  visibleNodes.forEach(n=>{ radiiMap[n.id] = nodeRadii(n); });
+
+  /* edges — drawn FIRST so nodes appear on top */
   const eGroup = document.createElementNS(SVG_NS,'g');
-  eGroup.setAttribute('id','mindEdges');
-  mindNodes.forEach(n=>{
-    if(n.parentId==null || !visibleIds.has(n.id) || !visibleIds.has(n.parentId)) return;
+  visibleNodes.forEach(n=>{
+    if(n.parentId==null || !visibleIds.has(n.parentId)) return;
     const parent = mindNodes.find(x=>x.id===n.parentId);
     if(!parent) return;
+
+    const depth = nodeDepth(n.id);
+    const col = nodeColor(depth-1);
+
+    const pcx = parent.x+mindPan.x, pcy = parent.y+mindPan.y;
+    const ncx = n.x+mindPan.x,      ncy = n.y+mindPan.y;
+
+    /* Direction vectors */
+    const dx = ncx - pcx, dy = ncy - pcy;
+
+    /* Border points */
+    const pr = radiiMap[parent.id] || {rx:40,ry:22};
+    const nr = radiiMap[n.id]      || {rx:40,ry:22};
+
+    const startPt = ellipseBorderPoint(pcx, pcy, pr.rx, pr.ry, dx, dy);
+    const endPt   = ellipseBorderPoint(ncx, ncy, nr.rx, nr.ry, -dx, -dy);
+
+    /* Bezier control points */
+    const mx = (startPt.x + endPt.x) / 2;
     const path = document.createElementNS(SVG_NS,'path');
-    const px=parent.x+mindPan.x, py=parent.y+mindPan.y;
-    const cx=n.x+mindPan.x, cy=n.y+mindPan.y;
-    const mx=(px+cx)/2;
-    path.setAttribute('d',`M${px},${py} C${mx},${py} ${mx},${cy} ${cx},${cy}`);
-    path.setAttribute('stroke', nodeColor(nodeDepth(n.id)-1));
-    path.setAttribute('stroke-opacity','0.5');
+    path.setAttribute('d',`M${startPt.x},${startPt.y} C${mx},${startPt.y} ${mx},${endPt.y} ${endPt.x},${endPt.y}`);
+    path.setAttribute('stroke', col);
+    path.setAttribute('stroke-opacity','0.45');
     path.setAttribute('stroke-width','1.5');
     path.setAttribute('fill','none');
     eGroup.appendChild(path);
@@ -676,59 +765,65 @@ function mindRender(){
   /* nodes */
   visibleNodes.forEach(n=>{
     const depth = nodeDepth(n.id);
-    const r = nodeR(depth);
     const col = nodeColor(depth);
     const nx = n.x+mindPan.x, ny = n.y+mindPan.y;
     const isSel = n.id===mindSelected;
     const hasChildren = mindNodes.some(c=>c.parentId===n.id);
+    const {rx, ry, lines, lineH, fs} = radiiMap[n.id];
 
     const nGroup = document.createElementNS(SVG_NS,'g');
     nGroup.setAttribute('class','mind-node');
     nGroup.style.cursor = 'pointer';
     nGroup.dataset.nid = n.id;
 
-    /* circle */
-    const circle = document.createElementNS(SVG_NS,'circle');
-    circle.setAttribute('cx', nx);
-    circle.setAttribute('cy', ny);
-    circle.setAttribute('r', r);
-    circle.setAttribute('fill', col+'22');
-    circle.setAttribute('stroke', col);
-    circle.setAttribute('stroke-width', isSel?'2.5':'1.5');
-    if(isSel) circle.setAttribute('filter','url(#glow)');
-    nGroup.appendChild(circle);
+    /* ellipse */
+    const ellipse = document.createElementNS(SVG_NS,'ellipse');
+    ellipse.setAttribute('cx', nx);
+    ellipse.setAttribute('cy', ny);
+    ellipse.setAttribute('rx', rx);
+    ellipse.setAttribute('ry', ry);
+    ellipse.setAttribute('fill', col+'1a');
+    ellipse.setAttribute('stroke', col);
+    ellipse.setAttribute('stroke-width', isSel?'2.5':'1.5');
+    if(isSel) ellipse.setAttribute('filter','url(#glow)');
+    nGroup.appendChild(ellipse);
 
-    /* label */
-    const text = document.createElementNS(SVG_NS,'text');
-    text.setAttribute('x', nx);
-    text.setAttribute('y', ny+4);
-    text.setAttribute('text-anchor','middle');
-    text.setAttribute('fill', col);
-    text.setAttribute('font-family','Cairo, sans-serif');
-    text.setAttribute('font-size', depth===0?'13':'11');
-    text.setAttribute('font-weight', depth===0?'700':'500');
-    text.textContent = truncLabel(n.label, r);
-    nGroup.appendChild(text);
+    /* wrapped text lines */
+    const totalH = lines.length * lineH;
+    const startY = ny - totalH/2 + lineH * 0.75;
+    lines.forEach((line, i)=>{
+      const tspan = document.createElementNS(SVG_NS,'text');
+      tspan.setAttribute('x', nx);
+      tspan.setAttribute('y', startY + i*lineH);
+      tspan.setAttribute('text-anchor','middle');
+      tspan.setAttribute('fill', col);
+      tspan.setAttribute('font-family','Cairo, sans-serif');
+      tspan.setAttribute('font-size', fs);
+      tspan.setAttribute('font-weight', depth===0?'700':'500');
+      tspan.textContent = line;
+      nGroup.appendChild(tspan);
+    });
 
-    /* collapse indicator */
+    /* collapse indicator dot */
     if(hasChildren){
-      const indicator = document.createElementNS(SVG_NS,'circle');
-      indicator.setAttribute('cx', nx + r - 4);
-      indicator.setAttribute('cy', ny - r + 4);
-      indicator.setAttribute('r','5');
-      indicator.setAttribute('fill', n.collapsed ? col : col+'44');
-      indicator.setAttribute('stroke', col);
-      indicator.setAttribute('stroke-width','1');
-      nGroup.appendChild(indicator);
-      const iText = document.createElementNS(SVG_NS,'text');
-      iText.setAttribute('x', nx + r - 4);
-      iText.setAttribute('y', ny - r + 8);
-      iText.setAttribute('text-anchor','middle');
-      iText.setAttribute('fill', n.collapsed?'#0d0d0f':col);
-      iText.setAttribute('font-size','7');
-      iText.setAttribute('font-weight','700');
-      iText.textContent = n.collapsed ? '+' : '−';
-      nGroup.appendChild(iText);
+      const indG = document.createElementNS(SVG_NS,'g');
+      const ix = nx + rx - 2, iy = ny - ry + 2;
+      const circ = document.createElementNS(SVG_NS,'circle');
+      circ.setAttribute('cx', ix); circ.setAttribute('cy', iy);
+      circ.setAttribute('r','7');
+      circ.setAttribute('fill', n.collapsed ? col : col+'55');
+      circ.setAttribute('stroke', col); circ.setAttribute('stroke-width','1');
+      const itxt = document.createElementNS(SVG_NS,'text');
+      itxt.setAttribute('x', ix); itxt.setAttribute('y', iy+4);
+      itxt.setAttribute('text-anchor','middle');
+      itxt.setAttribute('fill', n.collapsed?'#0d0d0f':col);
+      itxt.setAttribute('font-size','9'); itxt.setAttribute('font-weight','700');
+      itxt.textContent = n.collapsed ? '+' : '−';
+      indG.appendChild(circ); indG.appendChild(itxt);
+      /* Click on indicator toggles collapse */
+      indG.style.cursor='pointer';
+      indG.addEventListener('click', e=>{ e.stopPropagation(); n.collapsed=!n.collapsed; mindRender(); });
+      nGroup.appendChild(indG);
     }
 
     /* events */
@@ -737,11 +832,6 @@ function mindRender(){
     nGroup.addEventListener('dblclick', e => { e.stopPropagation(); openNodeEdit(n.id); });
     g.appendChild(nGroup);
   });
-}
-
-function truncLabel(label, r){
-  const maxChars = Math.max(3, Math.floor(r/5));
-  return label.length > maxChars ? label.slice(0,maxChars)+'…' : label;
 }
 
 function getVisibleNodes(){
@@ -785,9 +875,9 @@ function mindAddChild(){
   const depth = nodeDepth(pid);
   const siblings = mindNodes.filter(n=>n.parentId===pid);
   const angle = depth===0
-    ? (siblings.length * Math.PI*0.4) - Math.PI*0.6
-    : getAngleFromParent(parent) + (siblings.length-0) * 0.5;
-  const dist = 120 - depth*10;
+    ? (siblings.length * Math.PI*0.45) - Math.PI*0.7
+    : getAngleFromParent(parent) + (siblings.length * 0.55);
+  const dist = 200 - depth*15;
   const newNode = {
     id: mindNextId++,
     label: 'فكرة جديدة',
@@ -863,13 +953,16 @@ function openNodeEdit(id){
   const box = $('nodeEditBox');
   const inp = $('nodeEditInput');
   inp.value = n.label;
-  /* position near node */
   const rect = mindCanvas.getBoundingClientRect();
-  const nx = n.x + mindPan.x + rect.left;
-  const ny = n.y + mindPan.y + rect.top;
+  /* compute ellipse ry to position below node */
+  const {ry} = nodeRadii(n);
+  const nx = n.x + mindPan.x;
+  const ny = n.y + mindPan.y + ry + 10;
+  const left = Math.min(Math.max(nx - rect.left - 90, 8), rect.width - 210);
+  const top  = Math.min(Math.max(ny - rect.top, 8), rect.height - 100);
   box.style.display = 'flex';
-  box.style.left = Math.min(nx - rect.left + 20, rect.width - 220) + 'px';
-  box.style.top  = Math.max(ny - rect.top  - 80, 10) + 'px';
+  box.style.left = left + 'px';
+  box.style.top  = top + 'px';
   setTimeout(()=>inp.select(),50);
 }
 function closeNodeEdit(){
