@@ -357,7 +357,7 @@ async function loadEntries(){
   try{
     const res=await apiCall({action:'get'});
     if(!res.ok)throw new Error(res.error||'خطأ');
-    allEntries=(res.data||[]).sort((a,b)=>Number(b.ts)-Number(a.ts));
+    allEntries=(res.data||[]).map(e=>({...e,id:String(e.id)})).sort((a,b)=>Number(b.ts)-Number(a.ts));
     setStatus('ok','متصل ✓');
     if(sidebarOpen)renderList();
   }catch(e){
@@ -393,9 +393,9 @@ function renderList(){
 
 /* ═══ OPEN ENTRY — الإصلاح الرئيسي ═══ */
 function openEntry(id){
-  const e=allEntries.find(x=>x.id===id);
+  const e=allEntries.find(x=>String(x.id)===String(id));
   if(!e){showToast('لم يُعثر على السجل','error');return;}
-  activeEntryId=id;
+  activeEntryId=String(id);
 
   if(e.text.startsWith('MIND::')){
     setMode('mind');
@@ -523,7 +523,7 @@ async function deleteEntry(id){
     const res=await apiCall({action:'delete',id});
     if(!res.ok)throw new Error(res.error||'خطأ');
     showToast('تمّ الحذف');
-    if(activeEntryId===id){
+    if(activeEntryId===String(id)){
       activeEntryId=null;
       $('editingBadge').classList.remove('visible');
       if(currentMode==='editor')editor.innerHTML='';
