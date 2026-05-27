@@ -149,7 +149,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 <div id="lockScreen">
   <div class="lock-box">
     <span class="lock-icon">🔒</span>
-    <div class="lock-title">أنا الخاص</div>
+    <div class="lock-title">أنا</div>
     <div class="lock-sub">أدخل كلمة المرور للدخول</div>
     <input type="password" id="passInput" maxlength="10" placeholder="••••" autocomplete="off">
     <div id="lockError"></div>
@@ -305,8 +305,8 @@ const showToast=(msg,type='')=>{
 const apiCall=p=>fetch(API+'?'+new URLSearchParams(p).toString()).then(r=>r.json());
 
 /* ── تنسيق التاريخ والوقت بشكل واضح وبولد ── */
-const fmtTime=ts=>new Date(Number(ts)).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
-const fmtDate=ts=>new Date(Number(ts)).toLocaleDateString('ar-EG',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+const fmtTime=ts=>new Date(Number(ts)).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+const fmtDate=ts=>{const d=new Date(Number(ts));const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];return days[d.getDay()]+' '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();};
 const isToday=ts=>new Date(Number(ts)).toDateString()===new Date().toDateString();
 const isWeek=ts=>(Date.now()-Number(ts))/(864e5)<=7;
 const escHtml=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -432,6 +432,9 @@ function openEntry(id){
 
 function cancelEdit(){
   activeEntryId=null;
+  activeColor='';
+  document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
+  $('cdDefault').classList.add('active');
   $('editor').innerHTML='';
   $('editingBadge').classList.remove('visible');
   updateCounts();
@@ -440,6 +443,9 @@ function cancelEdit(){
 
 function newEntry(){
   activeEntryId=null;
+  activeColor='';
+  document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
+  $('cdDefault').classList.add('active');
   $('editingBadge').classList.remove('visible');
   if(currentMode==='editor'){
     $('editor').innerHTML='';
@@ -475,37 +481,107 @@ function execFmt(cmd){
   updateFmtBtns();
 }
 
-/* ── إصلاح اللون: يحافظ على موضع المؤشر ── */
+/* ── نظام الألوان: يطبق على النص المحدد ويستمر للكتابة الجديدة ── */
+let activeColor = ''; // اللون الحالي المختار
+
 function setColor(color){
   document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
-
-  // احفظ موضع المؤشر الحالي
-  const sel=window.getSelection();
-  let savedRange=null;
-  if(sel&&sel.rangeCount>0){
-    savedRange=sel.getRangeAt(0).cloneRange();
-  }
-
-  editor.focus();
-
-  // استعد المؤشر إذا كان محفوظاً
-  if(savedRange){
-    sel.removeAllRanges();
-    sel.addRange(savedRange);
-  }
+  activeColor = color;
 
   if(!color){
     $('cdDefault').classList.add('active');
-    document.execCommand('removeFormat',false,null);
-    document.execCommand('foreColor',false,'#e8e6f0');
   } else {
     const id={'#c9a84c':'cdGold','#6b9bc9':'cdBlue','#6bc98a':'cdGreen','#c96b6b':'cdRed','#9b6bc9':'cdPurple'}[color];
     if(id)$(id).classList.add('active');
-    document.execCommand('foreColor',false,color);
+  }
+
+  // تطبيق اللون على النص المحدد إن وُجد
+  const sel = window.getSelection();
+  if(sel && sel.rangeCount > 0 && !sel.isCollapsed){
+    applyColorToSelection(color);
+  }
+  // إعادة التركيز للمحرر
+  editor.focus();
+}
+
+function applyColorToSelection(color){
+  const sel = window.getSelection();
+  if(!sel || sel.rangeCount === 0) return;
+  const range = sel.getRangeAt(0);
+  if(range.collapsed) return;
+
+  if(!color){
+    // إزالة لون — نستخدم removeFormat
+    document.execCommand('removeFormat', false, null);
+    return;
+  }
+
+  // نلف النص المحدد بـ span ملوّن
+  try {
+    const span = document.createElement('span');
+    span.style.color = color;
+    range.surroundContents(span);
+    sel.removeAllRanges();
+    const newRange = document.createRange();
+    newRange.setStartAfter(span);
+    newRange.collapse(true);
+    sel.addRange(newRange);
+  } catch(e){
+    // surroundContents تفشل إن كان التحديد يعبر عدة عناصر — نستخدم execCommand كبديل
+    document.execCommand('foreColor', false, color);
   }
 }
 
-async function saveEditorEntry(){
+// عند الكتابة: إن كان هناك لون نشط، نطبقه على الحرف الجديد عبر span
+editor.addEventListener('keypress', function(e){
+  if(!activeColor) return;
+  if(e.ctrlKey || e.metaKey || e.altKey) return;
+  const char = e.key;
+  if(char.length !== 1) return;
+  e.preventDefault();
+
+  const sel = window.getSelection();
+  if(!sel || sel.rangeCount === 0) return;
+
+  // احذف التحديد إن وُجد
+  const range = sel.getRangeAt(0);
+  if(!range.collapsed) range.deleteContents();
+
+  // أدخل الحرف داخل span ملوّن
+  const span = document.createElement('span');
+  span.style.color = activeColor;
+  span.textContent = char;
+  range.insertNode(span);
+
+  // ضع المؤشر بعد الـ span
+  const newRange = document.createRange();
+  newRange.setStartAfter(span);
+  newRange.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(newRange);
+
+  updateCounts();
+});
+
+// عند الضغط Enter نحافظ على اللون في السطر الجديد
+editor.addEventListener('keydown', function(e){
+  if(e.key === 'Enter' && activeColor){
+    e.preventDefault();
+    const sel = window.getSelection();
+    if(!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+    if(!range.collapsed) range.deleteContents();
+    const br = document.createElement('br');
+    range.insertNode(br);
+    // ضع مؤشر بعد br
+    const newRange = document.createRange();
+    newRange.setStartAfter(br);
+    newRange.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+    updateCounts();
+  }
+});
   const html=editor.innerHTML.trim();
   if(!html||html==='<br>'){showToast('اكتب شيئاً أولاً','error');return;}
   $('saveEntryBtn').disabled=true;
