@@ -200,8 +200,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
         <button class="fmt-btn" id="fmtUnder" onmousedown="event.preventDefault();" onclick="execFmt('underline')"><u>ع</u></button>
         <div class="fmt-sep"></div>
         
+        <button class="fmt-btn" onmousedown="event.preventDefault();" onclick="execFontSize('up')" title="تكبير الخط" style="font-size:14px;">A+</button>
+        <button class="fmt-btn" onmousedown="event.preventDefault();" onclick="execFontSize('down')" title="تصغير الخط" style="font-size:11px;">A-</button>
+        <div class="fmt-sep"></div>
+
         <div class="color-picker-container">
-          <button class="fmt-btn" id="colorToggleBtn" title="تغيير لون الخط">
+          <button class="fmt-btn" id="colorToggleBtn" title="تغيير لون الخط" onmousedown="event.preventDefault();" onclick="toggleColorDropdown(event)">
             <svg viewBox="0 0 24 24"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.03444 19.1759 5.09911 19.431 5.02164 19.6706L4.70014 20.6625C4.54284 21.1479 4.90113 21.6358 5.40556 21.5637L6.75704 21.3706C7.00998 21.3345 7.26189 21.4326 7.42436 21.6247C8.75612 22.5065 10.3201 22 12 22Z"/><circle cx="7.5" cy="10.5" r="1" fill="currentColor"/><circle cx="11.5" cy="7.5" r="1" fill="currentColor"/><circle cx="16.5" cy="9.5" r="1" fill="currentColor"/></svg>
           </button>
           <div id="colorDropdown">
@@ -542,12 +546,12 @@ function execFmt(cmd){
   saveEditorSelection();
 }
 
-/* إصلاح قائمة الألوان ومنع الارتداد */
-$('colorToggleBtn').addEventListener('click', e => {
-  e.stopPropagation(); // منع انتقال الحدث للمستند وإغلاق القائمة فوراً
+/* التحكم بظهور وإغلاق قائمة الألوان */
+function toggleColorDropdown(e) {
+  e.stopPropagation();
   const d = $('colorDropdown');
   d.style.display = (d.style.display === 'flex') ? 'none' : 'flex';
-});
+}
 
 document.addEventListener('click', e => {
   if (!e.target.closest('.color-picker-container')) {
@@ -576,6 +580,66 @@ function setColor(color){
   
   $('colorDropdown').style.display = 'none';
   saveEditorSelection();
+}
+
+/* التحكم بحجم الخط المخصص (تكبير / تصغير عند المؤشر أو النص المحدد) */
+function execFontSize(action) {
+  editor.focus();
+  if(lastEditorRange){
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(lastEditorRange);
+  }
+  const sel = window.getSelection();
+  if(!sel.rangeCount) return;
+  
+  let range = sel.getRangeAt(0);
+  let parent = range.commonAncestorContainer;
+  if(parent.nodeType === 3) parent = parent.parentNode;
+  
+  // قراءة الحجم الحالي للخط من العنصر الأب
+  let currentSize = window.getComputedStyle(parent).fontSize;
+  let sizeNum = parseFloat(currentSize) || 17;
+  
+  // حساب الحجم الجديد بمقدار درجتين
+  if(action === 'up') {
+    sizeNum += 2;
+  } else {
+    sizeNum = Math.max(10, sizeNum - 2);
+  }
+  
+  if(!sel.isCollapsed) {
+    // حالة وجود نص محدد: يتم لفه داخل كود span بالحجم الجديد
+    const contents = range.extractContents();
+    const span = document.createElement('span');
+    span.style.fontSize = sizeNum + 'px';
+    span.appendChild(contents);
+    range.insertNode(span);
+    
+    // إعادة التحديد للمحافظة على حالة النص
+    const newRange = document.createRange();
+    newRange.selectNodeContents(span);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+  } else {
+    // حالة وقوف المؤشر فقط: تعديل حجم الخط للكلمات التالية
+    if(parent !== editor && editor.contains(parent) && parent.tagName === 'SPAN') {
+      parent.style.fontSize = sizeNum + 'px';
+    } else {
+      const span = document.createElement('span');
+      span.style.fontSize = sizeNum + 'px';
+      span.innerHTML = '&#8203;'; // مسافة صفرية لتثبيت المؤشر بداخلها
+      range.insertNode(span);
+      
+      const newRange = document.createRange();
+      newRange.setStart(span.firstChild, 1);
+      newRange.setEnd(span.firstChild, 1);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+    }
+  }
+  saveEditorSelection();
+  updateCounts();
 }
 
 async function saveEditorEntry(){
