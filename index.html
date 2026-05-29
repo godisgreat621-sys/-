@@ -64,18 +64,23 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 .fmt-btn.active{background:var(--accent-glow);border-color:var(--accent-dim);color:var(--accent);}
 .fmt-sep{width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0;}
 
+.title-container{padding:16px 48px 0;background:var(--bg);flex-shrink:0;}
+#entryTitle{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);padding:8px 0;color:var(--accent);font-family:var(--sans);font-size:1.25rem;font-weight:700;outline:none;transition:border-color .2s;}
+#entryTitle:focus{border-color:var(--accent-dim);}
+#entryTitle::placeholder{color:var(--text-faint);font-weight:500;}
+@media(max-width:600px){.title-container{padding:14px 18px 0;}}
+
 .color-picker-container{position:relative;display:inline-block;}
-/* تم تحويله إلى fixed لمنع مشكلة القص بسبب سكرول شريط التنسيق */
 #colorDropdown{display:none;position:fixed;background:var(--surface3);border:1px solid var(--border-glow);border-radius:8px;padding:8px;gap:8px;z-index:350;box-shadow:0 8px 24px rgba(0,0,0,.6);align-items:center;}
 .color-dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.2);cursor:pointer;transition:transform .15s;flex-shrink:0;}
 .color-dot:hover,.color-dot:active{transform:scale(1.25);}
 .color-dot.active{border-color:white;transform:scale(1.1);}
 
-#editor{flex:1;overflow-y:auto;padding:36px 48px;outline:none;font-size:1.05rem;line-height:1.9;caret-color:var(--accent);color:var(--text);-webkit-overflow-scrolling:touch;}
+#editor{flex:1;overflow-y:auto;padding:20px 48px 36px;outline:none;font-size:1.05rem;line-height:1.9;caret-color:var(--accent);color:var(--text);-webkit-overflow-scrolling:touch;}
 #editor:empty::before{content:attr(data-placeholder);color:var(--text-faint);pointer-events:none;}
 #editor b,#editor strong{font-weight:700;}
 #editor u{text-decoration:underline;}
-@media(max-width:600px){#editor{padding:20px 18px;font-size:1rem;}}
+@media(max-width:600px){#editor{padding:12px 18px 20px;font-size:1rem;}}
 
 #editorFooter{height:44px;flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:8px;}
 #editingBadge{display:none;align-items:center;gap:6px;font-size:10px;color:var(--accent);font-family:var(--mono);background:var(--accent-glow);border:1px solid var(--accent-dim);border-radius:4px;padding:3px 8px;flex-shrink:0;}
@@ -111,7 +116,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 #searchInput::placeholder{color:var(--text-faint);}
 #filterRow{display:flex;gap:4px;padding:0 16px 8px;flex-wrap:wrap;flex-shrink:0;}
 #hashtagRow{display:none;gap:4px;padding:0 16px 10px;flex-wrap:wrap;flex-shrink:0;max-height:65px;overflow-y:auto;border-bottom:1px solid var(--border);}
-.flt-btn{font-size:11px;font-weight:600;padding:5px 10px;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--text-faint);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;}
+.flt-btn{font-size:11px;font-weight:600;padding:5px 10px;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--text-muted);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;}
 .flt-btn:active{transform:scale(.94);}
 .flt-btn.active{border-color:var(--accent-dim);color:var(--accent);background:var(--accent-glow);}
 
@@ -218,9 +223,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
             <div class="color-dot" id="cdPurple" style="background:#9b6bc9" onmousedown="event.preventDefault();" onclick="setColor('#9b6bc9')"></div>
           </div>
         </div>
+
+        <button class="fmt-btn" onmousedown="event.preventDefault();" onclick="insertHashtag()" title="إضافة هاشتاق">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
         
         <span style="font-size:10px;color:var(--text-faint);font-family:var(--mono);margin-right:auto;flex-shrink:0" id="wordCount">0 كلمة</span>
       </div>
+
+      <div class="title-container">
+        <input type="text" id="entryTitle" placeholder="عنوان السجل (اختياري)..." autocomplete="off">
+      </div>
+
       <div id="editor" contenteditable="true" data-placeholder="ابدأ الكتابة هنا..."></div>
 
       <div id="editorFooter">
@@ -260,7 +274,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
           <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <input type="text" id="searchInput" placeholder="ابحث في السجلات..." oninput="renderList()">
+      <input type="text" id="searchInput" placeholder="ابحث في السجلات والهاشتاقات..." oninput="renderList()">
       <div id="filterRow">
         <button class="flt-btn active" id="fAll" onclick="setFilter('all')">الكل</button>
         <button class="flt-btn" id="fToday" onclick="setFilter('today')">اليوم</button>
@@ -403,9 +417,12 @@ async function loadEntries(){
 function renderList(){
   const q=$('searchInput').value.trim().toLowerCase();
   let foundTags = new Set();
+  
   allEntries.forEach(e => {
     if(!e.text.startsWith('MIND::')){
-      const tags = e.text.match(/#[^\s<>\#!.,;:\"']+/g);
+      // إزالة تعليق العنوان قبل استخراج الهاشتاقات لمنع التداخل
+      const cleanText = e.text.replace(/^/, '');
+      const tags = cleanText.match(/#[^\s<>\#!.,;:\"']+/g);
       if(tags) tags.forEach(t => foundTags.add(t));
     }
   });
@@ -436,6 +453,16 @@ function renderList(){
   $('entryList').innerHTML=list.map(e=>{
     const isMind=e.text.startsWith('MIND::');
     let preview;
+    let entryTitle='';
+    let textBody=e.text;
+
+    // استخراج العنوان إذا كان متوفراً
+    const titleMatch = textBody.match(/^/);
+    if(titleMatch) {
+      entryTitle = titleMatch[1];
+      textBody = textBody.replace(/^/, '');
+    }
+
     if(isMind){
       try{
         const data=JSON.parse(e.text.slice(6));
@@ -443,12 +470,14 @@ function renderList(){
         preview='🌿 '+(rootNode?rootNode.label:'خريطة ذهنية');
       }catch(err){preview='🌿 خريطة ذهنية';}
     } else {
-      preview=escHtml(e.text.replace(/<[^>]*>/g,'').slice(0,80));
+      preview=escHtml(textBody.replace(/<[^>]*>/g,'').slice(0,80));
     }
+    
     const active=activeEntryId===e.id?' active':'';
     return `<div class="entry-item${active}" onclick="openEntry('${e.id}')">
       <div class="ei-relative-date">${getRelativeDateStr(e.ts)}</div>
       <span class="ei-badge ${isMind?'mind':'text'}">${isMind?'🌿 خريطة':'✦ نص'}</span>
+      ${entryTitle ? `<div style="font-size:13px; font-weight:700; color:var(--text); margin-top:4px; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">📌 ${escHtml(entryTitle)}</div>` : ''}
       <div class="ei-preview">${preview}</div>
       <div class="ei-time">📅 ${fmtDate(e.ts)} · ⏰ ${fmtTime(e.ts)}</div>
       <button class="ei-del" onclick="event.stopPropagation();deleteEntry('${e.id}')">×</button>
@@ -467,8 +496,18 @@ function openEntry(id){
     mindLoadFromSerial(e.text.slice(6));
   } else {
     setMode('editor');
+    
+    let textBody=e.text;
+    let entryTitle='';
+    const titleMatch = textBody.match(/^/);
+    if(titleMatch) {
+      entryTitle = titleMatch[1];
+      textBody = textBody.replace(/^/, '');
+    }
+    
+    $('entryTitle').value=entryTitle;
     const editorEl=$('editor');
-    editorEl.innerHTML=e.text;
+    editorEl.innerHTML=textBody;
     updateCounts();
     $('editingBadge').classList.add('visible');
     setTimeout(()=>{
@@ -484,6 +523,7 @@ function cancelEdit(){
   activeEntryId=null;
   document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
   $('cdDefault').classList.add('active');
+  $('entryTitle').value='';
   $('editor').innerHTML='';
   $('editingBadge').classList.remove('visible');
   updateCounts();
@@ -495,6 +535,7 @@ function newEntry(){
   document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
   $('cdDefault').classList.add('active');
   $('editingBadge').classList.remove('visible');
+  $('entryTitle').value='';
   if(currentMode==='editor'){
     $('editor').innerHTML='';
     updateCounts();
@@ -547,7 +588,18 @@ function execFmt(cmd){
   saveEditorSelection();
 }
 
-/* التحكم بظهور وإغلاق قائمة الألوان وحساب موضعها بدقة منعاً للاختفاء */
+/* زر إدراج الهاشتاق المباشر عند المؤشر */
+function insertHashtag(){
+  editor.focus();
+  if(lastEditorRange){
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(lastEditorRange);
+  }
+  document.execCommand('insertText', false, '#');
+  saveEditorSelection();
+}
+
 function toggleColorDropdown(e) {
   e.stopPropagation();
   const d = $('colorDropdown');
@@ -557,11 +609,7 @@ function toggleColorDropdown(e) {
     d.style.display = 'flex';
     const btn = $('colorToggleBtn');
     const rect = btn.getBoundingClientRect();
-    
-    // وضع القائمة أسفل الأيقونة بـ 6 بكسل
     d.style.top = (rect.bottom + 6) + 'px';
-    
-    // محاذاة القائمة لليمين تماشياً مع اتجاه الـ RTL
     const rightSpace = window.innerWidth - rect.right;
     d.style.right = rightSpace + 'px';
     d.style.left = 'auto';
@@ -577,13 +625,11 @@ document.addEventListener('click', e => {
 function setColor(color){
   document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
   editor.focus();
-  
   if(lastEditorRange){
     const sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(lastEditorRange);
   }
-
   if(!color){
     $('cdDefault').classList.add('active');
     document.execCommand('foreColor', false, 'var(--text)');
@@ -592,12 +638,11 @@ function setColor(color){
     if(id)$(id).classList.add('active');
     document.execCommand('foreColor', false, color);
   }
-  
   $('colorDropdown').style.display = 'none';
   saveEditorSelection();
 }
 
-/* التحكم بحجم الخط المخصص (تكبير / تصغير عند المؤشر أو النص المحدد) */
+/* تغيير الحجم الذكي دون التلاعب بالنصوص السابقة */
 function execFontSize(action) {
   editor.focus();
   if(lastEditorRange){
@@ -622,6 +667,7 @@ function execFontSize(action) {
   }
   
   if(!sel.isCollapsed) {
+    // تفعيل التكبير/التصغير على النص المحدد فقط وحصره بـ Span
     const contents = range.extractContents();
     const span = document.createElement('span');
     span.style.fontSize = sizeNum + 'px';
@@ -633,28 +679,33 @@ function execFontSize(action) {
     sel.removeAllRanges();
     sel.addRange(newRange);
   } else {
-    if(parent !== editor && editor.contains(parent) && parent.tagName === 'SPAN') {
-      parent.style.fontSize = sizeNum + 'px';
-    } else {
-      const span = document.createElement('span');
-      span.style.fontSize = sizeNum + 'px';
-      span.innerHTML = '&#8203;'; 
-      range.insertNode(span);
-      
-      const newRange = document.createRange();
-      newRange.setStart(span.firstChild, 1);
-      newRange.setEnd(span.firstChild, 1);
-      sel.removeAllRanges();
-      sel.addRange(newRange);
-    }
+    // إصلاح جذري: إنشاء عنصر مستقل للمستقبل عند تعديل الحجم والمؤشر فارغ من التحديد
+    const span = document.createElement('span');
+    span.style.fontSize = sizeNum + 'px';
+    span.innerHTML = '&#8203;'; // رمز مسافة صفرية لتثبيت المؤشر داخلياً
+    range.insertNode(span);
+    
+    const newRange = document.createRange();
+    newRange.setStart(span.firstChild, 1);
+    newRange.setEnd(span.firstChild, 1);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
   }
   saveEditorSelection();
   updateCounts();
 }
 
 async function saveEditorEntry(){
-  const html=editor.innerHTML.trim();
-  if(!html||html==='<br>'){showToast('اكتب شيئاً أولاً','error');return;}
+  let html=editor.innerHTML.trim();
+  const title=$('entryTitle').value.trim();
+  
+  if((!html||html==='<br>') && !title){showToast('اكتب عنواناً أو نصاً أولاً','error');return;}
+  
+  // تضمين العنوان داخل السجل بهيئة وسم تعليق HTML ذكي لا يظهر للمستخدم في المحرر ولكنه يُحفظ بامتياز
+  if(title) {
+    html = `` + html;
+  }
+
   $('saveEntryBtn').disabled=true;
   $('saveEntryBtn').textContent='...';
   setStatus('loading','جاري الحفظ...');
@@ -669,6 +720,7 @@ async function saveEditorEntry(){
     showToast(activeEntryId?'✦ تمّ التعديل':'✦ تمّ الحفظ','success');
     activeEntryId=null;
     $('editingBadge').classList.remove('visible');
+    $('entryTitle').value='';
     editor.innerHTML='';
     updateCounts();
     setStatus('ok','محفوظ ✓');
@@ -694,6 +746,7 @@ async function deleteEntry(id){
     if(activeEntryId===String(id)){
       activeEntryId=null;
       $('editingBadge').classList.remove('visible');
+      $('entryTitle').value='';
       editor.innerHTML='';
       updateCounts();
     }
