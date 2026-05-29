@@ -42,7 +42,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 .icon-btn:hover{border-color:var(--border-glow);color:var(--text);background:var(--surface2);}
 .icon-btn:active{transform:scale(.92);}
 .icon-btn.active{border-color:var(--accent-dim);color:var(--accent);background:var(--accent-glow);}
-.icon-btn svg, .fmt-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.icon-btn svg,.fmt-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .sep{width:1px;height:24px;background:var(--border);flex-shrink:0;}
 .status-dot{width:6px;height:6px;border-radius:50%;background:var(--text-faint);flex-shrink:0;transition:background .4s;}
 .status-dot.ok{background:var(--green);}
@@ -125,7 +125,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 
 #entryList{flex:1;overflow-y:auto;padding:12px 16px 16px;-webkit-overflow-scrolling:touch;}
 .entry-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer;transition:border-color .18s;position:relative;-webkit-tap-highlight-color:transparent;}
-.entry-item:hover {border-color:var(--border-glow);}
+.entry-item:hover{border-color:var(--border-glow);}
 .entry-item:active{opacity:.8;}
 .entry-item.active{border-color:var(--accent-dim);background:var(--accent-glow);}
 .entry-item.is-pinned{border-color:var(--accent-dim);box-shadow:inset 0 0 8px rgba(201,168,76,0.05);}
@@ -137,13 +137,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 .ei-card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
 .ei-card-tag{font-size:10px;font-weight:600;background:var(--surface3);color:var(--accent);border:1px solid var(--border);padding:1px 6px;border-radius:4px;}
 .ei-time{font-size:10px;color:var(--text-faint);font-family:var(--mono);margin-top:6px;font-weight:700;}
-
-.ei-actions-panel {position:absolute;bottom:10px;left:10px;display:flex;gap:4px;opacity:0;transition:opacity 0.15s;}
-.entry-item:hover .ei-actions-panel {opacity:1;}
-.ei-act-btn {width:24px;height:24px;border:1px solid var(--border);border-radius:5px;background:var(--surface);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all 0.15s;}
-.ei-act-btn:hover {border-color:var(--border-glow);color:var(--text);}
-.ei-act-btn.pin-btn.active {color:var(--accent);border-color:var(--accent-dim);background:var(--accent-glow);}
-.ei-act-btn.del-btn:hover {border-color:var(--red)!important;color:var(--red)!important;background:var(--red-dim)!important;}
+.ei-actions-panel{position:absolute;bottom:10px;left:10px;display:flex;gap:4px;opacity:0;transition:opacity 0.15s;}
+.entry-item:hover .ei-actions-panel{opacity:1;}
+.ei-act-btn{width:24px;height:24px;border:1px solid var(--border);border-radius:5px;background:var(--surface);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all 0.15s;}
+.ei-act-btn:hover{border-color:var(--border-glow);color:var(--text);}
+.ei-act-btn.pin-btn.active{color:var(--accent);border-color:var(--accent-dim);background:var(--accent-glow);}
+.ei-act-btn.del-btn:hover{border-color:var(--red)!important;color:var(--red)!important;background:var(--red-dim)!important;}
 @media(hover:none){.ei-actions-panel{opacity:0.6;}}
 
 #confirmDialog{position:fixed;inset:0;z-index:600;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);padding:20px;}
@@ -162,7 +161,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 #toast.success{border-color:var(--green);color:var(--green);}
 #toast.error{border-color:var(--red);color:var(--red);}
 
-::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border-glow);border-radius:2px;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border-glow);border-radius:2px;}
 </style>
 </head>
 <body>
@@ -180,7 +181,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 
 <div id="confirmDialog">
   <div class="confirm-box">
-    <p id="confirmMsg">هل تريد الحذف?</p>
+    <p id="confirmMsg">هل تريد الحذف؟</p>
     <div class="confirm-actions">
       <button class="confirm-yes" onclick="confirmYes()">تأكيد</button>
       <button class="confirm-no" onclick="confirmNo()">إلغاء</button>
@@ -215,11 +216,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
         <button class="fmt-btn" id="fmtBold" onmousedown="event.preventDefault();" onclick="execFmt('bold')"><b>ع</b></button>
         <button class="fmt-btn" id="fmtUnder" onmousedown="event.preventDefault();" onclick="execFmt('underline')"><u>ع</u></button>
         <div class="fmt-sep"></div>
-        
         <button class="fmt-btn" onmousedown="event.preventDefault();" onclick="execFontSize('up')" title="تكبير الخط" style="font-size:14px;">A+</button>
         <button class="fmt-btn" onmousedown="event.preventDefault();" onclick="execFontSize('down')" title="تصغير الخط" style="font-size:11px;">A-</button>
         <div class="fmt-sep"></div>
-
         <div class="color-picker-container">
           <button class="fmt-btn" id="colorToggleBtn" title="تغيير لون الخط" onmousedown="event.preventDefault();" onclick="toggleColorDropdown(event)">
             <svg viewBox="0 0 24 24"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.03444 19.1759 5.09911 19.431 5.02164 19.6706L4.70014 20.6625C4.54284 21.1479 4.90113 21.6358 5.40556 21.5637L6.75704 21.3706C7.00998 21.3345 7.26189 21.4326 7.42436 21.6247C8.75612 22.5065 10.3201 22 12 22Z"/><circle cx="7.5" cy="10.5" r="1" fill="currentColor"/><circle cx="11.5" cy="7.5" r="1" fill="currentColor"/><circle cx="16.5" cy="9.5" r="1" fill="currentColor"/></svg>
@@ -233,7 +232,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
             <div class="color-dot" id="cdPurple" style="background:#9b6bc9" onmousedown="event.preventDefault();" onclick="setColor('#9b6bc9')"></div>
           </div>
         </div>
-        
         <span style="font-size:10px;color:var(--text-faint);font-family:var(--mono);margin-right:auto;flex-shrink:0" id="wordCount">0 كلمة</span>
       </div>
 
@@ -259,7 +257,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
         <svg id="mindSvg" xmlns="http://www.w3.org/2000/svg"></svg>
         <div class="node-fo-wrap" id="nodeEditOverlay">
           <textarea class="node-fo-textarea" id="nodeEditTA" rows="1" placeholder="عنوان الدائرة..."></textarea>
-          <textarea class="node-fo-textarea" id="nodeEditDescTA" rows="2" placeholder="وصف الدائرة (يظهر أسفلها)..." style="margin-top:5px; font-size:11px; color:var(--text-muted);"></textarea>
+          <textarea class="node-fo-textarea" id="nodeEditDescTA" rows="2" placeholder="وصف الدائرة (يظهر أسفلها)..." style="margin-top:5px;font-size:11px;color:var(--text-muted);"></textarea>
           <div class="node-fo-hint">اضغط خارج الدائرة أو Enter للحفظ · Esc للإلغاء</div>
         </div>
       </div>
@@ -270,9 +268,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
         <button class="mind-btn" onclick="mindToggleCollapse()">إخفاء/إظهار</button>
         <button class="mind-btn" onclick="mindDeleteSelectedNode()">🗑 حذف</button>
         <button class="mind-btn" onclick="mindResetConfirm()">جديدة</button>
-        <button class="mind-btn" onclick="exportMind('svg')" style="border-color:var(--blue); color:var(--blue); font-weight:700;">📥 SVG</button>
-        <button class="mind-btn" onclick="exportMind('png')" style="border-color:var(--green); color:var(--green); font-weight:700;">📥 PNG</button>
-        <button class="mind-btn" onclick="exportMind('jpg')" style="border-color:var(--accent); color:var(--accent); font-weight:700;">📥 JPG</button>
+        <button class="mind-btn" onclick="exportMind('svg')" style="border-color:var(--blue);color:var(--blue);font-weight:700;">📥 SVG</button>
+        <button class="mind-btn" onclick="exportMind('png')" style="border-color:var(--green);color:var(--green);font-weight:700;">📥 PNG</button>
+        <button class="mind-btn" onclick="exportMind('jpg')" style="border-color:var(--accent);color:var(--accent);font-weight:700;">📥 JPG</button>
       </div>
     </div>
 
@@ -301,13 +299,106 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 <div id="toast"></div>
 
 <script>
+// ══════════════════════════════════════════════
+// الإعدادات الأساسية
+// ══════════════════════════════════════════════
 const API  = 'https://script.google.com/macros/s/AKfycbwDuAZbCi0Gls71mcZtkHJo0-CpAvO41QFo7pbGZ2YV3SwC8yMMjIWqjhjQGu8pF3iN/exec';
 const PASS = '8435';
 
-let allEntries=[], activeFilter='all', selectedHashtag=null, currentMode='editor';
-let activeEntryId=null, sidebarOpen=false, lastEditorRange=null;
+// ══════════════════════════════════════════════
+// ✅ إصلاح #1: ثوابت Separator نصية واضحة
+// بدلاً من أحرف Unicode التي تضيع مع HTML encoding
+// ══════════════════════════════════════════════
+const PIN_PREFIX    = '[PIN]';
+const TITLE_START   = '[TITLE:';
+const TITLE_END     = ']';
+const TAGS_START    = '[TAGS:';
+const TAGS_END      = ']';
 
-/* 🌟 مستمع ذكي لتحويل الشرطة (-) تلقائياً إلى فاصلة عربية (،) دون التأثير على المؤشر */
+let allEntries = [], activeFilter = 'all', selectedHashtag = null, currentMode = 'editor';
+let activeEntryId = null, sidebarOpen = false, lastEditorRange = null;
+
+// ══════════════════════════════════════════════
+// ✅ إصلاح #2: دوال التثبيت تستخدم الثوابت الجديدة
+// ══════════════════════════════════════════════
+function isPinned(text) {
+  return text && String(text).startsWith(PIN_PREFIX);
+}
+
+function stripPin(text) {
+  if (!text) return '';
+  let s = String(text);
+  while (s.startsWith(PIN_PREFIX)) {
+    s = s.slice(PIN_PREFIX.length);
+  }
+  return s;
+}
+
+function addPin(text) {
+  return PIN_PREFIX + stripPin(text);
+}
+
+// ══════════════════════════════════════════════
+// ✅ إصلاح #3: دوال بناء وتحليل البيانات
+// نظام separator نصي موثوق لا ينكسر
+// ══════════════════════════════════════════════
+
+/**
+ * يبني النص الكامل المراد حفظه في الـ API
+ * الصيغة: [PIN][TITLE:العنوان][TAGS:#تاق1 #تاق2]محتوى_HTML
+ */
+function buildEntryText(htmlContent, title, tagsStr, keepPin) {
+  let result = '';
+  if (keepPin) result += PIN_PREFIX;
+  if (title && title.trim()) result += TITLE_START + title.trim() + TITLE_END;
+  if (tagsStr && tagsStr.trim()) result += TAGS_START + tagsStr.trim() + TAGS_END;
+  result += htmlContent;
+  return result;
+}
+
+/**
+ * يحلل النص المحفوظ ويستخرج العنوان والتاقات والمحتوى
+ */
+function parseEntryMetadata(rawText) {
+  if (!rawText) return { title: '', tagsStr: '', tagsArray: [], textBody: '', pinned: false };
+
+  let text = String(rawText);
+  const pinned = isPinned(text);
+  if (pinned) text = stripPin(text);
+
+  let title = '';
+  let tagsStr = '';
+
+  // استخراج العنوان
+  if (text.startsWith(TITLE_START)) {
+    const endIdx = text.indexOf(TITLE_END, TITLE_START.length);
+    if (endIdx !== -1) {
+      title = text.slice(TITLE_START.length, endIdx);
+      text = text.slice(endIdx + TITLE_END.length);
+    }
+  }
+
+  // استخراج التاقات
+  if (text.startsWith(TAGS_START)) {
+    const endIdx = text.indexOf(TAGS_END, TAGS_START.length);
+    if (endIdx !== -1) {
+      tagsStr = text.slice(TAGS_START.length, endIdx);
+      text = text.slice(endIdx + TAGS_END.length);
+    }
+  }
+
+  // استخراج الهاشتاقات كمصفوفة
+  let tagsArray = [];
+  if (tagsStr) {
+    tagsArray = tagsStr.match(/#[^\s<>#!.,;:"']+/g) || [];
+  }
+
+  return { title, tagsStr, tagsArray, textBody: text, pinned };
+}
+
+// ══════════════════════════════════════════════
+// تحويل الشرطة إلى فاصلة عربية
+// ══════════════════════════════════════════════
 document.addEventListener('beforeinput', function(e) {
   if (e.data === '-') {
     e.preventDefault();
@@ -323,383 +414,361 @@ document.addEventListener('beforeinput', function(e) {
   }
 });
 
-/* التركيز التلقائي فور تحميل الصفحة */
+// التركيز التلقائي
 window.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     const inp = document.getElementById('passInput');
-    if(inp) inp.focus();
+    if (inp) inp.focus();
   }, 100);
 });
 
-/* 🔒 ضبط وفحص الحماية الصارمة للمثبتات المكررة */
-function isPinned(text) { 
-  return text && String(text).trim().startsWith(''); 
-}
-
-function stripPin(text) { 
-  if(!text) return '';
-  let s = String(text).trim();
-  while(s.startsWith('')) {
-    s = s.replace('', '').trim();
-  }
-  return s;
-}
-
-/* Confirm dialog */
-let _confirmResolve=null;
-function showConfirm(msg){
-  return new Promise(res=>{
-    _confirmResolve=res;
-    document.getElementById('confirmMsg').textContent=msg;
+// ══════════════════════════════════════════════
+// Confirm Dialog
+// ══════════════════════════════════════════════
+let _confirmResolve = null;
+function showConfirm(msg) {
+  return new Promise(res => {
+    _confirmResolve = res;
+    document.getElementById('confirmMsg').textContent = msg;
     document.getElementById('confirmDialog').classList.add('show');
   });
 }
-function confirmYes(){document.getElementById('confirmDialog').classList.remove('show');if(_confirmResolve)_confirmResolve(true);_confirmResolve=null;}
-function confirmNo(){document.getElementById('confirmDialog').classList.remove('show');if(_confirmResolve)_confirmResolve(false);_confirmResolve=null;}
+function confirmYes() {
+  document.getElementById('confirmDialog').classList.remove('show');
+  if (_confirmResolve) _confirmResolve(true);
+  _confirmResolve = null;
+}
+function confirmNo() {
+  document.getElementById('confirmDialog').classList.remove('show');
+  if (_confirmResolve) _confirmResolve(false);
+  _confirmResolve = null;
+}
 
-/* Lock */
-function checkPass(){
-  const v=document.getElementById('passInput').value;
-  if(v===PASS){
-    document.getElementById('lockScreen').style.display='none';
+// ══════════════════════════════════════════════
+// قفل الدخول
+// ══════════════════════════════════════════════
+function checkPass() {
+  const v = document.getElementById('passInput').value;
+  if (v === PASS) {
+    document.getElementById('lockScreen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
     loadEntries();
     mindInit();
   } else {
-    const inp=document.getElementById('passInput');
+    const inp = document.getElementById('passInput');
     inp.classList.add('error');
-    document.getElementById('lockError').textContent='كلمة المرور غير صحيحة';
-    inp.value='';
-    setTimeout(()=>inp.classList.remove('error'),600);
+    document.getElementById('lockError').textContent = 'كلمة المرور غير صحيحة';
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 600);
   }
 }
-document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkPass();});
+document.getElementById('passInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPass();
+});
 
-const $=id=>document.getElementById(id);
-const setStatus=(type,msg)=>{$('statusDot').className='status-dot '+type;$('statusText').textContent=msg;};
-const showToast=(msg,type='')=>{
-  const t=$('toast');t.textContent=msg;t.className='show '+type;
-  clearTimeout(t._t);t._t=setTimeout(()=>t.className='',2800);
+// ══════════════════════════════════════════════
+// أدوات مساعدة
+// ══════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const setStatus = (type, msg) => { $('statusDot').className = 'status-dot ' + type; $('statusText').textContent = msg; };
+const showToast = (msg, type = '') => {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.className = '', 2800);
 };
-const apiCall=p=>fetch(API+'?'+new URLSearchParams(p).toString()).then(r=>r.json());
+const apiCall = p => fetch(API + '?' + new URLSearchParams(p).toString()).then(r => r.json());
 
-/* التاريخ والوقت */
-const fmtTime=ts=>new Date(Number(ts)).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-const fmtDate=ts=>{const d=new Date(Number(ts));const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];return days[d.getDay()]+' '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();};
-const isToday=ts=>new Date(Number(ts)).toDateString()===new Date().toDateString();
-const isWeek=ts=>(Date.now()-Number(ts))/(864e5)<=7;
-const escHtml=s=>s?s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):'';
+const fmtTime = ts => new Date(Number(ts)).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+const fmtDate = ts => {
+  const d = new Date(Number(ts));
+  const days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  return days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+};
+const isToday = ts => new Date(Number(ts)).toDateString() === new Date().toDateString();
+const isWeek  = ts => (Date.now() - Number(ts)) / 864e5 <= 7;
+const escHtml = s => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
 
 function getRelativeDateStr(ts) {
   const d1 = new Date(); d1.setHours(0,0,0,0);
   const d2 = new Date(Number(ts)); d2.setHours(0,0,0,0);
   const diffDays = Math.round((d1 - d2) / 864e5);
-  if (diffDays === 0) return "اليوم";
-  if (diffDays === 1) return "أمس";
-  if (diffDays === 2) return "قبل 2 يوم";
-  if (diffDays > 2 && diffDays < 30) return `قبل ${diffDays} يوم`;
-  if (diffDays >= 30 && diffDays < 365) {
-    const m = Math.floor(diffDays / 30);
-    return m === 1 ? "قبل شهر" : `قبل ${m} شهر`;
-  }
+  if (diffDays === 0) return 'اليوم';
+  if (diffDays === 1) return 'أمس';
+  if (diffDays === 2) return 'قبل يومين';
+  if (diffDays < 30) return 'قبل ' + diffDays + ' يوم';
+  if (diffDays < 365) { const m = Math.floor(diffDays / 30); return m === 1 ? 'قبل شهر' : 'قبل ' + m + ' شهر'; }
   const y = Math.floor(diffDays / 365);
-  return y === 1 ? "قبل سنة" : `قبل ${y} سنة`;
+  return y === 1 ? 'قبل سنة' : 'قبل ' + y + ' سنة';
 }
 
-/* Mode */
-function setMode(mode){
-  currentMode=mode;
-  $('modeEditor').classList.toggle('active',mode==='editor');
-  $('modeMind').classList.toggle('active',mode==='mind');
-  $('editorPane').classList.toggle('hidden',mode!=='editor');
-  $('mindPane').classList.toggle('hidden',mode!=='mind');
-  if(mode==='mind'){
-    requestAnimationFrame(()=>{
-      mindRender();
-    });
-  }
+// ══════════════════════════════════════════════
+// الوضع (محرر / خريطة ذهنية)
+// ══════════════════════════════════════════════
+function setMode(mode) {
+  currentMode = mode;
+  $('modeEditor').classList.toggle('active', mode === 'editor');
+  $('modeMind').classList.toggle('active', mode === 'mind');
+  $('editorPane').classList.toggle('hidden', mode !== 'editor');
+  $('mindPane').classList.toggle('hidden', mode !== 'mind');
+  if (mode === 'mind') requestAnimationFrame(() => mindRender());
 }
 
-/* Sidebar */
-function toggleSidebar(){
-  sidebarOpen=!sidebarOpen;
-  $('sidebar').classList.toggle('hidden',!sidebarOpen);
-  $('sideOverlay').classList.toggle('show',sidebarOpen);
-  $('sidebarToggle').classList.toggle('active',sidebarOpen);
-  if(sidebarOpen) renderList();
+// ══════════════════════════════════════════════
+// الشريط الجانبي
+// ══════════════════════════════════════════════
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  $('sidebar').classList.toggle('hidden', !sidebarOpen);
+  $('sideOverlay').classList.toggle('show', sidebarOpen);
+  $('sidebarToggle').classList.toggle('active', sidebarOpen);
+  if (sidebarOpen) renderList();
 }
-function closeSidebar(){
-  if(!sidebarOpen)return;
-  sidebarOpen=false;
+function closeSidebar() {
+  if (!sidebarOpen) return;
+  sidebarOpen = false;
   $('sidebar').classList.add('hidden');
   $('sideOverlay').classList.remove('show');
   $('sidebarToggle').classList.remove('active');
 }
-function setFilter(f){
-  activeFilter=f;
-  ['fAll','fToday','fWeek','fMind'].forEach(x=>$(x)&&$(x).classList.remove('active'));
-  ({all:'fAll',today:'fToday',week:'fWeek',mind:'fMind'})[f] && $({all:'fAll',today:'fToday',week:'fWeek',mind:'fMind'}[f]).classList.add('active');
+function setFilter(f) {
+  activeFilter = f;
+  ['fAll','fToday','fWeek','fMind'].forEach(x => $(x) && $(x).classList.remove('active'));
+  const map = { all:'fAll', today:'fToday', week:'fWeek', mind:'fMind' };
+  if (map[f]) $(map[f]).classList.add('active');
   renderList();
 }
-function toggleHashtagFilter(tag){
+function toggleHashtagFilter(tag) {
   selectedHashtag = (selectedHashtag === tag) ? null : tag;
   renderList();
 }
 
-/* API */
-async function loadEntries(){
-  setStatus('loading','جاري التحميل...');
-  try{
-    const res=await apiCall({action:'get'});
-    if(!res.ok)throw new Error(res.error||'خطأ');
-    allEntries=(res.data||[]).map(e=>({...e,id:String(e.id)})).sort((a,b)=>{
+// ══════════════════════════════════════════════
+// تحميل السجلات من الـ API
+// ══════════════════════════════════════════════
+async function loadEntries() {
+  setStatus('loading', 'جاري التحميل...');
+  try {
+    const res = await apiCall({ action: 'get' });
+    if (!res.ok) throw new Error(res.error || 'خطأ');
+    allEntries = (res.data || []).map(e => ({ ...e, id: String(e.id) })).sort((a, b) => {
       const pinA = isPinned(a.text);
       const pinB = isPinned(b.text);
-      if(pinA && !pinB) return -1;
-      if(!pinA && pinB) return 1;
+      if (pinA && !pinB) return -1;
+      if (!pinA && pinB) return 1;
       return Number(b.ts) - Number(a.ts);
     });
-    setStatus('ok','متصل ✓');
-    if(sidebarOpen)renderList();
-  }catch(e){
-    setStatus('err','خطأ');
-    showToast('خطأ في الاتصال: '+e.message,'error');
+    setStatus('ok', 'متصل ✓');
+    if (sidebarOpen) renderList();
+  } catch (e) {
+    setStatus('err', 'خطأ');
+    showToast('خطأ في الاتصال: ' + e.message, 'error');
   }
 }
 
-/* التبديل السريع والمضمون للتثبيت (الدبوس) دون تكرار */
+// ══════════════════════════════════════════════
+// التثبيت (Pin)
+// ══════════════════════════════════════════════
 async function togglePin(id, event) {
   event.stopPropagation();
   const e = allEntries.find(x => x.id === id);
-  if(!e) return;
-  
-  const pinStatus = isPinned(e.text);
-  let newText = stripPin(e.text);
-  
-  if(!pinStatus) {
-    newText = '' + newText;
-  }
-  
+  if (!e) return;
+
+  const pinned = isPinned(e.text);
+  const newText = pinned ? stripPin(e.text) : addPin(e.text);
+
   setStatus('loading', 'جاري التعديل...');
   try {
-    const res = await apiCall({action:'edit', id: id, text: newText});
-    if(!res.ok) throw new Error(res.error);
-    showToast(!pinStatus ? 'تم التثبيت في الأعلى 📌' : 'تم إلغاء التثبيت');
+    const res = await apiCall({ action: 'edit', id: id, text: newText });
+    if (!res.ok) throw new Error(res.error);
+    showToast(!pinned ? 'تم التثبيت في الأعلى 📌' : 'تم إلغاء التثبيت');
     await loadEntries();
-  } catch(err) {
+  } catch (err) {
     setStatus('err', 'خطأ');
     showToast('خطأ: ' + err.message, 'error');
   }
 }
 
-/* معالجة النصوص واستخراج الميتا داتا والهاشتاقات */
-function parseEntryMetadata(textStr) {
-  let textBody = stripPin(textStr);
-  let title = '';
-  let tagsStr = '';
-  
-  const titleMatch = textBody.match(/^/);
-  if(titleMatch) {
-    title = titleMatch[1];
-    textBody = textBody.replace(/^/, '');
-  }
-  
-  const tagsMatch = textBody.match(/^/);
-  if(tagsMatch) {
-    tagsStr = tagsMatch[1];
-    textBody = textBody.replace(/^/, '');
-  }
-  
-  let tagsArray = [];
-  if(tagsStr) {
-    tagsArray = tagsStr.match(/#[^\s<>\#!.,;:\"']+/g) || [];
-  }
-  
-  return { title, tagsStr, tagsArray, textBody, pinned: isPinned(textStr) };
-}
-
-/* List & Hashtag Rendering */
-function renderList(){
-  const q=$('searchInput').value.trim().toLowerCase();
+// ══════════════════════════════════════════════
+// عرض قائمة السجلات والهاشتاقات
+// ══════════════════════════════════════════════
+function renderList() {
+  const q = $('searchInput').value.trim().toLowerCase();
   let foundTags = new Set();
-  
+
   allEntries.forEach(e => {
     const cleanText = stripPin(e.text);
-    if(!cleanText.startsWith('MIND::')){
+    if (!cleanText.startsWith('MIND::')) {
       const meta = parseEntryMetadata(e.text);
       meta.tagsArray.forEach(t => foundTags.add(t));
     }
   });
 
   const hashRow = $('hashtagRow');
-  if(foundTags.size > 0){
+  if (foundTags.size > 0) {
     hashRow.style.display = 'flex';
     hashRow.innerHTML = Array.from(foundTags).map(t => {
       const act = selectedHashtag === t ? ' active' : '';
-      return `<span class="flt-btn${act}" onclick="toggleHashtagFilter('${t}')">${t}</span>`;
+      return `<span class="flt-btn${act}" onclick="toggleHashtagFilter('${escHtml(t)}')">${escHtml(t)}</span>`;
     }).join('');
   } else {
     hashRow.style.display = 'none';
   }
 
-  let list=[...allEntries];
-  if(activeFilter==='today')list=list.filter(e=>isToday(e.ts));
-  if(activeFilter==='week')list=list.filter(e=>isWeek(e.ts));
-  if(activeFilter==='mind')list=list.filter(e=>stripPin(e.text).startsWith('MIND::'));
-  
-  if(selectedHashtag){
+  let list = [...allEntries];
+  if (activeFilter === 'today') list = list.filter(e => isToday(e.ts));
+  if (activeFilter === 'week')  list = list.filter(e => isWeek(e.ts));
+  if (activeFilter === 'mind')  list = list.filter(e => stripPin(e.text).startsWith('MIND::'));
+  if (selectedHashtag) {
     list = list.filter(e => {
-      if(stripPin(e.text).startsWith('MIND::')) return false;
-      const meta = parseEntryMetadata(e.text);
-      return meta.tagsArray.includes(selectedHashtag);
+      if (stripPin(e.text).startsWith('MIND::')) return false;
+      return parseEntryMetadata(e.text).tagsArray.includes(selectedHashtag);
     });
   }
-  
-  if(q){
-    list=list.filter(e=>e.text.toLowerCase().includes(q));
-  }
-  
-  if(!list.length){
-    $('entryList').innerHTML='<div style="color:var(--text-faint);font-size:12px;text-align:center;padding:40px">لا توجد سجلات</div>';
+  if (q) list = list.filter(e => e.text.toLowerCase().includes(q));
+
+  if (!list.length) {
+    $('entryList').innerHTML = '<div style="color:var(--text-faint);font-size:12px;text-align:center;padding:40px">لا توجد سجلات</div>';
     return;
   }
-  
-  $('entryList').innerHTML=list.map(e=>{
+
+  $('entryList').innerHTML = list.map(e => {
     const cleanText = stripPin(e.text);
-    const isMind=cleanText.startsWith('MIND::');
+    const isMind = cleanText.startsWith('MIND::');
     const pinned = isPinned(e.text);
     let preview = '';
     let entryTitle = '';
     let tagsArray = [];
 
-    if(isMind){
-      try{
-        const data=JSON.parse(cleanText.slice(6));
-        const rootNode=data.nodes&&data.nodes.find(n=>n.parentId===null);
-        preview='🌿 '+(rootNode?rootNode.label:'خريطة ذهنية');
-      }catch(err){preview='🌿 خريطة ذهنية';}
+    if (isMind) {
+      try {
+        const data = JSON.parse(cleanText.slice(6));
+        const rootNode = data.nodes && data.nodes.find(n => n.parentId === null);
+        preview = '🌿 ' + (rootNode ? rootNode.label : 'خريطة ذهنية');
+      } catch(err) { preview = '🌿 خريطة ذهنية'; }
     } else {
       const meta = parseEntryMetadata(e.text);
       entryTitle = meta.title;
       tagsArray = meta.tagsArray;
-      preview = escHtml(meta.textBody.replace(/<[^>]*>/g,'').slice(0,80));
+      preview = escHtml(meta.textBody.replace(/<[^>]*>/g, '').slice(0, 80));
     }
-    
-    const active=activeEntryId===e.id?' active':'';
-    const pinClass=pinned?' is-pinned':'';
-    const tagsHtml = tagsArray.map(t => `<span class="ei-card-tag">${t}</span>`).join('');
+
+    const active   = activeEntryId === e.id ? ' active' : '';
+    const pinClass = pinned ? ' is-pinned' : '';
+    const tagsHtml = tagsArray.map(t => `<span class="ei-card-tag">${escHtml(t)}</span>`).join('');
 
     return `<div class="entry-item${active}${pinClass}" onclick="openEntry('${e.id}')">
       <div class="ei-relative-date">${getRelativeDateStr(e.ts)}</div>
-      <span class="ei-badge ${isMind?'mind':'text'}">${isMind?'🌿 خريطة':'✦ نص'} ${pinned?' · 📌 مثبت':''}</span>
-      ${entryTitle ? `<div style="font-size:13px; font-weight:700; color:var(--text); margin-top:4px; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">📌 ${escHtml(entryTitle)}</div>` : ''}
+      <span class="ei-badge ${isMind ? 'mind' : 'text'}">${isMind ? '🌿 خريطة' : '✦ نص'}${pinned ? ' · 📌 مثبت' : ''}</span>
+      ${entryTitle ? `<div style="font-size:13px;font-weight:700;color:var(--text);margin-top:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📌 ${escHtml(entryTitle)}</div>` : ''}
       <div class="ei-preview">${preview}</div>
       ${tagsHtml ? `<div class="ei-card-tags">${tagsHtml}</div>` : ''}
       <div class="ei-time">📅 ${fmtDate(e.ts)} · ⏰ ${fmtTime(e.ts)}</div>
       <div class="ei-actions-panel">
-        <button class="ei-act-btn pin-btn ${pinned?'active':''}" title="تثبيت" onclick="togglePin('${e.id}', event)">📌</button>
+        <button class="ei-act-btn pin-btn ${pinned ? 'active' : ''}" title="تثبيت" onclick="togglePin('${e.id}', event)">📌</button>
         <button class="ei-act-btn del-btn" title="حذف" onclick="event.stopPropagation();deleteEntry('${e.id}')">×</button>
       </div>
     </div>`;
   }).join('');
 }
 
-/* Open entry */
-function openEntry(id){
-  const e=allEntries.find(x=>String(x.id)===String(id));
-  if(!e){showToast('لم يُعثر على السجل','error');return;}
-  activeEntryId=String(id);
+// ══════════════════════════════════════════════
+// فتح سجل موجود
+// ══════════════════════════════════════════════
+function openEntry(id) {
+  const e = allEntries.find(x => String(x.id) === String(id));
+  if (!e) { showToast('لم يُعثر على السجل', 'error'); return; }
+  activeEntryId = String(id);
   const cleanText = stripPin(e.text);
 
-  if(cleanText.startsWith('MIND::')){
+  if (cleanText.startsWith('MIND::')) {
     setMode('mind');
     mindLoadFromSerial(cleanText.slice(6));
   } else {
     setMode('editor');
     const meta = parseEntryMetadata(e.text);
-    $('entryTitle').value=meta.title;
-    $('entryTags').value=meta.tagsStr;
-    
-    const editorEl=$('editor');
-    editorEl.innerHTML=meta.textBody;
+    $('entryTitle').value = meta.title;
+    $('entryTags').value  = meta.tagsStr;
+    $('editor').innerHTML = meta.textBody;
     updateCounts();
     $('editingBadge').classList.add('visible');
-    setTimeout(()=>{
-      editorEl.focus();
-      saveEditorSelection();
-    },60);
+    setTimeout(() => { $('editor').focus(); saveEditorSelection(); }, 60);
   }
   renderList();
   closeSidebar();
 }
 
-function cancelEdit(){
-  activeEntryId=null;
-  document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
+function cancelEdit() {
+  activeEntryId = null;
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
   $('cdDefault').classList.add('active');
-  $('entryTitle').value='';
-  $('entryTags').value='';
-  $('editor').innerHTML='';
+  $('entryTitle').value = '';
+  $('entryTags').value  = '';
+  $('editor').innerHTML = '';
   $('editingBadge').classList.remove('visible');
   updateCounts();
   showToast('تمّ إلغاء التعديل');
 }
 
-function newEntry(){
-  activeEntryId=null;
-  document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
+function newEntry() {
+  activeEntryId = null;
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
   $('cdDefault').classList.add('active');
   $('editingBadge').classList.remove('visible');
-  $('entryTitle').value='';
-  $('entryTags').value='';
-  if(currentMode==='editor'){
-    $('editor').innerHTML='';
+  $('entryTitle').value = '';
+  $('entryTags').value  = '';
+  if (currentMode === 'editor') {
+    $('editor').innerHTML = '';
     updateCounts();
-    setTimeout(()=>$('editor').focus(),50);
+    setTimeout(() => $('editor').focus(), 50);
   } else {
     mindInit();
   }
   closeSidebar();
 }
 
-/* ══ Editor Core ══ */
-const editor=$('editor');
-editor.addEventListener('input', ()=>{ updateCounts(); saveEditorSelection(); });
-editor.addEventListener('keyup', ()=>{ updateFmtBtns(); saveEditorSelection(); });
-editor.addEventListener('mouseup', ()=>{ updateFmtBtns(); saveEditorSelection(); });
-editor.addEventListener('click', saveEditorSelection);
-editor.addEventListener('touchend', ()=>{ updateFmtBtns(); saveEditorSelection(); });
+// ══════════════════════════════════════════════
+// المحرر النصي
+// ══════════════════════════════════════════════
+const editor = $('editor');
+editor.addEventListener('input',    () => { updateCounts(); saveEditorSelection(); });
+editor.addEventListener('keyup',    () => { updateFmtBtns(); saveEditorSelection(); });
+editor.addEventListener('mouseup',  () => { updateFmtBtns(); saveEditorSelection(); });
+editor.addEventListener('click',    saveEditorSelection);
+editor.addEventListener('touchend', () => { updateFmtBtns(); saveEditorSelection(); });
 
-function saveEditorSelection(){
+function saveEditorSelection() {
   const sel = window.getSelection();
-  if(sel.rangeCount > 0){
+  if (sel.rangeCount > 0) {
     const range = sel.getRangeAt(0);
-    if(editor.contains(range.commonAncestorContainer)){
+    if (editor.contains(range.commonAncestorContainer)) {
       lastEditorRange = range.cloneRange();
     }
   }
 }
 
-function updateCounts(){
-  const text=editor.innerText||'';
-  $('charCount').textContent=text.length+' حرف';
-  $('wordCount').textContent=(text.trim()?text.trim().split(/\s+/).length:0)+' كلمة';
+function updateCounts() {
+  const text = editor.innerText || '';
+  $('charCount').textContent = text.length + ' حرف';
+  $('wordCount').textContent = (text.trim() ? text.trim().split(/\s+/).length : 0) + ' كلمة';
 }
-function updateFmtBtns(){
-  try{
-    $('fmtBold').classList.toggle('active',document.queryCommandState('bold'));
-    $('fmtUnder').classList.toggle('active',document.queryCommandState('underline'));
-  }catch(e){}
+function updateFmtBtns() {
+  try {
+    $('fmtBold').classList.toggle('active',  document.queryCommandState('bold'));
+    $('fmtUnder').classList.toggle('active', document.queryCommandState('underline'));
+  } catch(e) {}
 }
 
-function execFmt(cmd){
+function execFmt(cmd) {
   editor.focus();
-  if(lastEditorRange){
+  if (lastEditorRange) {
     const sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(lastEditorRange);
   }
-  document.execCommand(cmd,false,null);
+  document.execCommand(cmd, false, null);
   updateFmtBtns();
   saveEditorSelection();
 }
@@ -711,12 +780,12 @@ function toggleColorDropdown(e) {
     d.style.display = 'none';
   } else {
     d.style.display = 'flex';
-    const btn = $('colorToggleBtn');
+    const btn  = $('colorToggleBtn');
     const rect = btn.getBoundingClientRect();
-    d.style.top = (rect.bottom + 6) + 'px';
+    d.style.top   = (rect.bottom + 6) + 'px';
     const rightSpace = window.innerWidth - rect.right;
     d.style.right = rightSpace + 'px';
-    d.style.left = 'auto';
+    d.style.left  = 'auto';
   }
 }
 
@@ -726,20 +795,20 @@ document.addEventListener('click', e => {
   }
 });
 
-function setColor(color){
-  document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
+function setColor(color) {
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
   editor.focus();
-  if(lastEditorRange){
+  if (lastEditorRange) {
     const sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(lastEditorRange);
   }
-  if(!color){
+  if (!color) {
     $('cdDefault').classList.add('active');
-    document.execCommand('foreColor', false, 'var(--text)');
+    document.execCommand('foreColor', false, '#e8e6f0');
   } else {
-    const id={'#c9a84c':'cdGold','#6b9bc9':'cdBlue','#6bc98a':'cdGreen','#c96b6b':'cdRed','#9b6bc9':'cdPurple'}[color];
-    if(id)$(id).classList.add('active');
+    const id = { '#c9a84c':'cdGold','#6b9bc9':'cdBlue','#6bc98a':'cdGreen','#c96b6b':'cdRed','#9b6bc9':'cdPurple' }[color];
+    if (id) $(id).classList.add('active');
     document.execCommand('foreColor', false, color);
   }
   $('colorDropdown').style.display = 'none';
@@ -748,24 +817,23 @@ function setColor(color){
 
 function execFontSize(action) {
   editor.focus();
-  if(lastEditorRange){
+  if (lastEditorRange) {
     const sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(lastEditorRange);
   }
   const sel = window.getSelection();
-  if(!sel.rangeCount) return;
-  
-  let range = sel.getRangeAt(0);
+  if (!sel.rangeCount) return;
+
+  let range  = sel.getRangeAt(0);
   let parent = range.commonAncestorContainer;
-  if(parent.nodeType === 3) parent = parent.parentNode;
-  
+  if (parent.nodeType === 3) parent = parent.parentNode;
+
   let currentSize = window.getComputedStyle(parent).fontSize;
   let sizeNum = parseFloat(currentSize) || 17;
-  
-  if(action === 'up') { sizeNum += 2; } else { sizeNum = Math.max(10, sizeNum - 2); }
-  
-  if(!sel.isCollapsed) {
+  if (action === 'up') { sizeNum += 2; } else { sizeNum = Math.max(10, sizeNum - 2); }
+
+  if (!sel.isCollapsed) {
     const contents = range.extractContents();
     const span = document.createElement('span');
     span.style.fontSize = sizeNum + 'px';
@@ -778,7 +846,7 @@ function execFontSize(action) {
   } else {
     const span = document.createElement('span');
     span.style.fontSize = sizeNum + 'px';
-    span.innerHTML = '&#8203;'; 
+    span.innerHTML = '&#8203;';
     range.insertNode(span);
     const newRange = document.createRange();
     newRange.setStart(span.firstChild, 1);
@@ -790,226 +858,239 @@ function execFontSize(action) {
   updateCounts();
 }
 
-async function saveEditorEntry(){
-  let html=editor.innerHTML.trim();
-  const title=$('entryTitle').value.trim();
-  const tags=$('entryTags').value.trim();
-  
-  if((!html||html==='<br>') && !title && !tags){showToast('أدخل بيانات لحفظ السجل','error');return;}
-  
-  if(tags) { html = `` + html; }
-  if(title) { html = `` + html; }
+// ══════════════════════════════════════════════
+// ✅ إصلاح #4: حفظ المحرر باستخدام buildEntryText
+// ══════════════════════════════════════════════
+async function saveEditorEntry() {
+  const html    = editor.innerHTML.trim();
+  const title   = $('entryTitle').value.trim();
+  const tags    = $('entryTags').value.trim();
 
-  if(activeEntryId) {
-    const old = allEntries.find(x => x.id === activeEntryId);
-    if(old && isPinned(old.text)) html = '' + html;
+  if ((!html || html === '<br>') && !title && !tags) {
+    showToast('أدخل بيانات لحفظ السجل', 'error');
+    return;
   }
 
-  $('saveEntryBtn').disabled=true;
-  $('saveEntryBtn').textContent='...';
-  setStatus('loading','جاري الحفظ...');
-  try{
+  // الحفاظ على حالة التثبيت إن كان السجل مثبتاً سابقاً
+  const keepPin = activeEntryId ? isPinned((allEntries.find(x => x.id === activeEntryId) || {}).text || '') : false;
+  const textToSave = buildEntryText(html, title, tags, keepPin);
+
+  $('saveEntryBtn').disabled = true;
+  $('saveEntryBtn').textContent = '...';
+  setStatus('loading', 'جاري الحفظ...');
+  try {
     let res;
-    if(activeEntryId){
-      res=await apiCall({action:'edit',id:activeEntryId,text:html});
+    if (activeEntryId) {
+      res = await apiCall({ action: 'edit', id: activeEntryId, text: textToSave });
     } else {
-      res=await apiCall({action:'add',text:html,ts:Date.now()});
+      res = await apiCall({ action: 'add', text: textToSave, ts: Date.now() });
     }
-    if(!res.ok)throw new Error(res.error||'خطأ في الحفظ');
-    showToast(activeEntryId?'✦ تمّ التعديل':'✦ تمّ الحفظ','success');
-    activeEntryId=null;
+    if (!res.ok) throw new Error(res.error || 'خطأ في الحفظ');
+    showToast(activeEntryId ? '✦ تمّ التعديل' : '✦ تمّ الحفظ', 'success');
+    activeEntryId = null;
     $('editingBadge').classList.remove('visible');
-    $('entryTitle').value='';
-    $('entryTags').value='';
-    editor.innerHTML='';
+    $('entryTitle').value = '';
+    $('entryTags').value  = '';
+    editor.innerHTML = '';
     updateCounts();
-    setStatus('ok','محفوظ ✓');
+    setStatus('ok', 'محفوظ ✓');
     await loadEntries();
-  }catch(e){
-    setStatus('err','فشل الحفظ');
-    showToast('خطأ: '+e.message,'error');
-  } finally{
-    $('saveEntryBtn').disabled=false;
-    $('saveEntryBtn').textContent='✦ حفظ';
+  } catch (e) {
+    setStatus('err', 'فشل الحفظ');
+    showToast('خطأ: ' + e.message, 'error');
+  } finally {
+    $('saveEntryBtn').disabled = false;
+    $('saveEntryBtn').textContent = '✦ حفظ';
   }
 }
 
-async function deleteEntry(id){
-  const ok=await showConfirm('هل تريد حذف هذا السجل نهائياً؟');
-  if(!ok)return;
-  setStatus('loading','جاري الحذف...');
-  try{
-    const res=await apiCall({action:'delete',id});
-    if(!res.ok)throw new Error(res.error||'خطأ');
+async function deleteEntry(id) {
+  const ok = await showConfirm('هل تريد حذف هذا السجل نهائياً؟');
+  if (!ok) return;
+  setStatus('loading', 'جاري الحذف...');
+  try {
+    const res = await apiCall({ action: 'delete', id });
+    if (!res.ok) throw new Error(res.error || 'خطأ');
     showToast('تمّ الحذف');
-    if(activeEntryId===String(id)){
-      activeEntryId=null;
+    if (activeEntryId === String(id)) {
+      activeEntryId = null;
       $('editingBadge').classList.remove('visible');
-      $('entryTitle').value='';
-      $('entryTags').value='';
-      editor.innerHTML='';
+      $('entryTitle').value = '';
+      $('entryTags').value  = '';
+      editor.innerHTML = '';
       updateCounts();
     }
     await loadEntries();
-  }catch(e){
-    setStatus('err','خطأ');
-    showToast('فشل الحذف: '+e.message,'error');
+  } catch (e) {
+    setStatus('err', 'خطأ');
+    showToast('فشل الحذف: ' + e.message, 'error');
   }
 }
 
-/* ══ الخريطة الذهنية المتكاملة والديناميكية ══ */
-let mindNodes=[], selectedNodeId=null, mindPanX=0, mindPanY=0;
-let isPanning=false, startX=0, startY=0;
+// ══════════════════════════════════════════════
+// الخريطة الذهنية
+// ══════════════════════════════════════════════
+let mindNodes = [], selectedNodeId = null, mindPanX = 0, mindPanY = 0;
+let isPanning = false, startX = 0, startY = 0;
 
-function mindInit(){
-  mindNodes=[{id:1, parentId:null, label:'الفكرة الرئيسية', desc:'', x:0, y:0, collapsed:false}];
-  selectedNodeId=1;
+function mindInit() {
+  mindNodes = [{ id: 1, parentId: null, label: 'الفكرة الرئيسية', desc: '', x: 0, y: 0, collapsed: false }];
+  selectedNodeId = 1;
   mindRender();
 }
 
-function mindRender(){
+function mindRender() {
   const svg = $('mindSvg');
-  if(!svg) return;
+  if (!svg) return;
   svg.innerHTML = '';
-  
-  const width = svg.clientWidth || window.innerWidth;
+
+  const width  = svg.clientWidth  || window.innerWidth;
   const height = svg.clientHeight || window.innerHeight;
-  const cx = width / 2 + mindPanX;
+  const cx = width  / 2 + mindPanX;
   const cy = height / 2 + mindPanY;
-  
+
   const gMaster = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   gMaster.setAttribute('transform', `translate(${cx}, ${cy})`);
   svg.appendChild(gMaster);
 
+  // رسم الخطوط
   mindNodes.forEach(node => {
-    if(node.parentId !== null){
+    if (node.parentId !== null) {
       const parent = mindNodes.find(n => n.id === node.parentId);
-      if(parent && !parent.collapsed && !isAncestorCollapsed(node)){
+      if (parent && !parent.collapsed && !isAncestorCollapsed(node)) {
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', parent.x); line.setAttribute('y1', parent.y);
-        line.setAttribute('x2', node.x); line.setAttribute('y2', node.y);
-        line.setAttribute('stroke', 'var(--border-glow)');
+        line.setAttribute('x2', node.x);   line.setAttribute('y2', node.y);
+        line.setAttribute('stroke', '#3a3a48');
         line.setAttribute('stroke-width', '2');
         gMaster.appendChild(line);
       }
     }
   });
 
+  // رسم العقد
   mindNodes.forEach(node => {
-    if(isAncestorCollapsed(node)) return;
+    if (isAncestorCollapsed(node)) return;
 
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     g.setAttribute('transform', `translate(${node.x}, ${node.y})`);
-    
-    g.addEventListener('click', (e) => { e.stopPropagation(); selectedNodeId=node.id; mindRender(); });
-    g.addEventListener('dblclick', (e) => { e.stopPropagation(); showNodeOverlay(node); });
+    g.style.cursor = 'pointer';
+
+    g.addEventListener('click',   e => { e.stopPropagation(); selectedNodeId = node.id; mindRender(); });
+    g.addEventListener('dblclick', e => { e.stopPropagation(); showNodeOverlay(node); });
 
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     const isSelected = selectedNodeId === node.id;
-    rect.setAttribute('fill', isSelected ? 'var(--accent-glow)' : 'var(--surface)');
-    rect.setAttribute('stroke', isSelected ? 'var(--accent)' : 'var(--border)');
+    rect.setAttribute('fill',         isSelected ? 'rgba(201,168,76,0.12)' : '#141417');
+    rect.setAttribute('stroke',       isSelected ? '#c9a84c' : '#2a2a32');
     rect.setAttribute('stroke-width', isSelected ? '2' : '1');
-    rect.setAttribute('rx', '10'); rect.setAttribute('ry', '10');
+    rect.setAttribute('rx', '10');
+    rect.setAttribute('ry', '10');
 
     const txtLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     txtLabel.textContent = node.label || '...';
-    txtLabel.setAttribute('fill', 'var(--text)');
-    txtLabel.setAttribute('font-size', '13px');
+    txtLabel.setAttribute('fill', '#e8e6f0');
+    txtLabel.setAttribute('font-size', '13');
     txtLabel.setAttribute('font-weight', '600');
     txtLabel.setAttribute('text-anchor', 'middle');
+    txtLabel.setAttribute('font-family', 'Cairo, sans-serif');
 
     let txtDesc = null;
-    if(node.desc) {
+    if (node.desc) {
       txtDesc = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       txtDesc.textContent = node.desc;
-      txtDesc.setAttribute('fill', 'var(--text-muted)');
-      txtDesc.setAttribute('font-size', '10px');
+      txtDesc.setAttribute('fill', '#7a7890');
+      txtDesc.setAttribute('font-size', '10');
       txtDesc.setAttribute('text-anchor', 'middle');
+      txtDesc.setAttribute('font-family', 'Cairo, sans-serif');
     }
 
     g.appendChild(rect);
     g.appendChild(txtLabel);
-    if(txtDesc) g.appendChild(txtDesc);
+    if (txtDesc) g.appendChild(txtDesc);
     gMaster.appendChild(g);
 
     setTimeout(() => {
       try {
         const lB = txtLabel.getBBox();
-        const dB = txtDesc ? txtDesc.getBBox() : {width:0, height:0};
-        const w = Math.max(lB.width, dB.width) + 26;
-        const h = node.desc ? 46 : 32;
-        rect.setAttribute('x', -w/2); rect.setAttribute('y', -h/2);
-        rect.setAttribute('width', w); rect.setAttribute('height', h);
-        if(node.desc){
-          txtLabel.setAttribute('y', -4);
-          txtDesc.setAttribute('y', 13);
+        const dB = txtDesc ? txtDesc.getBBox() : { width: 0, height: 0 };
+        const w  = Math.max(lB.width, dB.width) + 26;
+        const h  = node.desc ? 46 : 32;
+        rect.setAttribute('x', -w / 2); rect.setAttribute('y', -h / 2);
+        rect.setAttribute('width', w);  rect.setAttribute('height', h);
+        if (node.desc) {
+          txtLabel.setAttribute('y', '-4');
+          txtDesc.setAttribute('y', '13');
         } else {
-          txtLabel.setAttribute('y', 4);
+          txtLabel.setAttribute('y', '4');
         }
-      } catch(err){}
+      } catch(err) {}
     }, 0);
   });
 }
 
-function isAncestorCollapsed(node){
+function isAncestorCollapsed(node) {
   let pId = node.parentId;
-  while(pId !== null){
+  while (pId !== null) {
     const p = mindNodes.find(n => n.id === pId);
-    if(p && p.collapsed) return true;
+    if (p && p.collapsed) return true;
     pId = p ? p.parentId : null;
   }
   return false;
 }
 
 let editingOverlayNode = null;
-function showNodeOverlay(node){
+function showNodeOverlay(node) {
   editingOverlayNode = node;
   const overlay = $('nodeEditOverlay');
-  $('nodeEditTA').value = node.label || '';
+  $('nodeEditTA').value    = node.label || '';
   $('nodeEditDescTA').value = node.desc || '';
   overlay.classList.add('active');
-  
-  const svg = $('mindSvg');
+
+  const svg  = $('mindSvg');
   const rect = svg.getBoundingClientRect();
-  const cx = rect.width / 2 + mindPanX + node.x;
-  const cy = rect.height / 2 + mindPanY + node.y;
-  
+  const cx   = rect.width  / 2 + mindPanX + node.x;
+  const cy   = rect.height / 2 + mindPanY + node.y;
+
   overlay.style.right = 'auto';
-  overlay.style.left = Math.min(window.innerWidth - 240, Math.max(20, cx - 110)) + 'px';
-  overlay.style.top = Math.min(window.innerHeight - 150, Math.max(70, cy - 40)) + 'px';
-  setTimeout(()=>$('nodeEditTA').focus(), 50);
+  overlay.style.left  = Math.min(window.innerWidth - 240, Math.max(20, cx - 110)) + 'px';
+  overlay.style.top   = Math.min(window.innerHeight - 150, Math.max(70, cy - 40)) + 'px';
+  setTimeout(() => $('nodeEditTA').focus(), 50);
 }
 
-function closeNodeOverlay(){
-  if(!editingOverlayNode) return;
+function closeNodeOverlay() {
+  if (!editingOverlayNode) return;
   editingOverlayNode.label = $('nodeEditTA').value.trim() || '...';
-  editingOverlayNode.desc = $('nodeEditDescTA').value.trim();
+  editingOverlayNode.desc  = $('nodeEditDescTA').value.trim();
   editingOverlayNode = null;
   $('nodeEditOverlay').classList.remove('active');
   mindRender();
 }
 
-$('mindCanvas').addEventListener('click', () => { if($('nodeEditOverlay').classList.contains('active')) closeNodeOverlay(); });
-$('nodeEditOverlay').addEventListener('click', (e)=>e.stopPropagation());
+$('mindCanvas').addEventListener('click', () => {
+  if ($('nodeEditOverlay').classList.contains('active')) closeNodeOverlay();
+});
+$('nodeEditOverlay').addEventListener('click', e => e.stopPropagation());
 
-document.addEventListener('keydown', (e)=>{
-  if($('nodeEditOverlay').classList.contains('active')){
-    if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); closeNodeOverlay(); }
-    if(e.key === 'Escape') { editingOverlayNode=null; $('nodeEditOverlay').classList.remove('active'); mindRender(); }
+document.addEventListener('keydown', e => {
+  if ($('nodeEditOverlay').classList.contains('active')) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); closeNodeOverlay(); }
+    if (e.key === 'Escape') { editingOverlayNode = null; $('nodeEditOverlay').classList.remove('active'); mindRender(); }
   }
 });
 
+// تحريك الخريطة بالسحب
 const canvas = $('mindCanvas');
-canvas.addEventListener('mousedown', (e) => {
-  if(e.target.tagName === 'svg' || e.target.id === 'mindSvg') {
+canvas.addEventListener('mousedown', e => {
+  if (e.target.tagName === 'svg' || e.target.id === 'mindSvg') {
     isPanning = true;
     canvas.classList.add('grabbing');
     startX = e.clientX - mindPanX;
     startY = e.clientY - mindPanY;
   }
 });
-canvas.addEventListener('mousemove', (e) => {
-  if(isPanning) {
+canvas.addEventListener('mousemove', e => {
+  if (isPanning) {
     mindPanX = e.clientX - startX;
     mindPanY = e.clientY - startY;
     mindRender();
@@ -1017,116 +1098,91 @@ canvas.addEventListener('mousemove', (e) => {
 });
 window.addEventListener('mouseup', () => { isPanning = false; canvas.classList.remove('grabbing'); });
 
-function mindAddChild(){
-  if(!selectedNodeId) return;
+function mindAddChild() {
+  if (!selectedNodeId) return;
   const parent = mindNodes.find(n => n.id === selectedNodeId);
-  if(!parent) return;
-  const id = Date.now();
+  if (!parent) return;
+  const id    = Date.now();
   const count = mindNodes.filter(n => n.parentId === selectedNodeId).length;
-  mindNodes.push({
-    id: id, parentId: selectedNodeId, label: 'فرع جديد', desc: '',
-    x: parent.x + 150, y: parent.y + (count * 55) - 30, collapsed: false
-  });
+  mindNodes.push({ id, parentId: selectedNodeId, label: 'فرع جديد', desc: '', x: parent.x + 150, y: parent.y + (count * 55) - 30, collapsed: false });
   selectedNodeId = id;
   mindRender();
 }
 
-function mindAddSibling(){
-  if(!selectedNodeId) return;
+function mindAddSibling() {
+  if (!selectedNodeId) return;
   const node = mindNodes.find(n => n.id === selectedNodeId);
-  if(!node || node.parentId === null) { showToast('لا يمكن إضافة مجاور للجذر الرئيسي', 'error'); return; }
+  if (!node || node.parentId === null) { showToast('لا يمكن إضافة مجاور للجذر الرئيسي', 'error'); return; }
   const id = Date.now();
-  mindNodes.push({
-    id: id, parentId: node.parentId, label: 'مجاور جديد', desc: '',
-    x: node.x, y: node.y + 55, collapsed: false
-  });
+  mindNodes.push({ id, parentId: node.parentId, label: 'مجاور جديد', desc: '', x: node.x, y: node.y + 55, collapsed: false });
   selectedNodeId = id;
   mindRender();
 }
 
-function mindToggleCollapse(){
-  if(!selectedNodeId) return;
+function mindToggleCollapse() {
+  if (!selectedNodeId) return;
   const node = mindNodes.find(n => n.id === selectedNodeId);
-  if(node) { node.collapsed = !node.collapsed; mindRender(); }
+  if (node) { node.collapsed = !node.collapsed; mindRender(); }
 }
 
-function mindDeleteSelectedNode(){
-  if(!selectedNodeId || selectedNodeId === 1) { showToast('لا يمكن حذف العقدة الرئيسية', 'error'); return; }
+function mindDeleteSelectedNode() {
+  if (!selectedNodeId || selectedNodeId === 1) { showToast('لا يمكن حذف العقدة الرئيسية', 'error'); return; }
   mindNodes = mindNodes.filter(n => n.id !== selectedNodeId && n.parentId !== selectedNodeId);
   selectedNodeId = 1;
   mindRender();
 }
 
-async function mindResetConfirm(){
-  if(await showConfirm('هل أنت متأكد من مسح الخريطة بالكامل والبدء من جديد؟')){ mindInit(); }
+async function mindResetConfirm() {
+  if (await showConfirm('هل أنت متأكد من مسح الخريطة بالكامل والبدء من جديد؟')) { mindInit(); }
 }
 
-/* 📤 دالة التصدير الشاملة والذكية للخرائط الذهنية بجودة فائقة (SVG, PNG, JPG) */
+// ══════════════════════════════════════════════
+// تصدير الخريطة الذهنية (SVG / PNG / JPG)
+// ══════════════════════════════════════════════
 function exportMind(type) {
   const svgEl = $('mindSvg');
-  if(!svgEl) return;
-  
+  if (!svgEl) return;
+
   const clone = svgEl.cloneNode(true);
   clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-  
-  // دمج لوحة الأنماط لتلوين الكائنات بدقة في المعالجة المعزولة
+
   const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
-  styleEl.textContent = `
-    :root {
-      --bg:#0d0d0f; --surface:#141417; --surface2:#1c1c21; --surface3:#232329;
-      --border:#2a2a32; --border-glow:#3a3a48;
-      --text:#e8e6f0; --text-muted:#7a7890; --text-faint:#3d3c50;
-      --accent:#c9a84c; --accent-dim:#8a6e2e; --accent-glow:rgba(201,168,76,0.12);
-      --blue:#6b9bc9;
-    }
-    svg { background: var(--bg); font-family: 'Cairo', sans-serif; }
-  `;
+  styleEl.textContent = 'svg { background: #0d0d0f; font-family: Cairo, sans-serif; }';
   clone.insertBefore(styleEl, clone.firstChild);
-  
-  const width = svgEl.clientWidth || window.innerWidth;
+
+  const width  = svgEl.clientWidth  || window.innerWidth;
   const height = svgEl.clientHeight || window.innerHeight;
-  clone.setAttribute('width', width);
+  clone.setAttribute('width',  width);
   clone.setAttribute('height', height);
 
-  const serializer = new XMLSerializer();
-  const svgStr = serializer.serializeToString(clone);
-  
+  const svgStr = new XMLSerializer().serializeToString(clone);
+
   if (type === 'svg') {
-    const blob = new Blob([svgStr], {type: 'image/svg+xml;charset=utf-8'});
-    triggerDownload(URL.createObjectURL(blob), `خريطة_ذهنية-${Date.now()}.svg`);
+    const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+    triggerDownload(URL.createObjectURL(blob), 'خريطة_ذهنية-' + Date.now() + '.svg');
     showToast('تم تصدير ملف SVG بنجاح 🌿', 'success');
     return;
   }
-  
-  // معالجة الصور النقطية PNG و JPG بدقة عالية مضاعفة (Hi-Res 2x) لضمان حدة النص
+
   setStatus('loading', 'جاري تجهيز الصورة...');
-  const blob = new Blob([svgStr], {type: 'image/svg+xml;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  
-  const img = new Image();
+  const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const img  = new Image();
+
   img.onload = function() {
-    const canvas = document.createElement('canvas');
-    canvas.width = width * 2;
-    canvas.height = height * 2;
-    const ctx = canvas.getContext('2d');
+    const c = document.createElement('canvas');
+    c.width  = width  * 2;
+    c.height = height * 2;
+    const ctx = c.getContext('2d');
     ctx.scale(2, 2);
-    
-    if (type === 'jpg') {
-      // تعبئة خلفية داكنة مخصصة لصور الـ JPG لمنع تحول الشفافية لأسود كامد
-      ctx.fillStyle = '#0d0d0f';
-      ctx.fillRect(0, 0, width, height);
-    }
-    
+    if (type === 'jpg') { ctx.fillStyle = '#0d0d0f'; ctx.fillRect(0, 0, width, height); }
     ctx.drawImage(img, 0, 0, width, height);
-    
-    const mime = type === 'png' ? 'image/png' : 'image/jpeg';
-    const ext = type === 'png' ? 'png' : 'jpg';
-    const dataUrl = canvas.toDataURL(mime, 0.95);
-    
-    triggerDownload(dataUrl, `خريطة_ذهنية-${Date.now()}.${ext}`);
+    const mime    = type === 'png' ? 'image/png' : 'image/jpeg';
+    const dataUrl = c.toDataURL(mime, 0.95);
+    triggerDownload(dataUrl, 'خريطة_ذهنية-' + Date.now() + '.' + type);
     URL.revokeObjectURL(url);
     setStatus('ok', 'متصل ✓');
-    showToast(`تم تصدير صورة ${type.toUpperCase()} بنجاح 🌿`, 'success');
+    showToast('تم تصدير صورة ' + type.toUpperCase() + ' بنجاح 🌿', 'success');
   };
   img.onerror = function() {
     URL.revokeObjectURL(url);
@@ -1145,47 +1201,46 @@ function triggerDownload(url, filename) {
   document.body.removeChild(a);
 }
 
-/* حفظ الخرائط وقراءتها */
-async function saveMindEntry(){
-  if(!mindNodes.length) return;
-  let textData = 'MIND::' + JSON.stringify({nodes: mindNodes, panX: mindPanX, panY: mindPanY});
-  
-  if(activeEntryId) {
-    const old = allEntries.find(x => x.id === activeEntryId);
-    if(old && isPinned(old.text)) textData = '' + textData;
-  }
+// ══════════════════════════════════════════════
+// ✅ إصلاح #5: حفظ الخريطة الذهنية
+// ══════════════════════════════════════════════
+async function saveMindEntry() {
+  if (!mindNodes.length) return;
+  const mindSerial = 'MIND::' + JSON.stringify({ nodes: mindNodes, panX: mindPanX, panY: mindPanY });
+  const keepPin = activeEntryId ? isPinned((allEntries.find(x => x.id === activeEntryId) || {}).text || '') : false;
+  const textData = keepPin ? addPin(mindSerial) : mindSerial;
 
   $('mindSavebtn').disabled = true;
-  setStatus('loading','جاري حفظ الخريطة...');
-  try{
+  setStatus('loading', 'جاري حفظ الخريطة...');
+  try {
     let res;
-    if(activeEntryId){
-      res = await apiCall({action:'edit', id:activeEntryId, text:textData});
+    if (activeEntryId) {
+      res = await apiCall({ action: 'edit', id: activeEntryId, text: textData });
     } else {
-      res = await apiCall({action:'add', text:textData, ts:Date.now()});
+      res = await apiCall({ action: 'add', text: textData, ts: Date.now() });
     }
-    if(!res.ok) throw new Error(res.error);
-    showToast('تم حفظ الخريطة بنجاح 🌿','success');
+    if (!res.ok) throw new Error(res.error);
+    showToast('تم حفظ الخريطة بنجاح 🌿', 'success');
     activeEntryId = null;
-    setStatus('ok','محفوظ ✓');
+    setStatus('ok', 'محفوظ ✓');
     await loadEntries();
-  }catch(e){
-    setStatus('err','فشل الحفظ');
-    showToast('خطأ: '+e.message,'error');
-  }finally{
+  } catch (e) {
+    setStatus('err', 'فشل الحفظ');
+    showToast('خطأ: ' + e.message, 'error');
+  } finally {
     $('mindSavebtn').disabled = false;
   }
 }
 
-function mindLoadFromSerial(serialStr){
-  try{
+function mindLoadFromSerial(serialStr) {
+  try {
     const data = JSON.parse(serialStr);
-    mindNodes = data.nodes || [];
-    mindPanX = data.panX || 0;
-    mindPanY = data.panY || 0;
+    mindNodes      = data.nodes || [];
+    mindPanX       = data.panX  || 0;
+    mindPanY       = data.panY  || 0;
     selectedNodeId = mindNodes.length ? mindNodes[0].id : null;
     mindRender();
-  }catch(err){
+  } catch(err) {
     showToast('فشل في تحميل بيانات الخريطة', 'error');
     mindInit();
   }
