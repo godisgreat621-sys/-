@@ -270,7 +270,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
         <button class="mind-btn" onclick="mindToggleCollapse()">إخفاء/إظهار</button>
         <button class="mind-btn" onclick="mindDeleteSelectedNode()">🗑 حذف</button>
         <button class="mind-btn" onclick="mindResetConfirm()">جديدة</button>
-        <button class="mind-btn" onclick="exportMindSvg()" style="border-color:var(--blue); color:var(--blue); font-weight:700;">📥 تصدير</button>
+        <button class="mind-btn" onclick="exportMind('svg')" style="border-color:var(--blue); color:var(--blue); font-weight:700;">📥 SVG</button>
+        <button class="mind-btn" onclick="exportMind('png')" style="border-color:var(--green); color:var(--green); font-weight:700;">📥 PNG</button>
+        <button class="mind-btn" onclick="exportMind('jpg')" style="border-color:var(--accent); color:var(--accent); font-weight:700;">📥 JPG</button>
       </div>
     </div>
 
@@ -279,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
     <div id="sidebar" class="hidden">
       <div id="sidebarHeader">
         <h2>✦ السجلات</h2>
-        <button class="icon-btn" onclick="toggleSidebar(")>
+        <button class="icon-btn" onclick="toggleSidebar()">
           <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
@@ -329,9 +331,19 @@ window.addEventListener('DOMContentLoaded', () => {
   }, 100);
 });
 
-/* Helpers للتحقق من السجلات المثبتة بالدبوس */
-function isPinned(text) { return text.startsWith(''); }
-function stripPin(text) { return text.startsWith('') ? text.replace('', '') : text; }
+/* 🔒 ضبط وفحص الحماية الصارمة للمثبتات المكررة */
+function isPinned(text) { 
+  return text && String(text).trim().startsWith(''); 
+}
+
+function stripPin(text) { 
+  if(!text) return '';
+  let s = String(text).trim();
+  while(s.startsWith('')) {
+    s = s.replace('', '').trim();
+  }
+  return s;
+}
 
 /* Confirm dialog */
 let _confirmResolve=null;
@@ -441,7 +453,6 @@ async function loadEntries(){
     const res=await apiCall({action:'get'});
     if(!res.ok)throw new Error(res.error||'خطأ');
     allEntries=(res.data||[]).map(e=>({...e,id:String(e.id)})).sort((a,b)=>{
-      // فرز وتثبيت الدبوس بالقمة دائماً
       const pinA = isPinned(a.text);
       const pinB = isPinned(b.text);
       if(pinA && !pinB) return -1;
@@ -456,22 +467,24 @@ async function loadEntries(){
   }
 }
 
-/* التبديل السريع للتثبيت (الدبوس) */
+/* التبديل السريع والمضمون للتثبيت (الدبوس) دون تكرار */
 async function togglePin(id, event) {
   event.stopPropagation();
   const e = allEntries.find(x => x.id === id);
   if(!e) return;
-  let newText = e.text;
-  if(isPinned(newText)) {
-    newText = stripPin(newText);
-  } else {
+  
+  const pinStatus = isPinned(e.text);
+  let newText = stripPin(e.text);
+  
+  if(!pinStatus) {
     newText = '' + newText;
   }
+  
   setStatus('loading', 'جاري التعديل...');
   try {
     const res = await apiCall({action:'edit', id: id, text: newText});
     if(!res.ok) throw new Error(res.error);
-    showToast(isPinned(newText) ? 'تم التثبيت في الأعلى 📌' : 'تم إلغاء التثبيت');
+    showToast(!pinStatus ? 'تم التثبيت في الأعلى 📌' : 'تم إلغاء التثبيت');
     await loadEntries();
   } catch(err) {
     setStatus('err', 'خطأ');
@@ -787,7 +800,6 @@ async function saveEditorEntry(){
   if(tags) { html = `` + html; }
   if(title) { html = `` + html; }
 
-  // إذا كان السجل الحالي في الأصل مثبتاً، نحافظ عليه عند الحفظ
   if(activeEntryId) {
     const old = allEntries.find(x => x.id === activeEntryId);
     if(old && isPinned(old.text)) html = '' + html;
@@ -869,7 +881,6 @@ function mindRender(){
   gMaster.setAttribute('transform', `translate(${cx}, ${cy})`);
   svg.appendChild(gMaster);
 
-  // رسم الخطوط الموصلة
   mindNodes.forEach(node => {
     if(node.parentId !== null){
       const parent = mindNodes.find(n => n.id === node.parentId);
@@ -884,7 +895,6 @@ function mindRender(){
     }
   });
 
-  // رسم الدوائر والبطاقات
   mindNodes.forEach(node => {
     if(isAncestorCollapsed(node)) return;
 
@@ -922,210 +932,10 @@ function mindRender(){
     if(txtDesc) g.appendChild(txtDesc);
     gMaster.appendChild(g);
 
-    // ضبط الأبعاد والمسافات تلقائياً بناءً على حجم النصوص والوصف التابع
     setTimeout(() => {
       try {
         const lB = txtLabel.getBBox();
         const dB = txtDesc ? txtDesc.getBBox() : {width:0, height:0};
         const w = Math.max(lB.width, dB.width) + 26;
         const h = node.desc ? 46 : 32;
-        rect.setAttribute('x', -w/2); rect.setAttribute('y', -h/2);
-        rect.setAttribute('width', w); rect.setAttribute('height', h);
-        if(node.desc){
-          txtLabel.setAttribute('y', -4);
-          txtDesc.setAttribute('y', 13);
-        } else {
-          txtLabel.setAttribute('y', 4);
-        }
-      } catch(err){}
-    }, 0);
-  });
-}
-
-function isAncestorCollapsed(node){
-  let pId = node.parentId;
-  while(pId !== null){
-    const p = mindNodes.find(n => n.id === pId);
-    if(p && p.collapsed) return true;
-    pId = p ? p.parentId : null;
-  }
-  return false;
-}
-
-/* لوحة تعديل الدائرة الفرعية والوصف */
-let editingOverlayNode = null;
-function showNodeOverlay(node){
-  editingOverlayNode = node;
-  const overlay = $('nodeEditOverlay');
-  $('nodeEditTA').value = node.label || '';
-  $('nodeEditDescTA').value = node.desc || '';
-  overlay.classList.add('active');
-  
-  const svg = $('mindSvg');
-  const rect = svg.getBoundingClientRect();
-  const cx = rect.width / 2 + mindPanX + node.x;
-  const cy = rect.height / 2 + mindPanY + node.y;
-  
-  overlay.style.right = 'auto';
-  overlay.style.left = Math.min(window.innerWidth - 240, Math.max(20, cx - 110)) + 'px';
-  overlay.style.top = Math.min(window.innerHeight - 150, Math.max(70, cy - 40)) + 'px';
-  setTimeout(()=>$('nodeEditTA').focus(), 50);
-}
-
-function closeNodeOverlay(){
-  if(!editingOverlayNode) return;
-  editingOverlayNode.label = $('nodeEditTA').value.trim() || '...';
-  editingOverlayNode.desc = $('nodeEditDescTA').value.trim();
-  editingOverlayNode = null;
-  $('nodeEditOverlay').classList.remove('active');
-  mindRender();
-}
-
-// إغلاق النافذة والحفظ تلقائياً عند النقر في الخارج
-$('mindCanvas').addEventListener('click', () => { if($('nodeEditOverlay').classList.contains('active')) closeNodeOverlay(); });
-$('nodeEditOverlay').addEventListener('click', (e)=>e.stopPropagation());
-
-document.addEventListener('keydown', (e)=>{
-  if($('nodeEditOverlay').classList.contains('active')){
-    if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); closeNodeOverlay(); }
-    if(e.key === 'Escape') { editingOverlayNode=null; $('nodeEditOverlay').classList.remove('active'); mindRender(); }
-  }
-});
-
-/* إدارة حركات وسحب الخريطة الذهنية */
-const canvas = $('mindCanvas');
-canvas.addEventListener('mousedown', (e) => {
-  if(e.target.tagName === 'svg' || e.target.id === 'mindSvg') {
-    isPanning = true;
-    canvas.classList.add('grabbing');
-    startX = e.clientX - mindPanX;
-    startY = e.clientY - mindPanY;
-  }
-});
-canvas.addEventListener('mousemove', (e) => {
-  if(isPanning) {
-    mindPanX = e.clientX - startX;
-    mindPanY = e.clientY - startY;
-    mindRender();
-  }
-});
-window.addEventListener('mouseup', () => { isPanning = false; canvas.classList.remove('grabbing'); });
-
-/* أزرار لوحة التحكم للخرائط */
-function mindAddChild(){
-  if(!selectedNodeId) return;
-  const parent = mindNodes.find(n => n.id === selectedNodeId);
-  if(!parent) return;
-  const id = Date.now();
-  const count = mindNodes.filter(n => n.parentId === selectedNodeId).length;
-  mindNodes.push({
-    id: id, parentId: selectedNodeId, label: 'فرع جديد', desc: '',
-    x: parent.x + 150, y: parent.y + (count * 55) - 30, collapsed: false
-  });
-  selectedNodeId = id;
-  mindRender();
-}
-
-function mindAddSibling(){
-  if(!selectedNodeId) return;
-  const node = mindNodes.find(n => n.id === selectedNodeId);
-  if(!node || node.parentId === null) { showToast('لا يمكن إضافة مجاور للجذر الرئيسي', 'error'); return; }
-  const id = Date.now();
-  mindNodes.push({
-    id: id, parentId: node.parentId, label: 'مجاور جديد', desc: '',
-    x: node.x, y: node.y + 55, collapsed: false
-  });
-  selectedNodeId = id;
-  mindRender();
-}
-
-function mindToggleCollapse(){
-  if(!selectedNodeId) return;
-  const node = mindNodes.find(n => n.id === selectedNodeId);
-  if(node) { node.collapsed = !node.collapsed; mindRender(); }
-}
-
-function mindDeleteSelectedNode(){
-  if(!selectedNodeId || selectedNodeId === 1) { showToast('لا يمكن حذف العقدة الرئيسية', 'error'); return; }
-  mindNodes = mindNodes.filter(n => n.id !== selectedNodeId && n.parentId !== selectedNodeId);
-  selectedNodeId = 1;
-  mindRender();
-}
-
-async function mindResetConfirm(){
-  if(await showConfirm('هل أنت متأكد من مسح الخريطة بالكامل والبدء من جديد؟')){ mindInit(); }
-}
-
-/* 📤 تصدير الخريطة كـ صورة عالية الدقة ومتجهة SVG */
-function exportMindSvg() {
-  const svgEl = $('mindSvg');
-  if(!svgEl) return;
-  
-  // أخذ نسخة مستقلة وحساب الحواف الحقيقية لمنع قص الأطراف أثناء التصدير
-  const clone = svgEl.cloneNode(true);
-  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-  
-  const serializer = new XMLSerializer();
-  const svgStr = serializer.serializeToString(clone);
-  const blob = new Blob([svgStr], {type: 'image/svg+xml;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `خريطة_ذهنية-${Date.now()}.svg`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast('تم تصدير الخريطة بنجاح كملف SVG 🌿', 'success');
-}
-
-/* حفظ الخرائط وقراءتها */
-async function saveMindEntry(){
-  if(!mindNodes.length) return;
-  let textData = 'MIND::' + JSON.stringify({nodes: mindNodes, panX: mindPanX, panY: mindPanY});
-  
-  // الحفاظ على حالة التثبيت إن وجدت مسبقاً
-  if(activeEntryId) {
-    const old = allEntries.find(x => x.id === activeEntryId);
-    if(old && isPinned(old.text)) textData = '' + textData;
-  }
-
-  $('mindSavebtn').disabled = true;
-  setStatus('loading','جاري حفظ الخريطة...');
-  try{
-    let res;
-    if(activeEntryId){
-      res = await apiCall({action:'edit', id:activeEntryId, text:textData});
-    } else {
-      res = await apiCall({action:'add', text:textData, ts:Date.now()});
-    }
-    if(!res.ok) throw new Error(res.error);
-    showToast('تم حفظ الخريطة بنجاح 🌿','success');
-    activeEntryId = null;
-    setStatus('ok','محفوظ ✓');
-    await loadEntries();
-  }catch(e){
-    setStatus('err','فشل الحفظ');
-    showToast('خطأ: '+e.message,'error');
-  }finally{
-    $('mindSavebtn').disabled = false;
-  }
-}
-
-function mindLoadFromSerial(serialStr){
-  try{
-    const data = JSON.parse(serialStr);
-    mindNodes = data.nodes || [];
-    mindPanX = data.panX || 0;
-    mindPanY = data.panY || 0;
-    selectedNodeId = mindNodes.length ? mindNodes[0].id : null;
-    mindRender();
-  }catch(err){
-    showToast('فشل في تحميل بيانات الخريطة', 'error');
-    mindInit();
-  }
-}
-</script>
-</body>
-</html>
+        rect.setAttribute('x', -w/
