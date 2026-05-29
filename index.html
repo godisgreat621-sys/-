@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>أنا</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0d0d0f;--surface:#141417;--surface2:#1c1c21;--surface3:#232329;
@@ -42,7 +42,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 .icon-btn:hover{border-color:var(--border-glow);color:var(--text);background:var(--surface2);}
 .icon-btn:active{transform:scale(.92);}
 .icon-btn.active{border-color:var(--accent-dim);color:var(--accent);background:var(--accent-glow);}
-.icon-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.icon-btn svg, .fmt-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .sep{width:1px;height:24px;background:var(--border);flex-shrink:0;}
 .status-dot{width:6px;height:6px;border-radius:50%;background:var(--text-faint);flex-shrink:0;transition:background .4s;}
 .status-dot.ok{background:var(--green);}
@@ -75,10 +75,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 #editor b,#editor strong{font-weight:700;}
 #editor u{text-decoration:underline;}
 @media(max-width:600px){#editor{padding:20px 18px;font-size:1rem;}}
-
-#aiPanel{display:none;background:var(--surface2);border-top:1px solid var(--border);padding:14px 18px;max-height:190px;overflow-y:auto;position:relative;}
-#aiContent{font-size:13px;color:var(--text);line-height:1.7;margin-bottom:8px;user-select:text;-webkit-user-select:text;}
-#aiSelectionBadge{display:none;justify-content:flex-end;margin-top:6px;}
 
 #editorFooter{height:44px;flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:8px;}
 #editingBadge{display:none;align-items:center;gap:6px;font-size:10px;color:var(--accent);font-family:var(--mono);background:var(--accent-glow);border:1px solid var(--accent-dim);border-radius:4px;padding:3px 8px;flex-shrink:0;}
@@ -168,7 +164,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 
 <div id="confirmDialog">
   <div class="confirm-box">
-    <p id="confirmMsg">هل تريد الحذف؟</p>
+    <p id="confirmMsg">هل تريد الحذف?</p>
     <div class="confirm-actions">
       <button class="confirm-yes" onclick="confirmYes()">تأكيد</button>
       <button class="confirm-no" onclick="confirmNo()">إلغاء</button>
@@ -205,7 +201,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
         <div class="fmt-sep"></div>
         
         <div class="color-picker-container">
-          <button class="fmt-btn" id="colorToggleBtn" onmousedown="event.preventDefault();" onclick="toggleColorMenu()">🎨 اللون</button>
+          <button class="fmt-btn" id="colorToggleBtn" title="تغيير لون الخط">
+            <svg viewBox="0 0 24 24"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.03444 19.1759 5.09911 19.431 5.02164 19.6706L4.70014 20.6625C4.54284 21.1479 4.90113 21.6358 5.40556 21.5637L6.75704 21.3706C7.00998 21.3345 7.26189 21.4326 7.42436 21.6247C8.75612 22.5065 10.3201 22 12 22Z"/><circle cx="7.5" cy="10.5" r="1" fill="currentColor"/><circle cx="11.5" cy="7.5" r="1" fill="currentColor"/><circle cx="16.5" cy="9.5" r="1" fill="currentColor"/></svg>
+          </button>
           <div id="colorDropdown">
             <div class="color-dot active" id="cdDefault" style="background:var(--text)" onmousedown="event.preventDefault();" onclick="setColor('')"></div>
             <div class="color-dot" id="cdGold" style="background:#c9a84c" onmousedown="event.preventDefault();" onclick="setColor('#c9a84c')"></div>
@@ -215,25 +213,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
             <div class="color-dot" id="cdPurple" style="background:#9b6bc9" onmousedown="event.preventDefault();" onclick="setColor('#9b6bc9')"></div>
           </div>
         </div>
-
-        <div class="fmt-sep"></div>
-        <button class="fmt-btn" id="aiBtn" onmousedown="event.preventDefault();" onclick="askAI()" style="background:var(--accent-glow); border-color:var(--accent-dim); color:var(--accent);">🤖 اسأل الذكاء</button>
         
         <span style="font-size:10px;color:var(--text-faint);font-family:var(--mono);margin-right:auto;flex-shrink:0" id="wordCount">0 كلمة</span>
       </div>
       <div id="editor" contenteditable="true" data-placeholder="ابدأ الكتابة هنا..."></div>
-      
-      <!-- نافذة استجابة الذكاء الاصطناعي مدمجة -->
-      <div id="aiPanel">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <span style="font-size:11px; font-weight:700; color:var(--accent);">🤖 تحليل ومقترحات الذكاء الاصطناعي:</span>
-          <button onclick="document.getElementById('aiPanel').style.display='none'" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:16px;">×</button>
-        </div>
-        <div id="aiContent"></div>
-        <div id="aiSelectionBadge">
-          <button onmousedown="event.preventDefault();" onclick="insertSelectedAIText()" style="background:var(--accent); color:#0d0d0f; border:none; border-radius:5px; padding:4px 10px; font-family:var(--sans); font-size:11px; font-weight:700; cursor:pointer;">➕ إدراج النص المظلل في مؤشر كتابتي</button>
-        </div>
-      </div>
 
       <div id="editorFooter">
         <div id="editingBadge">
@@ -279,7 +262,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
         <button class="flt-btn" id="fWeek" onclick="setFilter('week')">الأسبوع</button>
         <button class="flt-btn" id="fMind" onclick="setFilter('mind')">🌿 الخرائط</button>
       </div>
-      <!-- صف التصفية بالهاشتاق المستخرج تلقائياً -->
       <div id="hashtagRow"></div>
       <div id="entryList"><div style="color:var(--text-faint);font-size:12px;text-align:center;padding:30px">جاري التحميل...</div></div>
     </div>
@@ -333,7 +315,7 @@ const showToast=(msg,type='')=>{
 };
 const apiCall=p=>fetch(API+'?'+new URLSearchParams(p).toString()).then(r=>r.json());
 
-/* تنسيق التاريخ والوقت النسبي بدقة */
+/* التاريخ والوقت */
 const fmtTime=ts=>new Date(Number(ts)).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 const fmtDate=ts=>{const d=new Date(Number(ts));const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];return days[d.getDay()]+' '+d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();};
 const isToday=ts=>new Date(Number(ts)).toDateString()===new Date().toDateString();
@@ -412,11 +394,9 @@ async function loadEntries(){
   }
 }
 
-/* List & Hashtag Processing */
+/* List & Hashtag */
 function renderList(){
   const q=$('searchInput').value.trim().toLowerCase();
-  
-  // استخراج الهاشتاقات ديناميكياً من كافة النصوص المخزنة
   let foundTags = new Set();
   allEntries.forEach(e => {
     if(!e.text.startsWith('MIND::')){
@@ -501,7 +481,6 @@ function cancelEdit(){
   $('cdDefault').classList.add('active');
   $('editor').innerHTML='';
   $('editingBadge').classList.remove('visible');
-  $('aiPanel').style.display='none';
   updateCounts();
   showToast('تمّ إلغاء التعديل');
 }
@@ -511,7 +490,6 @@ function newEntry(){
   document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
   $('cdDefault').classList.add('active');
   $('editingBadge').classList.remove('visible');
-  $('aiPanel').style.display='none';
   if(currentMode==='editor'){
     $('editor').innerHTML='';
     updateCounts();
@@ -552,7 +530,6 @@ function updateFmtBtns(){
   }catch(e){}
 }
 
-/* حل مشكلة ارتداد المؤشر مع الحفاظ على موقعه الأصلي للخط واللون */
 function execFmt(cmd){
   editor.focus();
   if(lastEditorRange){
@@ -565,10 +542,18 @@ function execFmt(cmd){
   saveEditorSelection();
 }
 
-function toggleColorMenu(){
+/* إصلاح قائمة الألوان ومنع الارتداد */
+$('colorToggleBtn').addEventListener('click', e => {
+  e.stopPropagation(); // منع انتقال الحدث للمستند وإغلاق القائمة فوراً
   const d = $('colorDropdown');
   d.style.display = (d.style.display === 'flex') ? 'none' : 'flex';
-}
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.color-picker-container')) {
+    $('colorDropdown').style.display = 'none';
+  }
+});
 
 function setColor(color){
   document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
@@ -593,78 +578,6 @@ function setColor(color){
   saveEditorSelection();
 }
 
-// غلق قائمة الألوان تلقائياً عند الضغط خارجها
-window.addEventListener('click', e => {
-  if(!e.target.closest('.color-picker-container')){
-    $('colorDropdown').style.display = 'none';
-  }
-});
-
-/* ══ نظام تكامل وقراءة نص الذكاء الاصطناعي ══ */
-function askAI(){
-  const currentText = editor.innerText.trim();
-  if(!currentText){
-    showToast('اكتب نصاً أولاً في المحرر ليقرأه الذكاء الاصطناعي ويحلله!','error');
-    return;
-  }
-  
-  $('aiPanel').style.display = 'block';
-  $('aiContent').innerHTML = '<span style="color:var(--accent); font-weight:500;">⏳ جاري قراءة وتحليل النص المكتوب بعمق وبناء الاستجابة...</span>';
-  $('aiSelectionBadge').style.display = 'none';
-  
-  setTimeout(() => {
-    let reply = "";
-    // توليد سياقات ذكية ومطابقة تخدم اهتماماتك تلقائياً بناءً على الكلمات المفتاحية
-    if(currentText.includes('زاد') || currentText.includes('جمعية') || currentText.includes('مشروع')){
-      reply = "بناءً على البناء التشغيلي والحوكمة للمؤسسات غير الربحية، أقترح تدعيم هذا النص بجدول للمسؤوليات (RACI Matrix) مع مراجعة المعايير القياسية للجهات المستهدفة لضمان توافق النماذج مع متطلبات الحوكمة الرسمية.";
-    } else if(currentText.includes('مطعم') || currentText.includes('منيو') || currentText.includes('مبيعات')){
-      reply = "ملاحظات جيدة للتحليل المالي؛ يفضل فرز العناصر الأكثر مبيعاً واستبعاد الوجبات غير المراجعة لتفادي الانحراف في الإحصائيات، مع تحسين إشهار روابط التقييم المباشر لتحسين الظهور على خرائط جوجل.";
-    } else if(currentText.includes('هاشتاق') || currentText.includes('#')){
-      reply = "استخدامك للهاشتاقات في التدوين يسهل حوكمة الملفات الشخصية. يمكنك إلحاق هذا الاقتراح: [#تطوير_مستمر #تنظيم_رقمي] لفرز الأفكار بسلاسة عبر السجلات الذكية لاحقاً.";
-    } else {
-      reply = "لقد قمت بقراءة وتحليل مدخلاتك الحالية بنجاح. النص متناسق، وأوصي بإضافة لمسة هيكلية نهائية وصياغة البنود بشكل أكثر شمولية لتغطية الأهداف التشغيلية المطلوبة بنجاح.";
-    }
-    
-    $('aiContent').textContent = reply;
-    $('aiSelectionBadge').style.display = 'flex';
-  }, 1100);
-}
-
-// التقاط المظلل من الـ AI وإلحاقه في مكان وموضع المؤشر الأصلي بالمحرر
-function insertSelectedAIText(){
-  const sel = window.getSelection();
-  const txt = sel.toString().trim();
-  if(!txt){
-    showToast('قم أولاً بتظليل وتحديد أي جزء أو نص تريده من كلام الذكاء الاصطناعي!','error');
-    return;
-  }
-  
-  if(lastEditorRange){
-    const editorSel = window.getSelection();
-    editorSel.removeAllRanges();
-    editorSel.addRange(lastEditorRange);
-    
-    lastEditorRange.deleteContents();
-    const node = document.createTextNode(txt);
-    lastEditorRange.insertNode(node);
-    
-    // إزاحة المؤشر إلى ما بعد النص الملحق مباشرة
-    lastEditorRange.setStartAfter(node);
-    lastEditorRange.collapse(true);
-    editorSel.removeAllRanges();
-    editorSel.addRange(lastEditorRange);
-    
-    editor.focus();
-    updateCounts();
-    showToast('تم إلحاق الجزء المظلل بنجاح ✦');
-  } else {
-    editor.focus();
-    document.execCommand('insertText', false, txt);
-    updateCounts();
-    showToast('تم إلحاق النص ✦');
-  }
-}
-
 async function saveEditorEntry(){
   const html=editor.innerHTML.trim();
   if(!html||html==='<br>'){showToast('اكتب شيئاً أولاً','error');return;}
@@ -682,7 +595,6 @@ async function saveEditorEntry(){
     showToast(activeEntryId?'✦ تمّ التعديل':'✦ تمّ الحفظ','success');
     activeEntryId=null;
     $('editingBadge').classList.remove('visible');
-    $('aiPanel').style.display='none';
     editor.innerHTML='';
     updateCounts();
     setStatus('ok','محفوظ ✓');
@@ -708,7 +620,6 @@ async function deleteEntry(id){
     if(activeEntryId===String(id)){
       activeEntryId=null;
       $('editingBadge').classList.remove('visible');
-      $('aiPanel').style.display='none';
       editor.innerHTML='';
       updateCounts();
     }
@@ -719,7 +630,7 @@ async function deleteEntry(id){
   }
 }
 
-/* ══ Mind Canvas (Placeholder Objects & Functions For Stability) ══ */
+/* الخريطة الذهنية */
 let mindNodes=[];
 function mindInit(){mindNodes=[{id:1,parentId:null,label:'الفكرة الرئيسية',x:0,y:0,collapsed:false}];}
 function setMindStatus(){}; function centerMind(){}; function mindRender(){}; function mindLoadFromSerial(s){}
