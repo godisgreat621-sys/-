@@ -65,7 +65,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);}
 .fmt-sep{width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0;}
 
 .color-picker-container{position:relative;display:inline-block;}
-#colorDropdown{display:none;position:absolute;top:32px;right:0;background:var(--surface3);border:1px solid var(--border-glow);border-radius:8px;padding:8px;gap:8px;z-index:350;box-shadow:0 8px 24px rgba(0,0,0,.6);align-items:center;}
+/* تم تحويله إلى fixed لمنع مشكلة القص بسبب سكرول شريط التنسيق */
+#colorDropdown{display:none;position:fixed;background:var(--surface3);border:1px solid var(--border-glow);border-radius:8px;padding:8px;gap:8px;z-index:350;box-shadow:0 8px 24px rgba(0,0,0,.6);align-items:center;}
 .color-dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.2);cursor:pointer;transition:transform .15s;flex-shrink:0;}
 .color-dot:hover,.color-dot:active{transform:scale(1.25);}
 .color-dot.active{border-color:white;transform:scale(1.1);}
@@ -546,11 +547,25 @@ function execFmt(cmd){
   saveEditorSelection();
 }
 
-/* التحكم بظهور وإغلاق قائمة الألوان */
+/* التحكم بظهور وإغلاق قائمة الألوان وحساب موضعها بدقة منعاً للاختفاء */
 function toggleColorDropdown(e) {
   e.stopPropagation();
   const d = $('colorDropdown');
-  d.style.display = (d.style.display === 'flex') ? 'none' : 'flex';
+  if (d.style.display === 'flex') {
+    d.style.display = 'none';
+  } else {
+    d.style.display = 'flex';
+    const btn = $('colorToggleBtn');
+    const rect = btn.getBoundingClientRect();
+    
+    // وضع القائمة أسفل الأيقونة بـ 6 بكسل
+    d.style.top = (rect.bottom + 6) + 'px';
+    
+    // محاذاة القائمة لليمين تماشياً مع اتجاه الـ RTL
+    const rightSpace = window.innerWidth - rect.right;
+    d.style.right = rightSpace + 'px';
+    d.style.left = 'auto';
+  }
 }
 
 document.addEventListener('click', e => {
@@ -597,11 +612,9 @@ function execFontSize(action) {
   let parent = range.commonAncestorContainer;
   if(parent.nodeType === 3) parent = parent.parentNode;
   
-  // قراءة الحجم الحالي للخط من العنصر الأب
   let currentSize = window.getComputedStyle(parent).fontSize;
   let sizeNum = parseFloat(currentSize) || 17;
   
-  // حساب الحجم الجديد بمقدار درجتين
   if(action === 'up') {
     sizeNum += 2;
   } else {
@@ -609,26 +622,23 @@ function execFontSize(action) {
   }
   
   if(!sel.isCollapsed) {
-    // حالة وجود نص محدد: يتم لفه داخل كود span بالحجم الجديد
     const contents = range.extractContents();
     const span = document.createElement('span');
     span.style.fontSize = sizeNum + 'px';
     span.appendChild(contents);
     range.insertNode(span);
     
-    // إعادة التحديد للمحافظة على حالة النص
     const newRange = document.createRange();
     newRange.selectNodeContents(span);
     sel.removeAllRanges();
     sel.addRange(newRange);
   } else {
-    // حالة وقوف المؤشر فقط: تعديل حجم الخط للكلمات التالية
     if(parent !== editor && editor.contains(parent) && parent.tagName === 'SPAN') {
       parent.style.fontSize = sizeNum + 'px';
     } else {
       const span = document.createElement('span');
       span.style.fontSize = sizeNum + 'px';
-      span.innerHTML = '&#8203;'; // مسافة صفرية لتثبيت المؤشر بداخلها
+      span.innerHTML = '&#8203;'; 
       range.insertNode(span);
       
       const newRange = document.createRange();
